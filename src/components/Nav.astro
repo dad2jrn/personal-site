@@ -4,22 +4,25 @@ import ThemeToggle from './ThemeToggle.astro';
 const { currentPath = "" } = Astro.props;
 
 const navItems = [
-  { label: 'work', href: '/work/' },
-  { label: 'patents', href: '/patents/' },
-  { label: 'writing', href: '/writing/' },
-  { label: 'contact', href: '/contact/' },
+  { label: 'work', href: '/personal-site/work/' },
+  { label: 'patents', href: '/personal-site/patents/' },
+  { label: 'writing', href: '/personal-site/writing/' },
+  { label: 'contact', href: '/personal-site/contact/' },
 ];
 
 const isActive = (href: string) => {
-  if (href === '/' && currentPath === '') return true;
-  if (href !== '/' && currentPath.startsWith(href.replace(/^\/|\/$/g, ''))) return true;
+  const normalizedPath = currentPath.replace(/^\/|\/$/g, '');
+  const normalizedHref = href.replace(/^\/personal-site\//, '').replace(/\/$/, '');
+
+  if (normalizedHref === '' && normalizedPath === '') return true;
+  if (normalizedHref !== '' && normalizedPath.startsWith(normalizedHref)) return true;
   return false;
 };
 ---
 
 <nav class="py-8">
   <div class="container-site flex items-center justify-between">
-    <a href="/" class="group flex items-center gap-1 font-display text-2xl font-medium tracking-tight text-ink">
+    <a href="/personal-site/" class="group flex items-center gap-1 font-display text-2xl font-medium tracking-tight text-ink">
       RM<span class="text-accent">.</span>
     </a>
 
