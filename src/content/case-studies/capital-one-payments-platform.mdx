@@ -10,7 +10,7 @@ scale:
   - { label: "Monthly users", value: "60M" }
   - { label: "Revenue impact", value: "+$30M/yr" }
   - { label: "Delivery speedup", value: "75%" }
-tools: ["AWS", "Kafka", "Kubernetes", "Java", "Postgres", "Terraform"]
+tools: ["React.js", "Java", "Spring Boot", "Postgres", "AWS", "Kafka", "Terraform"]
 outcomes:
   - "Reduced feature delivery time from quarterly to weekly cadence"
   - "Drove $30M in incremental annual revenue via improved throughput"
@@ -19,4 +19,21 @@ publishedAt: "2026-01-15"
 featured: true
 ---
 
-Led the architecture and execution of a multi-year re-platforming of Capital One's payment processing systems, moving from monolithic batch architectures to event-driven microservices on AWS, supporting ~60M monthly users and ~$2T in annual transaction volume.
+### The Problem
+The Card Line of Business (LoB) was anchored by a legacy monolithic payment application that had become increasingly unstable. This "black box" system was difficult to scale, prone to outages during peak volumes, and acted as a bottleneck for new feature delivery. The technical debt was so significant that even minor changes risked cascading failures across the payment lifecycle.
+
+### The Strategy: The Strangler Method
+Rather than a high-risk "big bang" migration, we employed the **Strangler Fig pattern**. We froze the legacy system, limiting its scope strictly to production support and essential maintenance. This ensured stability for existing customers while we systematically "strangled" its functionality by building out a modern replacement in parallel.
+
+### Architectural Innovation
+We designed a cloud-native, event-driven ecosystem built on **Domain-Driven Design (DDD)** principles. Key architectural pillars included:
+
+*   **Backend-for-Frontend (BFF)**: Implemented using Java/Spring Boot to provide optimized data structures for our React.js frontend, reducing client-side complexity and improving performance.
+*   **Anti-Corruption Layer (ACL)**: A critical defensive component that translated and sanitized data from the legacy system before it reached the new microservices. This prevented "bad data" and legacy logic from polluting the new architecture.
+*   **Microservices Architecture**: Decomposed the monolith into discrete, independently scalable services (e.g., Authorization, Settlement, Ledgering) using Spring Boot and Postgres.
+
+### From Application to Platform
+What began as a replacement for the Card LoB evolved into a **multi-tenant payments platform**. We implemented a flexible business rules engine driven by **YAML and JSON-based logic**. This allowed the platform to support additional lines of business without code changes, enabling them to define their own payment flows, validation rules, and processing logic through configuration.
+
+### The Impact
+By the end of the transformation, we had successfully migrated ~$2T in annual transaction volume to AWS. The new platform didn't just improve stability; it transformed the business's ability to compete. Feature delivery cycles dropped from months to weeks, and the improved throughput and reliability directly contributed to an estimated **$30M in incremental annual revenue**.
