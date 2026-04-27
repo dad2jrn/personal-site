@@ -1,5 +1,6 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
 export async function getStaticPaths() {
@@ -15,46 +16,53 @@ interface Props {
 }
 
 const { entry } = Astro.props;
+const { Content } = await render(entry);
 ---
 
 <BaseLayout title={entry.data.title}>
   <article class="py-24">
     <div class="container-site">
       <div class="max-w-[800px]">
-        <div class="label-mono mb-8">{entry.data.patentNumber} · {entry.data.grantedDate}</div>
+        <a href="/patents/" class="inline-flex items-center gap-2 text-sm font-medium text-ink-muted hover:text-accent transition-colors mb-12 group">
+          <span class="transition-transform group-hover:-translate-x-1">←</span> Back to Patents
+        </a>
+
+        <div class="label-mono text-accent mb-4">{entry.data.patentNumber}</div>
         <h1 class="text-4xl md:text-6xl font-medium text-ink mb-8 leading-[1.1] tracking-tight">
           {entry.data.title}
         </h1>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 py-12 border-y border-line mb-16">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 py-8 border-y border-line mb-12">
           <div>
-            <div class="label-mono text-[10px] mb-2">Assignee</div>
-            <div class="text-lg font-medium text-ink">{entry.data.assignee}</div>
+            <div class="text-[10px] font-mono uppercase tracking-widest text-ink-subtle mb-1">Status</div>
+            <div class="text-sm font-medium text-ink">Granted</div>
           </div>
           <div>
-            <div class="label-mono text-[10px] mb-2">Inventors</div>
-            <div class="text-lg font-medium text-ink">{entry.data.inventors.join(', ')}</div>
+            <div class="text-[10px] font-mono uppercase tracking-widest text-ink-subtle mb-1">Date</div>
+            <div class="text-sm font-medium text-ink">{entry.data.grantedDate}</div>
           </div>
           <div>
-            <div class="label-mono text-[10px] mb-2">Filed</div>
-            <div class="text-lg font-medium text-ink">{entry.data.filedDate}</div>
+            <div class="text-[10px] font-mono uppercase tracking-widest text-ink-subtle mb-1">Assignee</div>
+            <div class="text-sm font-medium text-ink">{entry.data.assignee}</div>
           </div>
           <div>
-            <div class="label-mono text-[10px] mb-2">Granted</div>
-            <div class="text-lg font-medium text-ink">{entry.data.grantedDate}</div>
+            <div class="text-[10px] font-mono uppercase tracking-widest text-ink-subtle mb-1">USPTO</div>
+            <a href={entry.data.usptoUrl} target="_blank" rel="noopener noreferrer" class="text-sm font-medium text-accent hover:text-ink transition-colors">View Original</a>
           </div>
         </div>
 
-        <div class="prose prose-ink max-w-none mb-16">
-          <h2 class="text-2xl font-medium text-ink mb-4">Abstract</h2>
-          <p class="text-xl text-ink-muted leading-relaxed">
-            {entry.data.abstract}
-          </p>
+        <div class="prose prose-ink max-w-none text-lg leading-relaxed mb-16">
+          <Content />
         </div>
 
-        <a href={entry.data.usptoUrl} target="_blank" rel="noopener noreferrer" class="inline-flex h-12 items-center justify-center rounded-full bg-ink px-8 text-sm font-medium text-surface hover:bg-accent transition-colors">
-          View on USPTO
-        </a>
+        <div class="mt-24 pt-12 border-t border-line">
+          <div class="bg-surface-sunken rounded-lg p-8 border border-line">
+            <h3 class="text-xl font-medium text-ink mb-4">Scale Fluency</h3>
+            <p class="text-ink-muted leading-relaxed">
+              The work behind this patent touched the kind of footprint where a 5% efficiency gain translates into real dollars and a 0.1% reliability improvement translates into thousands of customers having a better day. It represents the discipline required to operate cloud at the scale of a major bank.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   </article>

@@ -1,18 +1,19 @@
 ---
-title: "Computer-based systems configured for automated roll-forward of software"
-patentNumber: "US11157269B2"
-filedDate: "2020-06-08"
+title: "Computer-based systems configured for automated roll-forward of software updates"
+patentNumber: "US 11,157,269 B2"
+filedDate: "2019-11-12"
 grantedDate: "2021-10-26"
 assignee: "Capital One Services, LLC"
 inventors: ["Ron Meck"]
-abstract: "A system for detecting failures in software packages and automatically rolling forward to a stable version. It extracts data from a release directory and uses a base repository to facilitate automatic updates in response to detected failures."
+abstract: "A self-healing deployment system that automatically walks version history backward to a known-good state and reconstructs it as a new roll-forward version."
 usptoUrl: "https://patents.google.com/patent/US11157269B2"
 ---
 
-### Plain English Summary
-This patent addresses the critical challenge of software deployment failures. Traditionally, when a new software update fails, systems "roll back" to the previous version. However, in complex modern environments, rolling back can sometimes cause more issues than it fixes.
+### The Problem
+Every engineering org has lived through this: a deploy goes out, something breaks, and now there's a war room. Engineers scramble to figure out which version was good, find the right commit, rebuild a release, and push it back out — under pressure, often at 2 a.m. The longer it takes, the longer customers feel it.
 
-This invention introduces an "automated roll-forward" mechanism. When the system detects a failure in a new software package, it doesn't just revert; it intelligently identifies the necessary components for a stable state and automatically pushes the system forward to a known good configuration. This ensures higher availability and reduces the manual intervention required during failed deployments.
+### What I Invented
+A system that detects a failed software package, automatically reaches into the release directory to pull the current version's metadata, clones the application's base repository, walks the version history backward to a known-good change set, reconstructs that as a new version on top, and pushes it back through the deployment API to take over from the broken one. Self-healing roll-forward.
 
-### Key Innovation
-The shift from reactive "roll-back" strategies to proactive "roll-forward" automation, allowing systems to recover from deployment failures by advancing to a stable state rather than just retreating to the past.
+### Why it Matters to the Business
+Mean time to recovery drops from "however fast a sleepy human can move" to near-instant. Fewer customer-facing outages. And — critically for a regulated bank — every step is logged, repeatable, and auditable, because the system is doing the same thing the same way every time.
