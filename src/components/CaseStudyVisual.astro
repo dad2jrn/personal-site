@@ -4,61 +4,262 @@ interface Props {
 }
 
 const { company } = Astro.props;
+const isCapitalOne = company.toLowerCase().includes('capital one');
 ---
 
-<div class="w-full h-full relative overflow-hidden bg-surface-sunken flex items-center justify-center min-h-[200px]">
-  {company.toLowerCase().includes('capital one') ? (
-    <svg class="w-full h-full opacity-40 dark:opacity-60" viewBox="0 0 400 225" fill="none" xmlns="http://www.w3.org/2000/svg">
+<div class="w-full h-full relative overflow-hidden bg-surface-sunken flex items-center justify-center min-h-[200px] group">
+  {isCapitalOne ? (
+    <svg class="w-full h-full" viewBox="0 0 400 225" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-          <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" stroke-width="0.5" class="text-ink-subtle/20"/>
+        <pattern id="grid-c1" width="20" height="20" patternUnits="userSpaceOnUse">
+          <circle cx="1" cy="1" r="1" fill="currentColor" class="text-ink-subtle/20" />
+        </pattern>
+        <pattern id="hatch" width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+          <line x1="0" y1="0" x2="0" y2="4" stroke="rgb(var(--accent))" stroke-width="0.5" opacity="0.3" />
         </pattern>
       </defs>
-      <rect width="400" height="225" fill="url(#grid)" />
 
-      <!-- Abstract Data Nodes -->
-      <g class="animate-pulse">
-        <circle cx="100" cy="80" r="3" fill="#3b82f6" />
-        <circle cx="300" cy="140" r="3" fill="#3b82f6" />
-        <circle cx="200" cy="112" r="4" fill="#3b82f6" />
+      <!-- Background Grid -->
+      <rect width="400" height="225" fill="url(#grid-c1)" />
+
+      <!-- Monolith / Microservices Group -->
+      <g class="c1-system">
+        <!-- The Monolith (State A) / Central Node -->
+        <rect x="160" y="72.5" width="80" height="80" class="c1-monolith" fill="url(#hatch)" stroke="rgb(var(--accent))" stroke-width="1.25" />
+
+        <!-- Microservices (State B) -->
+        <g class="c1-services">
+          <rect x="185" y="97.5" width="30" height="30" class="service s1" stroke="rgb(var(--accent))" stroke-width="1.25" />
+          <rect x="185" y="97.5" width="30" height="30" class="service s2" stroke="rgb(var(--accent))" stroke-width="1.25" />
+          <rect x="185" y="97.5" width="30" height="30" class="service s3" stroke="rgb(var(--accent))" stroke-width="1.25" />
+          <rect x="185" y="97.5" width="30" height="30" class="service s4" stroke="rgb(var(--accent))" stroke-width="1.25" />
+          <rect x="185" y="97.5" width="30" height="30" class="service s5" stroke="rgb(var(--accent))" stroke-width="1.25" />
+          <rect x="185" y="97.5" width="30" height="30" class="service s6" stroke="rgb(var(--accent))" stroke-width="1.25" />
+        </g>
+
+        <!-- Connectors (State B) -->
+        <g class="c1-connectors" opacity="0">
+          <path d="M115 62.5 L185 112.5" class="connector" stroke="rgb(var(--accent))" stroke-width="1" stroke-dasharray="100" stroke-dashoffset="100" opacity="0.4" />
+          <path d="M285 62.5 L215 112.5" class="connector" stroke="rgb(var(--accent))" stroke-width="1" stroke-dasharray="100" stroke-dashoffset="100" opacity="0.4" />
+          <path d="M115 162.5 L185 112.5" class="connector" stroke="rgb(var(--accent))" stroke-width="1" stroke-dasharray="100" stroke-dashoffset="100" opacity="0.4" />
+          <path d="M285 162.5 L215 112.5" class="connector" stroke="rgb(var(--accent))" stroke-width="1" stroke-dasharray="100" stroke-dashoffset="100" opacity="0.4" />
+
+          <!-- Pulses -->
+          <circle r="1.5" fill="rgb(var(--accent))" class="pulse p1" />
+          <circle r="1.5" fill="rgb(var(--accent))" class="pulse p2" />
+          <circle r="1.5" fill="rgb(var(--accent))" class="pulse p3" />
+        </g>
       </g>
-
-      <!-- Connecting Lines -->
-      <path d="M100 80 L200 112 L300 140" stroke="#3b82f6" stroke-width="1" opacity="0.3" stroke-dasharray="4 4" />
-      <path d="M50 150 L200 112 L350 50" stroke="#3b82f6" stroke-width="1" opacity="0.2" />
-
-      <!-- Moving "Packets" -->
-      <circle r="2" fill="#3b82f6">
-        <animateMotion dur="3s" repeatCount="indefinite" path="M100 80 L200 112 L300 140" />
-      </circle>
-      <circle r="2" fill="#3b82f6">
-        <animateMotion dur="4s" repeatCount="indefinite" path="M350 50 L200 112 L50 150" />
-      </circle>
     </svg>
   ) : (
-    <svg class="w-full h-full opacity-40 dark:opacity-60" viewBox="0 0 400 225" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <!-- Architectural Blueprint Style -->
+    <svg class="w-full h-full" viewBox="0 0 400 225" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse">
-          <circle cx="1" cy="1" r="1" fill="currentColor" class="text-ink-subtle/30" />
+        <pattern id="grid-vdot" width="20" height="20" patternUnits="userSpaceOnUse">
+          <circle cx="1" cy="1" r="1" fill="currentColor" class="text-ink-subtle/20" />
         </pattern>
       </defs>
-      <rect width="400" height="225" fill="url(#dots)" />
 
-      <!-- Geometric Governance Shapes -->
-      <rect x="80" y="40" width="240" height="145" stroke="currentColor" stroke-width="1" opacity="0.4" />
-      <rect x="100" y="60" width="200" height="105" stroke="#3b82f6" stroke-width="1" opacity="0.4" />
+      <!-- Background Grid -->
+      <rect width="400" height="225" fill="url(#grid-vdot)" />
 
-      <!-- Crosshairs -->
-      <line x1="200" y1="0" x2="200" y2="225" stroke="currentColor" stroke-width="0.5" opacity="0.2" />
-      <line x1="0" y1="112.5" x2="400" y2="112.5" stroke="currentColor" stroke-width="0.5" opacity="0.2" />
+      <!-- Blueprint Guides -->
+      <g opacity="0.2">
+        <line x1="200" y1="0" x2="200" y2="225" stroke="currentColor" stroke-width="0.5" stroke-dasharray="4 4" />
+        <line x1="0" y1="112.5" x2="400" y2="112.5" stroke="currentColor" stroke-width="0.5" stroke-dasharray="4 4" />
+        <!-- Registration Marks -->
+        <path d="M10 10 L20 10 M10 10 L10 20" stroke="currentColor" stroke-width="0.5" />
+        <path d="M390 10 L380 10 M390 10 L390 20" stroke="currentColor" stroke-width="0.5" />
+        <path d="M10 215 L20 215 M10 215 L10 205" stroke="currentColor" stroke-width="0.5" />
+        <path d="M390 215 L380 215 M390 215 L390 205" stroke="currentColor" stroke-width="0.5" />
+      </g>
 
-      <!-- Corner Accents -->
-      <path d="M80 60 L80 40 L100 40" stroke="#3b82f6" stroke-width="2" />
-      <path d="M300 165 L320 165 L320 145" stroke="#3b82f6" stroke-width="2" />
+      <!-- Tiers -->
+      <g class="vdot-blueprint">
+        <!-- Presentation Tier -->
+        <g class="tier t-top">
+          <rect x="110" y="40" width="40" height="25" class="box" stroke="rgb(var(--accent))" stroke-width="1.25" />
+          <rect x="180" y="40" width="40" height="25" class="box" stroke="rgb(var(--accent))" stroke-width="1.25" />
+          <rect x="250" y="40" width="40" height="25" class="box" stroke="rgb(var(--accent))" stroke-width="1.25" />
+        </g>
+        <!-- Services Tier -->
+        <g class="tier t-mid">
+          <rect x="85" y="100" width="40" height="25" class="box" stroke="rgb(var(--accent))" stroke-width="1.25" />
+          <rect x="145" y="100" width="40" height="25" class="box" stroke="rgb(var(--accent))" stroke-width="1.25" />
+          <rect x="215" y="100" width="40" height="25" class="box" stroke="rgb(var(--accent))" stroke-width="1.25" />
+          <rect x="275" y="100" width="40" height="25" class="box" stroke="rgb(var(--accent))" stroke-width="1.25" />
+        </g>
+        <!-- Data Tier -->
+        <g class="tier t-bottom">
+          <rect x="120" y="160" width="70" height="25" class="box" stroke="rgb(var(--accent))" stroke-width="1.25" />
+          <rect x="210" y="160" width="70" height="25" class="box" stroke="rgb(var(--accent))" stroke-width="1.25" />
+        </g>
+
+        <!-- Connectors -->
+        <g class="vdot-connectors">
+          <path d="M130 65 L105 100" class="v-conn" stroke="rgb(var(--accent))" stroke-width="1" opacity="0.4" />
+          <path d="M200 65 L235 100" class="v-conn" stroke="rgb(var(--accent))" stroke-width="1" opacity="0.4" />
+          <path d="M105 125 L155 160" class="v-conn" stroke="rgb(var(--accent))" stroke-width="1" opacity="0.4" />
+          <path d="M295 125 L245 160" class="v-conn" stroke="rgb(var(--accent))" stroke-width="1" opacity="0.4" />
+
+          <!-- Data Dots -->
+          <circle r="1.25" fill="rgb(var(--accent))" class="v-pulse vp1" />
+          <circle r="1.25" fill="rgb(var(--accent))" class="v-pulse vp2" />
+        </g>
+      </g>
     </svg>
   )}
 
-  <div class="absolute inset-0 bg-gradient-to-t from-surface-sunken via-transparent to-transparent"></div>
-  <span class="absolute bottom-4 left-4 label-mono text-[10px] opacity-40">{company} // ARCH_VISUAL_v1.0</span>
+  <div class="absolute inset-0 bg-gradient-to-t from-surface-sunken via-transparent to-transparent pointer-events-none"></div>
+  <span class="absolute bottom-4 left-4 label-mono text-[10px] opacity-40">{company} // ARCH_VISUAL_v1.1</span>
 </div>
+
+<style>
+  /* Shared Motion Tokens */
+  :root {
+    --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+    --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Capital One: Monolith Decomposition (12s) */
+  .c1-monolith {
+    animation: c1-monolith-cycle 12s var(--ease-in-out) infinite;
+    transform-origin: center;
+  }
+
+  .service {
+    opacity: 0;
+    transform-origin: center;
+    animation: c1-service-cycle 12s var(--ease-in-out) infinite;
+  }
+
+  .s1 { --tx: -85px; --ty: -50px; animation-delay: 0s; }
+  .s2 { --tx: 85px; --ty: -50px; animation-delay: 0s; }
+  .s3 { --tx: -85px; --ty: 50px; animation-delay: 0s; }
+  .s4 { --tx: 85px; --ty: 50px; animation-delay: 0s; }
+  .s5 { --tx: 0px; --ty: -70px; animation-delay: 0s; }
+  .s6 { --tx: 0px; --ty: 70px; animation-delay: 0s; }
+
+  .c1-connectors {
+    animation: fade-in-out 12s var(--ease-in-out) infinite;
+  }
+
+  .connector {
+    animation: c1-connector-draw 12s var(--ease-in-out) infinite;
+  }
+
+  .pulse {
+    opacity: 0;
+    animation: c1-pulse-run 12s linear infinite;
+  }
+  .p1 { animation-delay: 5s; }
+  .p2 { animation-delay: 6.5s; }
+  .p3 { animation-delay: 8s; }
+
+  @keyframes c1-monolith-cycle {
+    0%, 15% { opacity: 1; transform: scale(1); }
+    25%, 75% { opacity: 0; transform: scale(0.8); }
+    85%, 100% { opacity: 1; transform: scale(1); stroke-width: 1; }
+  }
+
+  @keyframes c1-service-cycle {
+    0%, 20% { opacity: 0; transform: translate(0, 0); }
+    30%, 70% { opacity: 1; transform: translate(var(--tx), var(--ty)); }
+    80%, 100% { opacity: 0; transform: translate(0, 0); }
+  }
+
+  @keyframes c1-connector-draw {
+    0%, 40% { stroke-dashoffset: 100; }
+    50%, 70% { stroke-dashoffset: 0; }
+    80%, 100% { stroke-dashoffset: 100; }
+  }
+
+  @keyframes c1-pulse-run {
+    0%, 45% { opacity: 0; offset-distance: 0%; }
+    50% { opacity: 1; }
+    65% { opacity: 1; }
+    70%, 100% { opacity: 0; offset-distance: 100%; }
+  }
+
+  /* Pulse paths for Capital One */
+  .p1 { offset-path: path('M115 62.5 L185 112.5'); }
+  .p2 { offset-path: path('M285 62.5 L215 112.5'); }
+  .p3 { offset-path: path('M115 162.5 L185 112.5'); }
+
+  /* VDOT: Blueprint Drafting (13s) */
+  .vdot-blueprint .box {
+    stroke-dasharray: 200;
+    stroke-dashoffset: 200;
+    animation: vdot-draw-box 13s var(--ease-in-out) infinite;
+  }
+
+  .t-top .box { animation-delay: 1s; }
+  .t-mid .box { animation-delay: 2.5s; }
+  .t-bottom .box { animation-delay: 4s; }
+
+  .v-conn {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: vdot-draw-conn 13s var(--ease-in-out) infinite;
+    animation-delay: 6s;
+  }
+
+  .v-pulse {
+    opacity: 0;
+    animation: vdot-pulse-run 13s linear infinite;
+  }
+  .vp1 { animation-delay: 7.5s; offset-path: path('M130 65 L105 100'); }
+  .vp2 { animation-delay: 8.5s; offset-path: path('M200 65 L235 100'); }
+
+  .vdot-blueprint {
+    animation: vdot-system-breath 13s var(--ease-in-out) infinite;
+  }
+
+  @keyframes vdot-draw-box {
+    0%, 5% { stroke-dashoffset: 200; opacity: 0; }
+    10%, 80% { stroke-dashoffset: 0; opacity: 1; }
+    90%, 100% { stroke-dashoffset: 200; opacity: 0; }
+  }
+
+  @keyframes vdot-draw-conn {
+    0%, 5% { stroke-dashoffset: 100; }
+    15%, 75% { stroke-dashoffset: 0; }
+    85%, 100% { stroke-dashoffset: 100; }
+  }
+
+  @keyframes vdot-pulse-run {
+    0%, 5% { opacity: 0; offset-distance: 0%; }
+    10%, 20% { opacity: 1; }
+    25%, 100% { opacity: 0; offset-distance: 100%; }
+  }
+
+  @keyframes vdot-system-breath {
+    0%, 65% { opacity: 1; }
+    70%, 80% { opacity: 0.7; }
+    85%, 100% { opacity: 1; }
+  }
+
+  @keyframes fade-in-out {
+    0%, 40% { opacity: 0; }
+    50%, 75% { opacity: 1; }
+    85%, 100% { opacity: 0; }
+  }
+
+  /* Accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    .c1-monolith, .service, .connector, .pulse, .box, .v-conn, .v-pulse, .vdot-blueprint {
+      animation: none !important;
+      opacity: 1 !important;
+      stroke-dashoffset: 0 !important;
+      transform: none !important;
+    }
+    .c1-monolith { opacity: 0 !important; } /* Show services in resting state */
+    .service { opacity: 1 !important; transform: translate(var(--tx), var(--ty)) !important; }
+    .c1-connectors { opacity: 1 !important; }
+  }
+</style>

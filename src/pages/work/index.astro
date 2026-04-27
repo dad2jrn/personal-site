@@ -2,6 +2,7 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ExperienceTimeline from '../../components/ExperienceTimeline.astro';
+import CaseStudyVisual from '../../components/CaseStudyVisual.astro';
 
 const experience = await getCollection('experience');
 const caseStudies = await getCollection('case-studies');
@@ -26,8 +27,8 @@ const sortedExperience = experience.sort((a: CollectionEntry<'experience'>, b: C
         {caseStudies.map((study: CollectionEntry<'case-studies'>) => (
           <a href={`/work/${study.slug}/`} class="group block">
             <div class="aspect-video bg-surface rounded-lg border border-line overflow-hidden mb-6">
-              <div class="w-full h-full flex items-center justify-center text-ink-subtle group-hover:scale-105 transition-transform duration-500">
-                <span class="label-mono">{study.data.company}</span>
+              <div class="w-full h-full group-hover:scale-105 transition-transform duration-500">
+                <CaseStudyVisual company={study.data.company} />
               </div>
             </div>
             <h3 class="text-2xl font-medium text-ink group-hover:text-accent transition-colors mb-2">
