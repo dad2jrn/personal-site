@@ -1,11 +1,12 @@
 ---
-title: "Computer-based systems configured for automated roll-forward of software updates"
+title: "Self-Healing Deployment Recovery"
 patentNumber: "US 11,157,269 B2"
 filedDate: "2019-11-12"
 grantedDate: "2021-10-26"
 assignee: "Capital One Services, LLC"
 inventors: ["Ron Meck"]
 abstract: "A self-healing deployment system that automatically walks version history backward to a known-good state and reconstructs it as a new roll-forward version."
+tags: ["SRE", "CI/CD", "RESILIENCE"]
 usptoUrl: "https://patents.google.com/patent/US11157269B2"
 ---
 

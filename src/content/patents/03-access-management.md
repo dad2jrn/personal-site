@@ -1,11 +1,12 @@
 ---
-title: "System and method for access management for applications"
+title: "Behavior-Driven Least-Privilege Access"
 patentNumber: "US 12,086,648 B2"
 filedDate: "2023-07-13"
 grantedDate: "2024-09-10"
 assignee: "Capital One Services, LLC"
 inventors: ["Ron Meck"]
 abstract: "A system that observes application behavior at execution time to dynamically drive IAM policies, ensuring least-privilege access based on actual API calls and resources touched."
+tags: ["ZERO TRUST", "LEAST PRIVILEGE", "IAM AUTOMATION"]
 usptoUrl: "https://patents.google.com/patent/US12086648B2"
 ---
 

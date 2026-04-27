@@ -14,11 +14,37 @@
 </button>
 
 <script>
-  const btn = document.getElementById('theme-toggle');
-  btn?.addEventListener('click', () => {
-    const isDark = document.documentElement.classList.toggle('dark');
-    const next = isDark ? 'dark' : 'light';
-    localStorage.setItem('theme', next);
-    document.documentElement.style.colorScheme = next;
+  function setupTheme() {
+    const btn = document.getElementById('theme-toggle');
+
+    // Remove existing listener if any (for view transitions)
+    btn?.replaceWith(btn.cloneNode(true));
+    const newBtn = document.getElementById('theme-toggle');
+
+    newBtn?.addEventListener('click', () => {
+      const isDark = document.documentElement.classList.toggle('dark');
+      const next = isDark ? 'dark' : 'light';
+      localStorage.setItem('theme', next);
+      document.documentElement.style.colorScheme = next;
+    });
+  }
+
+  // Initialize on first load
+  setupTheme();
+
+  // Re-initialize after View Transitions swap
+  document.addEventListener('astro:after-swap', () => {
+    const stored = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const theme = stored ?? (prefersDark ? 'dark' : 'light');
+
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    document.documentElement.style.colorScheme = theme;
+
+    setupTheme();
   });
 </script>

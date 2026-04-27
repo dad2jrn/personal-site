@@ -1,11 +1,12 @@
 ---
-title: "Method for managing operational schedules of cloud-based systems"
+title: "Tag-Driven Cloud Cost Automation"
 patentNumber: "US 10,951,542 B2"
 filedDate: "2019-07-15"
 grantedDate: "2021-03-16"
-inventors: ["Ron Meck"]
 assignee: "Capital One Services, LLC"
+inventors: ["Ron Meck"]
 abstract: "A system for driving the on/off behavior of cloud resources automatically using metadata tags as the control mechanism, ensuring resources only bill when in use."
+tags: ["FINOPS", "CLOUD GOVERNANCE", "AUTOMATION"]
 usptoUrl: "https://patents.google.com/patent/US10951542B2"
 ---
 

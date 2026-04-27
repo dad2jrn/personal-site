@@ -26,6 +26,7 @@ const patents = defineCollection({
     inventors: z.array(z.string()),
     assignee: z.string(),
     abstract: z.string(),        // PARAPHRASED in Ron's words, not USPTO copy
+    tags: z.array(z.string()).default([]),
     usptoUrl: z.string().url().optional(),
   }),
 });

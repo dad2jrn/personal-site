@@ -4,7 +4,8 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://ronmeck.dev',
+  site: 'https://dad2jrn.github.io',
+  base: '/personal-site',
   integrations: [
     tailwind({ applyBaseStyles: false }),
     mdx(),

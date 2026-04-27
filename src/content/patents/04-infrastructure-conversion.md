@@ -1,11 +1,12 @@
 ---
-title: "Systems and methods to convert information technology infrastructure to a software-defined system"
+title: "Self-Optimizing Cloud Infrastructure"
 patentNumber: "US 11,954,504 B2"
 filedDate: "2022-07-14"
 grantedDate: "2024-04-09"
 assignee: "Capital One Services, LLC"
 inventors: ["Ron Meck", "Daniel Safronoff", "James Hounshell", "Eric Schultz"]
 abstract: "A system that analyzes existing cloud infrastructure and generates optimized alternative configurations as executable code, using a learning model to improve proposals over time."
+tags: ["FINOPS", "IAC", "MACHINE LEARNING"]
 usptoUrl: "https://patents.google.com/patent/US11954504B2"
 ---
 
