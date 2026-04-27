@@ -1,0 +1,16 @@
+---
+interface Props {
+  state: 'available' | 'busy';
+  location: string;
+}
+
+const { state, location } = Astro.props;
+---
+
+<div class="flex items-center gap-2 font-mono text-[11px] uppercase tracking-mono-wide text-ink-subtle">
+  <div class:list={[
+    "h-[7px] w-[7px] rounded-full",
+    state === 'available' ? "bg-accent" : "bg-ink-subtle"
+  ]}></div>
+  <span>{state} · {location}</span>
+</div>

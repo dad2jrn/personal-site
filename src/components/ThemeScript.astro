@@ -1,0 +1,16 @@
+---
+// No frontmatter logic — this is server-rendered as-is and runs synchronously
+// in the browser BEFORE the first paint, preventing theme flash.
+---
+<script is:inline>
+  (function () {
+    try {
+      const stored = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const theme = stored ?? (prefersDark ? 'dark' : 'light');
+      if (theme === 'dark') document.documentElement.classList.add('dark');
+      // Set color-scheme so native form controls and scrollbars match
+      document.documentElement.style.colorScheme = theme;
+    } catch (_) {}
+  })();
+</script>

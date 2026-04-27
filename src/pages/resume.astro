@@ -1,0 +1,73 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../lib/site';
+
+const experience = await getCollection('experience');
+const sortedExperience = experience.sort((a: CollectionEntry<'experience'>, b: CollectionEntry<'experience'>) => a.data.order - b.data.order);
+
+const formatYear = (dateStr: string) => dateStr.split('-')[0];
+---
+
+<BaseLayout title="Resume">
+  <section class="py-24">
+    <div class="container-site">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
+        <div>
+          <h1 class="text-5xl font-medium text-ink mb-4">{site.name}</h1>
+          <p class="text-xl text-ink-muted">{site.tagline}</p>
+        </div>
+        <div class="flex flex-col gap-2 text-sm font-mono text-ink-subtle md:text-right">
+          <a href={`mailto:${site.email}`} class="hover:text-ink">{site.email}</a>
+          <span>{site.location}</span>
+          <a href={site.links.linkedin} class="hover:text-ink">LinkedIn</a>
+        </div>
+      </div>
+
+      <div class="space-y-24">
+        <section>
+          <div class="label-mono mb-12">— Experience</div>
+          <div class="space-y-16">
+            {sortedExperience.map((entry: CollectionEntry<'experience'>) => (
+              <div class="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-8">
+                <div class="font-mono text-sm text-ink-subtle">
+                  {formatYear(entry.data.startDate)} — {entry.data.endDate ? formatYear(entry.data.endDate) : 'Present'}
+                </div>
+                <div>
+                  <h3 class="text-2xl font-medium text-ink mb-1">{entry.data.role}</h3>
+                  <div class="text-lg text-ink-muted mb-6">{entry.data.company}</div>
+                  <p class="text-ink-muted mb-6 leading-relaxed max-w-[65ch]">
+                    {entry.data.summary}
+                  </p>
+                  <ul class="space-y-3">
+                    {entry.data.achievements.map((achievement: string) => (
+                      <li class="flex gap-3 text-ink-muted leading-relaxed">
+                        <span class="text-ink-subtle mt-1.5 h-1 w-1 rounded-full bg-line shrink-0"></span>
+                        <span>{achievement}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section class="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-8 pt-24 border-t border-line">
+          <div class="label-mono">— Education</div>
+          <div>
+            <h3 class="text-xl font-medium text-ink">B.S. Information Systems</h3>
+            <p class="text-ink-muted">Strayer University</p>
+          </div>
+        </section>
+      </div>
+
+      <div class="mt-32 p-8 bg-surface-sunken rounded-lg border border-line text-center">
+        <p class="text-ink-muted mb-6">Need a PDF version for your records?</p>
+        <a href={site.links.resumePdf} class="inline-flex h-12 items-center justify-center rounded-full bg-ink px-8 text-sm font-medium text-surface hover:bg-accent transition-colors">
+          Download PDF Resume
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

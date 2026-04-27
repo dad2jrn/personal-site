@@ -1,0 +1,48 @@
+---
+import ThemeToggle from './ThemeToggle.astro';
+
+const { currentPath = "" } = Astro.props;
+
+const navItems = [
+  { label: 'work', href: '/work/' },
+  { label: 'patents', href: '/patents/' },
+  { label: 'writing', href: '/writing/' },
+  { label: 'contact', href: '/contact/' },
+];
+
+const isActive = (href: string) => {
+  if (href === '/' && currentPath === '') return true;
+  if (href !== '/' && currentPath.startsWith(href.replace(/^\/|\/$/g, ''))) return true;
+  return false;
+};
+---
+
+<nav class="py-8">
+  <div class="container-site flex items-center justify-between">
+    <a href="/" class="group flex items-center gap-1 font-display text-2xl font-medium tracking-tight text-ink">
+      RM<span class="text-accent">.</span>
+    </a>
+
+    <div class="flex items-center gap-6 md:gap-10">
+      <ul class="flex items-center gap-4 md:gap-8">
+        {navItems.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              class:list={[
+                "font-mono text-[11px] uppercase tracking-mono-wide transition-all duration-150 hover:text-ink",
+                isActive(item.href) ? "text-ink underline decoration-accent decoration-2 underline-offset-4" : "text-ink-muted underline decoration-transparent decoration-1 underline-offset-4 hover:decoration-ink-subtle"
+              ]}
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <div class="h-4 w-px bg-line"></div>
+
+      <ThemeToggle />
+    </div>
+  </div>
+</nav>

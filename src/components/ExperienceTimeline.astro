@@ -1,0 +1,50 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  entries: CollectionEntry<'experience'>[];
+  limit?: number;
+  showViewAll?: boolean;
+}
+
+const { entries, limit, showViewAll = false } = Astro.props;
+
+const sortedEntries = entries.sort((a, b) => a.data.order - b.data.order);
+const displayEntries = limit ? sortedEntries.slice(0, limit) : sortedEntries;
+
+const formatYear = (dateStr: string) => dateStr.split('-')[0];
+---
+
+<section class="py-24">
+  <div class="container-site">
+    <div class="flex items-center justify-between mb-12">
+      <div class="label-mono">— Selected work</div>
+      <div class="label-mono">2002 → now</div>
+    </div>
+
+    <div class="space-y-0">
+      {displayEntries.map((entry) => (
+        <div class="grid grid-cols-1 md:grid-cols-[120px_1fr_150px] gap-4 py-8 hairline items-baseline">
+          <div class="font-mono text-sm text-ink-subtle">
+            {formatYear(entry.data.startDate)} — {entry.data.endDate ? formatYear(entry.data.endDate) : 'Present'}
+          </div>
+          <div>
+            <h3 class="text-xl font-medium text-ink">{entry.data.role}</h3>
+            <p class="text-ink-muted mt-1">{entry.data.company}</p>
+          </div>
+          <div class="label-mono md:text-right">
+            {entry.data.sector.replace('-', ' ')}
+          </div>
+        </div>
+      ))}
+    </div>
+
+    {showViewAll && (
+      <div class="mt-12 hairline pt-8">
+        <a href="/work/" class="group inline-flex items-center gap-2 text-sm font-medium text-ink-muted hover:text-ink transition-colors">
+          view full timeline <span class="transition-transform group-hover:translate-x-1">→</span>
+        </a>
+      </div>
+    )}
+  </div>
+</section>

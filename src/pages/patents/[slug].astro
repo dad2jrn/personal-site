@@ -1,0 +1,61 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const patents = await getCollection('patents');
+  return patents.map((entry: CollectionEntry<'patents'>) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<'patents'>;
+}
+
+const { entry } = Astro.props;
+---
+
+<BaseLayout title={entry.data.title}>
+  <article class="py-24">
+    <div class="container-site">
+      <div class="max-w-[800px]">
+        <div class="label-mono mb-8">{entry.data.patentNumber} · {entry.data.grantedDate}</div>
+        <h1 class="text-4xl md:text-6xl font-medium text-ink mb-8 leading-[1.1] tracking-tight">
+          {entry.data.title}
+        </h1>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 py-12 border-y border-line mb-16">
+          <div>
+            <div class="label-mono text-[10px] mb-2">Assignee</div>
+            <div class="text-lg font-medium text-ink">{entry.data.assignee}</div>
+          </div>
+          <div>
+            <div class="label-mono text-[10px] mb-2">Inventors</div>
+            <div class="text-lg font-medium text-ink">{entry.data.inventors.join(', ')}</div>
+          </div>
+          <div>
+            <div class="label-mono text-[10px] mb-2">Filed</div>
+            <div class="text-lg font-medium text-ink">{entry.data.filedDate}</div>
+          </div>
+          <div>
+            <div class="label-mono text-[10px] mb-2">Granted</div>
+            <div class="text-lg font-medium text-ink">{entry.data.grantedDate}</div>
+          </div>
+        </div>
+
+        <div class="prose prose-ink max-w-none mb-16">
+          <h2 class="text-2xl font-medium text-ink mb-4">Abstract</h2>
+          <p class="text-xl text-ink-muted leading-relaxed">
+            {entry.data.abstract}
+          </p>
+        </div>
+
+        <a href={entry.data.usptoUrl} target="_blank" rel="noopener noreferrer" class="inline-flex h-12 items-center justify-center rounded-full bg-ink px-8 text-sm font-medium text-surface hover:bg-accent transition-colors">
+          View on USPTO
+        </a>
+      </div>
+    </div>
+  </article>
+</BaseLayout>

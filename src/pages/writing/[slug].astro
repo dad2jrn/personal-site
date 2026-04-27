@@ -1,0 +1,58 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('writing');
+  return posts.map((entry: CollectionEntry<'writing'>) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<'writing'>;
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+
+const formatDate = (date: Date | string) => {
+  const d = typeof date === 'string' ? new Date(date) : date;
+  return d.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+};
+---
+
+<BaseLayout title={entry.data.title}>
+  <article class="py-24">
+    <div class="container-site">
+      <div class="max-w-[720px] mx-auto">
+        <div class="label-mono mb-8">{formatDate(entry.data.publishedAt)}</div>
+        <h1 class="text-4xl md:text-6xl font-medium text-ink mb-8 leading-[1.1] tracking-tight">
+          {entry.data.title}
+        </h1>
+        <p class="text-xl md:text-2xl text-ink-muted leading-relaxed mb-16">
+          {entry.data.dek}
+        </p>
+
+        <div class="prose prose-ink max-w-none">
+          <Content />
+        </div>
+
+        <div class="mt-24 pt-12 border-t border-line">
+          <div class="flex flex-wrap gap-2">
+            {entry.data.tags.map((tag: string) => (
+              <span class="px-3 py-1 bg-surface-sunken border border-line rounded-full text-xs text-ink-subtle">
+                #{tag}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+</BaseLayout>

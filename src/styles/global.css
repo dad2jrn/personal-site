@@ -1,0 +1,72 @@
+/* Fonts — self-hosted, zero external requests */
+@import '@fontsource-variable/fraunces/index.css';
+@import '@fontsource/geist-sans/400.css';
+@import '@fontsource/geist-sans/500.css';
+@import '@fontsource/geist-sans/600.css';
+@import '@fontsource-variable/jetbrains-mono/index.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --ink: 18 18 22;
+    --ink-muted: 82 82 91;
+    --ink-subtle: 140 140 148;
+    --surface: 250 249 246;
+    --surface-raised: 255 255 255;
+    --surface-sunken: 244 242 237;
+    --line: 230 228 222;
+    --line-strong: 210 207 200;
+    --accent: 15 118 110;
+    --accent-soft: 204 251 241;
+  }
+
+  .dark {
+    --ink: 240 240 244;
+    --ink-muted: 156 156 165;
+    --ink-subtle: 102 102 112;
+    --surface: 12 12 14;
+    --surface-raised: 22 22 26;
+    --surface-sunken: 8 8 10;
+    --line: 38 38 44;
+    --line-strong: 60 60 68;
+    --accent: 45 212 191;
+    --accent-soft: 17 64 60;
+  }
+
+  html {
+    @apply bg-surface text-ink antialiased;
+    font-family: theme('fontFamily.sans');
+    font-feature-settings: 'ss01', 'cv11';
+    text-rendering: optimizeLegibility;
+  }
+
+  body { @apply bg-surface text-ink; min-height: 100vh; }
+
+  .font-display { font-variation-settings: 'opsz' 144, 'SOFT' 50, 'WONK' 0; }
+
+  ::selection { background-color: rgb(var(--accent) / 0.25); color: rgb(var(--ink)); }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-accent ring-offset-2 ring-offset-surface;
+  }
+}
+
+@layer components {
+  .container-site { @apply mx-auto w-full max-w-site px-6 md:px-10; }
+  .label-mono { @apply font-mono text-[11px] uppercase tracking-mono-wide text-ink-subtle; }
+  .hairline { @apply border-t border-line; }
+}
+
+@media print {
+  @page { size: Letter; margin: 0.6in 0.75in; }
+  html, body { background: white !important; color: black !important; font-size: 10.5pt; }
+  .no-print { display: none !important; }
+  a { color: black !important; text-decoration: none !important; }
+  .dark {
+    --ink: 18 18 22; --ink-muted: 82 82 91;
+    --surface: 255 255 255; --surface-raised: 255 255 255; --line: 200 200 200;
+  }
+}
