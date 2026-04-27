@@ -58,6 +58,43 @@
   .container-site { @apply mx-auto w-full max-w-site px-6 md:px-10; }
   .label-mono { @apply font-mono text-[11px] uppercase tracking-mono-wide text-ink-subtle; }
   .hairline { @apply border-t border-line; }
+
+  /* Typography Overrides */
+  .prose {
+    @apply text-ink-muted max-w-none;
+  }
+
+  .prose h1, .prose h2, .prose h3, .prose h4 {
+    @apply text-ink font-medium tracking-tight;
+  }
+
+  .prose strong {
+    @apply text-ink font-semibold;
+  }
+
+  .prose a {
+    @apply text-accent no-underline hover:text-ink transition-colors;
+  }
+
+  .prose code {
+    @apply text-accent bg-surface-sunken px-1.5 py-0.5 rounded text-[0.9em] font-mono;
+  }
+
+  .prose code::before, .prose code::after {
+    content: "";
+  }
+
+  .prose blockquote {
+    @apply border-l-2 border-accent italic pl-6 text-ink-muted;
+  }
+
+  .prose ul, .prose ol {
+    @apply list-outside;
+  }
+
+  .prose li::marker {
+    @apply text-accent;
+  }
 }
 
 @media print {
