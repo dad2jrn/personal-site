@@ -1,4 +1,6 @@
 ---
+import VDOTArchitectureDiagram from './VDOTArchitectureDiagram';
+
 interface Props {
   company: string;
 }
@@ -57,61 +59,7 @@ const isCapitalOne = company.toLowerCase().includes('capital one');
       </div>
     </div>
   ) : (
-    <svg class="w-full h-full" viewBox="0 0 400 225" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <pattern id="grid-vdot" width="20" height="20" patternUnits="userSpaceOnUse">
-          <circle cx="1" cy="1" r="1" fill="currentColor" class="text-ink-subtle/20" />
-        </pattern>
-      </defs>
-
-      <!-- Background Grid -->
-      <rect width="400" height="225" fill="url(#grid-vdot)" />
-
-      <!-- Blueprint Guides -->
-      <g opacity="0.2">
-        <line x1="200" y1="0" x2="200" y2="225" stroke="currentColor" stroke-width="0.5" stroke-dasharray="4 4" />
-        <line x1="0" y1="112.5" x2="400" y2="112.5" stroke="currentColor" stroke-width="0.5" stroke-dasharray="4 4" />
-        <!-- Registration Marks -->
-        <path d="M10 10 L20 10 M10 10 L10 20" stroke="currentColor" stroke-width="0.5" />
-        <path d="M390 10 L380 10 M390 10 L390 20" stroke="currentColor" stroke-width="0.5" />
-        <path d="M10 215 L20 215 M10 215 L10 205" stroke="currentColor" stroke-width="0.5" />
-        <path d="M390 215 L380 215 M390 215 L390 205" stroke="currentColor" stroke-width="0.5" />
-      </g>
-
-      <!-- Tiers -->
-      <g class="vdot-blueprint">
-        <!-- Presentation Tier -->
-        <g class="tier t-top">
-          <rect x="110" y="40" width="40" height="25" class="box" stroke="rgb(var(--accent))" stroke-width="1.25" />
-          <rect x="180" y="40" width="40" height="25" class="box" stroke="rgb(var(--accent))" stroke-width="1.25" />
-          <rect x="250" y="40" width="40" height="25" class="box" stroke="rgb(var(--accent))" stroke-width="1.25" />
-        </g>
-        <!-- Services Tier -->
-        <g class="tier t-mid">
-          <rect x="85" y="100" width="40" height="25" class="box" stroke="rgb(var(--accent))" stroke-width="1.25" />
-          <rect x="145" y="100" width="40" height="25" class="box" stroke="rgb(var(--accent))" stroke-width="1.25" />
-          <rect x="215" y="100" width="40" height="25" class="box" stroke="rgb(var(--accent))" stroke-width="1.25" />
-          <rect x="275" y="100" width="40" height="25" class="box" stroke="rgb(var(--accent))" stroke-width="1.25" />
-        </g>
-        <!-- Data Tier -->
-        <g class="tier t-bottom">
-          <rect x="120" y="160" width="70" height="25" class="box" stroke="rgb(var(--accent))" stroke-width="1.25" />
-          <rect x="210" y="160" width="70" height="25" class="box" stroke="rgb(var(--accent))" stroke-width="1.25" />
-        </g>
-
-        <!-- Connectors -->
-        <g class="vdot-connectors">
-          <path d="M130 65 L105 100" class="v-conn" stroke="rgb(var(--accent))" stroke-width="1" opacity="0.4" />
-          <path d="M200 65 L235 100" class="v-conn" stroke="rgb(var(--accent))" stroke-width="1" opacity="0.4" />
-          <path d="M105 125 L155 160" class="v-conn" stroke="rgb(var(--accent))" stroke-width="1" opacity="0.4" />
-          <path d="M295 125 L245 160" class="v-conn" stroke="rgb(var(--accent))" stroke-width="1" opacity="0.4" />
-
-          <!-- Data Dots -->
-          <circle r="1.25" fill="rgb(var(--accent))" class="v-pulse vp1" />
-          <circle r="1.25" fill="rgb(var(--accent))" class="v-pulse vp2" />
-        </g>
-      </g>
-    </svg>
+    <VDOTArchitectureDiagram client:load />
   )}
 
   <div class="absolute inset-0 bg-gradient-to-t from-surface-sunken via-transparent to-transparent pointer-events-none"></div>
@@ -237,12 +185,12 @@ const isCapitalOne = company.toLowerCase().includes('capital one');
   .co-tricks-orb-core::after {
     content: "";
     position: absolute;
-    inset: -8%;
     border-radius: inherit;
     pointer-events: none;
   }
 
   .co-tricks-orb-core::before {
+    inset: -8%;
     background:
       radial-gradient(circle at 48% 22%, rgba(238, 237, 242, 0.75), transparent 0 8%, transparent 18%),
       radial-gradient(circle at 36% 70%, rgba(248, 140, 212, 0.65), transparent 0 18%, transparent 42%),
@@ -477,59 +425,6 @@ const isCapitalOne = company.toLowerCase().includes('capital one');
     50% { transform: translate3d(16em, 0, 0); }
   }
 
-  /* VDOT: Blueprint Drafting (13s) */
-  .vdot-blueprint .box {
-    stroke-dasharray: 200;
-    stroke-dashoffset: 200;
-    animation: vdot-draw-box 13s var(--ease-in-out) infinite;
-  }
-
-  .t-top .box { animation-delay: 1s; }
-  .t-mid .box { animation-delay: 2.5s; }
-  .t-bottom .box { animation-delay: 4s; }
-
-  .v-conn {
-    stroke-dasharray: 100;
-    stroke-dashoffset: 100;
-    animation: vdot-draw-conn 13s var(--ease-in-out) infinite;
-    animation-delay: 6s;
-  }
-
-  .v-pulse {
-    opacity: 0;
-    animation: vdot-pulse-run 13s linear infinite;
-  }
-  .vp1 { animation-delay: 7.5s; offset-path: path('M130 65 L105 100'); }
-  .vp2 { animation-delay: 8.5s; offset-path: path('M200 65 L235 100'); }
-
-  .vdot-blueprint {
-    animation: vdot-system-breath 13s var(--ease-in-out) infinite;
-  }
-
-  @keyframes vdot-draw-box {
-    0%, 5% { stroke-dashoffset: 200; opacity: 0; }
-    10%, 80% { stroke-dashoffset: 0; opacity: 1; }
-    90%, 100% { stroke-dashoffset: 200; opacity: 0; }
-  }
-
-  @keyframes vdot-draw-conn {
-    0%, 5% { stroke-dashoffset: 100; }
-    15%, 75% { stroke-dashoffset: 0; }
-    85%, 100% { stroke-dashoffset: 100; }
-  }
-
-  @keyframes vdot-pulse-run {
-    0%, 5% { opacity: 0; offset-distance: 0%; }
-    10%, 20% { opacity: 1; }
-    25%, 100% { opacity: 0; offset-distance: 100%; }
-  }
-
-  @keyframes vdot-system-breath {
-    0%, 65% { opacity: 1; }
-    70%, 80% { opacity: 0.7; }
-    85%, 100% { opacity: 1; }
-  }
-
   /* Accessibility */
   @media (prefers-reduced-motion: reduce) {
     .co-tricks-orb-core,
@@ -537,11 +432,7 @@ const isCapitalOne = company.toLowerCase().includes('capital one');
     .co-tricks-orb-core::after,
     .co-tricks-glow,
     .co-tricks-card,
-    .co-tricks-card-shine,
-    .box,
-    .v-conn,
-    .v-pulse,
-    .vdot-blueprint {
+    .co-tricks-card-shine {
       animation: none !important;
       opacity: 1 !important;
       stroke-dashoffset: 0 !important;
