@@ -8,7 +8,7 @@ const experience = defineCollection({
     startDate: z.string(),       // "2024-01"
     endDate: z.string().nullable(), // null = present
     location: z.string(),
-    sector: z.enum(['fortune-100', 'gov-public', 'consulting', 'military']),
+    sector: z.enum(['banking', 'fortune-100', 'gov-public', 'consulting', 'military']),
     featured: z.boolean().default(false),
     order: z.number(),           // for ties; lower = appears first
     summary: z.string(),         // 1-2 sentence summary

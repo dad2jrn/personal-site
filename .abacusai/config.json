@@ -30,6 +30,9 @@
       "Bash(python3 - <<'PY'\nfrom pathlib import Path\nroot = Path('/Users/interlinked/Projects/personal site/src/content/experience'…)",
       "Bash(python3 - <<'PY'\nfrom pathlib import Path\nfor p in sorted(Path('/Users/interlinked/Projects/personal site/src/content/ex…)",
       "Bash(npm run build 2>&1 || true)",
+      "Bash(npm run build 2>&1 || true)",
+      "Bash(npm run build 2>&1 || true)",
+      "Bash(python3 - <<'PY'\nfrom pathlib import Path\nhtml = Path('/Users/interlinked/Projects/personal site/dist/work/index.html').…)",
       "Bash(npm run build 2>&1 || true)"
     ]
   },

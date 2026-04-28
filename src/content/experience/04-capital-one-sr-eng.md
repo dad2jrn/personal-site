@@ -4,7 +4,7 @@ role: "Senior Software Engineer"
 startDate: "2018-08"
 endDate: "2019-01"
 location: "Richmond, VA"
-sector: "fortune-100"
+sector: "banking"
 featured: false
 order: 4
 summary: "Self-architected solutions that drove automation around management and deployment of cloud infrastructure in a more compliant and secure manner."

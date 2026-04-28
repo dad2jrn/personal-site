@@ -14,7 +14,10 @@ const sortedEntries = entries.sort((a, b) => a.data.order - b.data.order);
 const displayEntries = limit ? sortedEntries.slice(0, limit) : sortedEntries;
 
 const formatYear = (dateStr: string) => dateStr.split('-')[0];
-const formatSector = (sector: string) => sector.replace(/[-_]/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase());
+const formatSector = (sector: string) => {
+  if (sector === 'fortune-100') return 'Banking';
+  return sector.replace(/[-_]/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase());
+};
 const modalEntries = displayEntries.map((entry) => ({
   period: `${formatYear(entry.data.startDate)} — ${entry.data.endDate ? formatYear(entry.data.endDate) : 'Present'}`,
   role: entry.data.role,
