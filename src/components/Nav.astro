@@ -2,16 +2,16 @@
 const { currentPath = "" } = Astro.props;
 
 const navItems = [
-  { label: 'work', href: '/personal-site/work/' },
-  { label: 'patents', href: '/personal-site/patents/' },
-  { label: 'writing', href: '/personal-site/writing/' },
-  { label: 'resume', href: '/personal-site/resume/' },
-  { label: 'contact', href: '/personal-site/contact/' },
+  { label: 'work', href: '/work/' },
+  { label: 'patents', href: '/patents/' },
+  { label: 'writing', href: '/writing/' },
+  { label: 'resume', href: '/resume/' },
+  { label: 'contact', href: '/contact/' },
 ];
 
 const isActive = (href: string) => {
   const normalizedPath = currentPath.replace(/^\/|\/$/g, '');
-  const normalizedHref = href.replace(/^\/personal-site\//, '').replace(/\/$/, '');
+  const normalizedHref = href.replace(/^\/|\/$/g, '');
 
   if (normalizedHref === '' && normalizedPath === '') return true;
   if (normalizedHref !== '' && normalizedPath.startsWith(normalizedHref)) return true;
@@ -21,7 +21,7 @@ const isActive = (href: string) => {
 
 <nav class="py-8">
   <div class="container-site flex items-center justify-between">
-    <a href="/personal-site/" class="group flex items-center gap-1 font-display text-2xl font-medium tracking-tight text-ink">
+    <a href="/" class="group flex items-center gap-1 font-display text-2xl font-medium tracking-tight text-ink">
       RM<span class="text-accent">.</span>
     </a>
 

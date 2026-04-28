@@ -5,8 +5,8 @@ import sitemap from '@astrojs/sitemap';
 import react from '@astrojs/react';
 
 export default defineConfig({
-  site: 'https://dad2jrn.github.io',
-  base: '/personal-site',
+  site: 'https://ronmeck.dev',
+  base: '/',
   integrations: [
     tailwind({ applyBaseStyles: false }),
     mdx(),

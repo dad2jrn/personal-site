@@ -28,7 +28,7 @@ const metrics = [
       <div class="label-mono mb-12">— Featured Case Studies</div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
         {caseStudies.map((study: CollectionEntry<'case-studies'>) => (
-          <a href={`/personal-site/work/${study.slug}/`} class="group relative block p-6 bg-surface rounded-lg border border-line transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] overflow-hidden">
+          <a href={`/work/${study.slug}/`} class="group relative block p-6 bg-surface rounded-lg border border-line transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] overflow-hidden">
             <div class="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
             <div class="relative z-10">
@@ -59,7 +59,7 @@ const metrics = [
     <div class="container-site">
       <div class="flex items-center justify-between mb-12">
         <div class="label-mono">— Intellectual Property</div>
-        <a href="/personal-site/patents/" class="text-sm font-medium text-ink-muted hover:text-ink transition-colors">view all</a>
+        <a href="/patents/" class="text-sm font-medium text-ink-muted hover:text-ink transition-colors">view all</a>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         {patents.map((patent: CollectionEntry<'patents'>) => (
@@ -72,7 +72,7 @@ const metrics = [
   <section class="py-24">
     <div class="container-site text-center">
       <h2 class="text-3xl md:text-4xl font-medium text-ink mb-8">Ready to modernize your enterprise?</h2>
-      <a href="/personal-site/contact" class="inline-flex h-12 items-center justify-center rounded-full bg-ink px-8 text-sm font-medium text-surface hover:bg-accent transition-colors">
+      <a href="/contact" class="inline-flex h-12 items-center justify-center rounded-full bg-ink px-8 text-sm font-medium text-surface hover:bg-accent transition-colors">
         Get in touch
       </a>
     </div>
