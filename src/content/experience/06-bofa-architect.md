@@ -4,7 +4,7 @@ role: "Enterprise Solutions Architect"
 startDate: "2010-07"
 endDate: "2016-08"
 location: "Richmond, VA"
-sector: "banking"
+sector: "fortune-100"
 featured: true
 order: 6
 summary: "Led enterprise architecture initiatives supporting large-scale financial systems across multiple business units, delivering secure, high-availability platforms aligned with corporate strategy."

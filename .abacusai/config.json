@@ -10,7 +10,30 @@
       "Bash(npm run build 2>&1 || true)",
       "Bash(npm run build 2>&1 || true)",
       "Bash(npm run build 2>&1 || true)",
+      "Bash(npm run build 2>&1 || true)",
+      "Bash(npm run build 2>&1 || true)",
+      "Bash(Bash(python3 *))",
+      "Bash(Bash(from *))",
+      "Bash(Bash(try: *))",
+      "Bash(Bash(import *))",
+      "Bash(Bash(except *))",
+      "Bash(Bash(print *))",
+      "Bash(pdftotext *)",
+      "Bash(npm run build 2>&1 || true)",
+      "Bash(python3 *)",
+      "Bash(git *)",
+      "Bash(python3 - <<'PY'\nfrom pathlib import Path\nroot = Path('/Users/interlinked/Projects/personal site/src/content/experience'…)",
+      "Bash(npm run build 2>&1 || true)",
+      "Bash(npm run build 2>&1 || true)",
+      "Bash(python3 - <<'PY'\nimport os\nfrom pathlib import Path\nroot = Path('/Users/interlinked/Projects/personal site/src/content/e…)",
+      "Bash(python3 - <<'PY'\nfrom pathlib import Path\nroot = Path('/Users/interlinked/Projects/personal site/src/content/experience'…)",
+      "Bash(python3 - <<'PY'\nfrom pathlib import Path\nroot = Path('/Users/interlinked/Projects/personal site/src/content/experience'…)",
+      "Bash(python3 - <<'PY'\nfrom pathlib import Path\nfor p in sorted(Path('/Users/interlinked/Projects/personal site/src/content/ex…)",
+      "Bash(npm run build 2>&1 || true)",
       "Bash(npm run build 2>&1 || true)"
     ]
-  }
+  },
+  "additionalDirectories": [
+    "/Users/interlinked/.abacusai/plans"
+  ]
 }
