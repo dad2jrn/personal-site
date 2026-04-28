@@ -13,6 +13,11 @@ const month = String(new Date().getMonth() + 1).padStart(2, '0');
       <span>v{year}.{month}</span>
     </div>
 
+    <div class="flex flex-col items-center gap-1 font-mono text-[11px] uppercase tracking-mono-wide text-ink-subtle">
+      <span>Site built by Ron Meck</span>
+      <span>Astro · React · Tailwind · TypeScript · MDX</span>
+    </div>
+
     <div class="flex items-center gap-6">
       <a href="https://github.com/ronmeck" class="text-ink-muted hover:text-ink transition-colors" aria-label="GitHub">
         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
@@ -27,7 +32,7 @@ const month = String(new Date().getMonth() + 1).padStart(2, '0');
           <circle cx="4" cy="4" r="2" />
         </svg>
       </a>
-      <a href="mailto:ronmeck@gmail.com" class="text-ink-muted hover:text-ink transition-colors" aria-label="Email">
+      <a id="footer-email-link" href="#" class="text-ink-muted hover:text-ink transition-colors" aria-label="Email">
         <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
           <rect width="20" height="16" x="2" y="4" rx="2" />
           <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
@@ -36,3 +41,13 @@ const month = String(new Date().getMonth() + 1).padStart(2, '0');
     </div>
   </div>
 </footer>
+
+<script>
+  (() => {
+    const codes = [114, 111, 110, 109, 101, 99, 107, 64, 103, 109, 97, 105, 108, 46, 99, 111, 109];
+    const link = document.getElementById('footer-email-link');
+    if (!link) return;
+    const email = codes.map((code) => String.fromCharCode(code)).join('');
+    link.setAttribute('href', `mailto:${email}`);
+  })();
+</script>

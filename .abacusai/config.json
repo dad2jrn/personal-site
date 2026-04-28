@@ -4,6 +4,12 @@
       "Bash(npm run astro *)",
       "Bash(npm run build *)",
       "Bash(npm run build 2>&1 || true)",
+      "Bash(npm run build 2>&1 || true)",
+      "Bash(npm run build 2>&1 || true)",
+      "Bash(npm run build 2>&1 || true)",
+      "Bash(npm run build 2>&1 || true)",
+      "Bash(npm run build 2>&1 || true)",
+      "Bash(npm run build 2>&1 || true)",
       "Bash(npm run build 2>&1 || true)"
     ]
   }
