@@ -8,6 +8,6 @@ export const site = {
   links: {
     linkedin: 'https://www.linkedin.com/in/ronmeck',
     github: 'https://github.com/ronmeck',
-    resumePdf: '/resume.pdf',
+    resumePdf: '/personal-site/Ron_Meck_Resume.pdf',
   },
 } as const;

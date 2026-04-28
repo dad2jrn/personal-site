@@ -6,68 +6,150 @@ import { site } from '../lib/site';
 const experience = await getCollection('experience');
 const sortedExperience = experience.sort((a: CollectionEntry<'experience'>, b: CollectionEntry<'experience'>) => a.data.order - b.data.order);
 
-const formatYear = (dateStr: string) => dateStr.split('-')[0];
+const featuredExperience = sortedExperience.filter(e => e.data.featured);
+const previousExperience = sortedExperience.filter(e => !e.data.featured);
+
+const formatDate = (dateStr: string | null | undefined) => {
+  if (!dateStr) return '';
+  const parts = dateStr.split('-');
+  if (parts.length < 2) return dateStr; // Return as is if not YYYY-MM
+  const [year, month] = parts;
+  const date = new Date(parseInt(year), parseInt(month) - 1);
+  return date.toLocaleDateString('en-US', { month: '2-digit', year: 'numeric' });
+};
+
+const skills = {
+  hard: ["Enterprise Architecture", "Cloud Strategy", "Product Management", "Agile Methodologies", "Budgeting & Forecasting", "Risk Management"],
+  techniques: ["CI/CD", "Vendor Selection", "Resource Optimization", "Governance Frameworks"],
+  tools: ["AWS", "Azure", "Jira", "Confluence", "Playwright", "Astro"]
+};
 ---
 
 <BaseLayout title="Resume">
-  <section class="py-24">
-    <div class="container-site">
-      <div class="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
-        <div>
-          <h1 class="text-5xl font-medium text-ink mb-4">{site.name}</h1>
-          <p class="text-xl text-ink-muted">{site.tagline}</p>
-        </div>
-        <div class="flex flex-col gap-2 text-sm font-mono text-ink-subtle md:text-right">
-          <a href={`mailto:${site.email}`} class="hover:text-ink">{site.email}</a>
+  <section class="py-12 md:py-20 bg-white text-black font-serif">
+    <div class="max-w-[850px] mx-auto px-8 sm:px-12">
+      <!-- Header -->
+      <header class="text-center mb-12">
+        <h1 class="text-5xl font-bold mb-2 uppercase tracking-wide">{site.name}</h1>
+        <p class="text-xl font-bold mb-6 text-gray-800">{site.tagline}</p>
+
+        <div class="flex flex-wrap justify-center items-center gap-x-2 text-[14px] text-gray-900 print-only">
           <span>{site.location}</span>
-          <a href={site.links.linkedin} class="hover:text-ink">LinkedIn</a>
+          <span class="text-gray-400">|</span>
+          <a href={`tel:${site.phone.replace(/\s+/g, '')}`} class="hover:underline">{site.phone}</a>
+          <span class="text-gray-400">|</span>
+          <a href={`mailto:${site.email}`} class="hover:underline">{site.email}</a>
+          <span class="text-gray-400">|</span>
+          <a href={site.links.linkedin} class="hover:underline">LinkedIn</a>
         </div>
+      </header>
+
+      <!-- Download Action (Hidden in PDF) -->
+      <div class="mb-12 p-6 bg-surface-sunken rounded-lg border border-line text-center no-print">
+        <p class="text-ink-muted mb-4">Need a PDF version for your records?</p>
+        <a href={site.links.resumePdf} download class="inline-flex h-11 items-center justify-center rounded-full bg-ink px-8 text-sm font-medium text-surface hover:bg-accent transition-colors">
+          Download PDF Resume
+        </a>
       </div>
 
-      <div class="space-y-24">
+      <div class="space-y-12 text-black font-sans">
+        <!-- Work Experience -->
         <section>
-          <div class="label-mono mb-12">— Experience</div>
-          <div class="space-y-16">
-            {sortedExperience.map((entry: CollectionEntry<'experience'>) => (
-              <div class="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-8">
-                <div class="font-mono text-sm text-ink-subtle">
-                  {formatYear(entry.data.startDate)} — {entry.data.endDate ? formatYear(entry.data.endDate) : 'Present'}
+          <h2 class="text-lg font-bold uppercase tracking-[0.15em] border-b-2 border-black mb-6 pb-1">Work Experience</h2>
+          <div class="space-y-10">
+            {featuredExperience.map((entry: CollectionEntry<'experience'>) => (
+              <div>
+                <div class="flex justify-between items-baseline mb-1">
+                  <h3 class="text-[17px] font-bold text-black">{entry.data.company}</h3>
+                  <span class="text-[14px] font-bold text-black">{formatDate(entry.data.startDate)} – {entry.data.endDate ? formatDate(entry.data.endDate) : 'Present'}</span>
                 </div>
-                <div>
-                  <h3 class="text-2xl font-medium text-ink mb-1">{entry.data.role}</h3>
-                  <div class="text-lg text-ink-muted mb-6">{entry.data.company}</div>
-                  <p class="text-ink-muted mb-6 leading-relaxed max-w-[65ch]">
-                    {entry.data.summary}
-                  </p>
-                  <ul class="space-y-3">
-                    {entry.data.achievements.map((achievement: string) => (
-                      <li class="flex gap-3 text-ink-muted leading-relaxed">
-                        <span class="text-ink-subtle mt-1.5 h-1 w-1 rounded-full bg-line shrink-0"></span>
-                        <span>{achievement}</span>
-                      </li>
-                    ))}
-                  </ul>
+                <div class="flex justify-between items-baseline mb-3">
+                  <span class="text-[15px] font-bold italic text-gray-800">{entry.data.role}</span>
+                  <span class="text-[14px] text-gray-700">{entry.data.location}</span>
                 </div>
+                <p class="text-[14px] mb-4 leading-relaxed text-gray-900 font-medium">
+                  {entry.data.summary}
+                </p>
+                <ul class="list-disc ml-5 space-y-2 text-[14px]">
+                  {entry.data.achievements?.map((achievement: string) => (
+                    <li class="leading-relaxed text-gray-900 pl-1">
+                      {achievement}
+                    </li>
+                  ))}
+                </ul>
               </div>
             ))}
           </div>
         </section>
 
-        <section class="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-8 pt-24 border-t border-line">
-          <div class="label-mono">— Education</div>
-          <div>
-            <h3 class="text-xl font-medium text-ink">B.S. Information Systems</h3>
-            <p class="text-ink-muted">Strayer University</p>
+        <!-- Previous Experience -->
+        {previousExperience.length > 0 && (
+          <section>
+            <h2 class="text-lg font-bold uppercase tracking-[0.15em] border-b-2 border-black mb-6 pb-1">Previous Experience</h2>
+            <div class="space-y-3">
+              {previousExperience.map((entry: CollectionEntry<'experience'>) => (
+                <div class="grid grid-cols-[1fr_auto] gap-4 items-baseline text-[14px]">
+                  <div class="truncate">
+                    <span class="font-bold text-black">{entry.data.role}</span>
+                    <span class="text-gray-400 mx-1">|</span>
+                    <span class="font-semibold text-gray-800">{entry.data.company}</span>
+                    <span class="text-gray-400 mx-1">|</span>
+                    <span class="italic text-gray-600">{entry.data.location}</span>
+                  </div>
+                  <span class="font-bold text-black whitespace-nowrap">
+                    {formatDate(entry.data.startDate)} – {entry.data.endDate ? formatDate(entry.data.endDate) : 'Present'}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        <!-- Skills -->
+        <section>
+          <h2 class="text-lg font-bold uppercase tracking-[0.15em] border-b-2 border-black mb-6 pb-1">Skills</h2>
+          <div class="space-y-2 text-[14px]">
+            <p><span class="font-bold text-black">Hard Skills:</span> <span class="text-gray-800">{skills.hard.join(', ')}</span></p>
+            <p><span class="font-bold text-black">Techniques:</span> <span class="text-gray-800">{skills.techniques.join(', ')}</span></p>
+            <p><span class="font-bold text-black">Tools and Software:</span> <span class="text-gray-800">{skills.tools.join(', ')}</span></p>
           </div>
         </section>
-      </div>
 
-      <div class="mt-32 p-8 bg-surface-sunken rounded-lg border border-line text-center">
-        <p class="text-ink-muted mb-6">Need a PDF version for your records?</p>
-        <a href={site.links.resumePdf} class="inline-flex h-12 items-center justify-center rounded-full bg-ink px-8 text-sm font-medium text-surface hover:bg-accent transition-colors">
-          Download PDF Resume
-        </a>
+        <!-- Education -->
+        <section>
+          <h2 class="text-lg font-bold uppercase tracking-[0.15em] border-b-2 border-black mb-6 pb-1">Education</h2>
+          <div class="flex justify-between items-baseline text-[14px]">
+            <div>
+              <h3 class="font-bold text-[16px] text-black">Strayer University</h3>
+              <p class="italic text-gray-800">B.S. Information Systems</p>
+            </div>
+            <span class="font-bold text-black">Richmond, VA</span>
+          </div>
+        </section>
       </div>
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  .print-only {
+    display: none;
+  }
+
+  @media print {
+    .no-print {
+      display: none !important;
+    }
+    .print-only {
+      display: flex !important;
+    }
+    section {
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+    }
+    .container-site {
+      max-width: 100% !important;
+      padding: 0 !important;
+    }
+  }
+</style>
