@@ -4,7 +4,7 @@ role: "Sr. Manager, Software Engineering Architect"
 startDate: "2016-10"
 endDate: "2023-07"
 location: "Richmond, VA"
-sector: "fortune-100"
+sector: "Banking"
 featured: true
 order: 2
 summary: "Architected and led mission-critical enterprise payment systems and cloud migration strategies for a Fortune 100 financial institution, supporting platforms serving nearly 60 million monthly users and processing approximately $2 trillion annually."

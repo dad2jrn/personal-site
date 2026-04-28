@@ -4,7 +4,7 @@ role: "Enterprise Architecture Consultant"
 startDate: "2008-10"
 endDate: "2010-07"
 location: "Richmond, VA"
-sector: "fortune-100"
+sector: "banking"
 featured: false
 order: 7
 summary: "Designed and implemented technology solutions that aligned with business objectives, resulting in significant infrastructure cost reductions and increased system uptime."

@@ -4,7 +4,7 @@ role: "Manager, Software Engineering"
 startDate: "2019-01"
 endDate: "2021-01"
 location: "Richmond, VA"
-sector: "fortune-100"
+sector: "banking"
 featured: false
 order: 3
 summary: "Managed a team of high-performing full-stack engineers to deliver automated solutions and back-office applications, streamlining divisional application and infrastructure deployment."
