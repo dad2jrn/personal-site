@@ -5,9 +5,30 @@
 @import '@fontsource/geist-sans/600.css';
 @import '@fontsource-variable/jetbrains-mono/index.css';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* Class-based dark variant: no element ever gets .dark after the redesign,
+   which neutralizes legacy dark: classes until Task 9 deletes them. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --color-ink: rgb(var(--ink));
+  --color-ink-muted: rgb(var(--ink-muted));
+  --color-ink-subtle: rgb(var(--ink-subtle));
+  --color-surface: rgb(var(--surface));
+  --color-surface-raised: rgb(var(--surface-raised));
+  --color-surface-sunken: rgb(var(--surface-sunken));
+  --color-line: rgb(var(--line));
+  --color-line-strong: rgb(var(--line-strong));
+  --color-accent: rgb(var(--accent));
+  --color-accent-soft: rgb(var(--accent-soft));
+  --font-sans: 'Geist', sans-serif;
+  --font-display: 'Fraunces Variable', serif;
+  --font-mono: 'JetBrains Mono Variable', monospace;
+  --container-site: 1180px;
+  --tracking-mono-wide: 0.05em;
+}
 
 @layer base {
   :root {
@@ -38,7 +59,7 @@
 
   html {
     @apply bg-surface text-ink antialiased;
-    font-family: theme('fontFamily.sans');
+    font-family: var(--font-sans);
     font-feature-settings: 'ss01', 'cv11';
     text-rendering: optimizeLegibility;
   }
@@ -50,7 +71,7 @@
   ::selection { background-color: rgb(var(--accent) / 0.25); color: rgb(var(--ink)); }
 
   :focus-visible {
-    @apply outline-none ring-2 ring-accent ring-offset-2 ring-offset-surface;
+    @apply outline-hidden ring-2 ring-accent ring-offset-2 ring-offset-surface;
   }
 }
 

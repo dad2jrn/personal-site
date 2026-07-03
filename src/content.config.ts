@@ -1,7 +1,8 @@
 import { defineCollection, z } from 'astro:content';
+import { glob } from 'astro/loaders';
 
 const experience = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.md', base: './src/content/experience' }),
   schema: z.object({
     company: z.string(),
     role: z.string(),
@@ -17,7 +18,7 @@ const experience = defineCollection({
 });
 
 const patents = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.md', base: './src/content/patents' }),
   schema: z.object({
     title: z.string(),
     patentNumber: z.string(),    // USPTO number e.g. "US 11,238,541 B2"
@@ -27,12 +28,12 @@ const patents = defineCollection({
     assignee: z.string(),
     abstract: z.string(),        // PARAPHRASED in Ron's words, not USPTO copy
     tags: z.array(z.string()).default([]),
-    usptoUrl: z.string().url().optional(),
+    usptoUrl: z.url().optional(), // Zod 4: z.string().url() is gone
   }),
 });
 
 const caseStudies = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.mdx', base: './src/content/case-studies' }),
   schema: z.object({
     title: z.string(),
     company: z.string(),
@@ -52,7 +53,7 @@ const caseStudies = defineCollection({
 });
 
 const writing = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.mdx', base: './src/content/writing' }),
   schema: z.object({
     title: z.string(),
     dek: z.string(),

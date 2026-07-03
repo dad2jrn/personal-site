@@ -31,7 +31,7 @@ const formatDate = (date: Date | string) => {
         {sortedPosts.map((post: CollectionEntry<'writing'>) => (
           <article class="group">
             <div class="label-mono mb-4">{formatDate(post.data.publishedAt)}</div>
-            <a href={`/writing/${post.slug}/`} class="block">
+            <a href={`/writing/${post.id}/`} class="block">
               <h2 class="text-3xl font-medium text-ink group-hover:text-accent transition-colors mb-4">
                 {post.data.title}
               </h2>
