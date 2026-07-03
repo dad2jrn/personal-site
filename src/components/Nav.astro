@@ -15,7 +15,7 @@ const navItems = [
     {navItems.map((item) => (
       <a href={item.href} class="text-ink no-underline transition-colors hover:text-accent">{item.label}</a>
     ))}
-    <button id="sound-toggle" type="button" class="border border-ink/25 px-3 py-[5px] font-mono text-[12px] tracking-[0.08em] text-ink transition-colors hover:border-accent hover:text-accent">SOUND · ON</button>
+    <button id="sound-toggle" type="button" data-sfx-silent class="border border-ink/25 px-3 py-[5px] font-mono text-[12px] tracking-[0.08em] text-ink transition-colors hover:border-accent hover:text-accent">SOUND · ON</button>
   </div>
 </nav>
 

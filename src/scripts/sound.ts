@@ -10,6 +10,7 @@ type RMSound = {
   ctx?: AudioContext;
   unlockBound?: boolean;
   clickBound?: boolean;
+  gestured?: boolean;
   buffers?: Map<string, Promise<AudioBuffer>>;
   musicSrc?: AudioBufferSourceNode;
 };
@@ -51,7 +52,14 @@ function loadBuffer(url: string): Promise<AudioBuffer> {
   if (!s.buffers) s.buffers = new Map();
   let p = s.buffers.get(url);
   if (!p) {
-    p = fetch(url).then((r) => r.arrayBuffer()).then((data) => ctx().decodeAudioData(data));
+    p = fetch(url)
+      .then((r) => {
+        if (!r.ok) throw new Error(`fetch ${url}: ${r.status}`);
+        return r.arrayBuffer();
+      })
+      .then((data) => ctx().decodeAudioData(data));
+    // Evict failures so a transient error doesn't silence the sample all session.
+    p.catch(() => { s.buffers?.delete(url); });
     s.buffers.set(url, p);
   }
   return p;
@@ -78,9 +86,10 @@ export function sfx(name: SfxName): void {
     loadBuffer(url).then((buf) => {
       if (!store().on) return;
       if (c.state === 'suspended') {
-        // Never schedule one-shots into a suspended context (they would pile
-        // up and fire stale); resume first — rejects harmlessly pre-gesture.
-        c.resume().then(() => playBuffer(buf, gain)).catch(() => {});
+        // Pre-gesture, resume() stays pending (it does not reject) and any
+        // queued one-shot would burst out later on the unlock click — drop it.
+        if (!store().gestured) return;
+        c.resume().then(() => { if (store().on) playBuffer(buf, gain); }).catch(() => {});
         return;
       }
       playBuffer(buf, gain);
@@ -114,10 +123,18 @@ export function stopMusic(): void {
 // (the boot LAUNCH click on the home page) so samples work right away.
 function unlock(): void {
   try {
+    store().gestured = true;
     const c = ctx();
     if (c.state === 'suspended') c.resume().catch(() => {});
     startMusic();
   } catch { /* audio unavailable */ }
+}
+
+// Prefetch the small, hot samples so the first hover/click isn't late.
+function prefetchHot(): void {
+  (['hover', 'click', 'open', 'deny'] as const).forEach((n) => {
+    loadBuffer(SFX[n].url).catch(() => {});
+  });
 }
 
 function bindGlobal(): void {
@@ -141,12 +158,7 @@ function bindGlobal(): void {
       },
       { capture: true },
     );
-    // Prefetch the small, hot samples so the first hover/click isn't late.
-    if (s.on) {
-      (['hover', 'click', 'open', 'deny'] as const).forEach((n) => {
-        loadBuffer(SFX[n].url).catch(() => {});
-      });
-    }
+    if (s.on) prefetchHot();
   }
 }
 
@@ -161,6 +173,7 @@ export function setSound(on: boolean): void {
   try { sessionStorage.setItem('rm-sound', on ? 'on' : 'off'); } catch { /* private mode */ }
   if (on) {
     blip(880, 0.05); // confirm blip on enable
+    prefetchHot();
     startMusic();
   } else {
     stopMusic();
