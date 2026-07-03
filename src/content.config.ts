@@ -13,6 +13,8 @@ const experience = defineCollection({
     featured: z.boolean().default(false),
     order: z.number(),           // for ties; lower = appears first
     summary: z.string(),         // 1-2 sentence summary
+    shortCompany: z.string().optional(),  // timeline display name when company is too long
+    tag: z.string().optional(),           // timeline category tag override (defaults from sector)
     achievements: z.array(z.string()).optional(), // bullet points for resume
   }),
 });
@@ -49,6 +51,10 @@ const caseStudies = defineCollection({
     outcomes: z.array(z.string()),
     publishedAt: z.string(),
     featured: z.boolean().default(false),
+    order: z.number().default(99),        // homepage card order; lower first
+    cardHeader: z.string().optional(),    // mono header on the homepage card
+    cardSummary: z.string().optional(),   // homepage card description (falls back to dek)
+    cardTags: z.array(z.string()).optional(), // homepage card chips (falls back to tools)
   }),
 });
 
