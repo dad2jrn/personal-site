@@ -29,7 +29,7 @@ const SFX: Record<SfxName, { url: string; gain: number }> = {
   type: { url: '/sounds/typearrayloop.ogg', gain: 0.4 },
 };
 
-const MUSIC_URL = '/sounds/mainLoop.ogg';
+const MUSIC_URL = '/sounds/musicLoop.ogg';
 const MUSIC_GAIN = 0.25;
 
 function store(): RMSound {
