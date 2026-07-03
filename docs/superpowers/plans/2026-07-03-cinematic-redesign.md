@@ -4,9 +4,9 @@
 
 **Goal:** Rebuild ronmeck.dev as the handoff's cinematic single-page design (boot → hero/particles → chaptered sections → contact) and reskin all inner pages to the same dark/amber design system.
 
-**Architecture:** In-place rebuild on the `revision` branch. Design tokens are remapped at the root (Tailwind config + `global.css`) so semantic classes (`text-ink`, `bg-surface`, `border-line`) flow the new palette everywhere automatically. The homepage becomes ~10 Astro section components in `src/components/home/` with 4 React islands in `src/components/home/islands/`. Content stays driven by the existing content collections.
+**Architecture:** In-place rebuild on the `revision` branch, on an upgraded platform (Task 0 lands Astro 7 / Tailwind 4 / React 19.2.7 before any redesign work). Design tokens are defined at the root (Tailwind 4 `@theme` block in `global.css` — there is no `tailwind.config.mjs` anymore) so semantic classes (`text-ink`, `bg-surface`, `border-line`) flow the new palette everywhere automatically. The homepage becomes ~10 Astro section components in `src/components/home/` with 4 React islands in `src/components/home/islands/`. Content stays driven by the existing content collections via the Content Layer API.
 
-**Tech Stack:** Astro v5, React 19, Tailwind 3.4, TypeScript, MDX. Fonts self-hosted via @fontsource.
+**Tech Stack:** Astro 7 (latest stable), React 19.2.7, Tailwind CSS 4.3.2 (CSS-first config via `@tailwindcss/vite`), TypeScript, MDX. Fonts self-hosted via @fontsource.
 
 **Spec:** `docs/superpowers/specs/2026-07-03-cinematic-redesign-design.md`. **Pixel reference:** `design_handoff_ronmeck_site/Ron Meck.dc.html` (its `Component` class is the behavioral spec — all constants below were ported from it).
 
@@ -20,7 +20,10 @@
 - The email address must NEVER appear in delivered/built HTML. Only assembled from char codes at runtime.
 - Every animation respects `prefers-reduced-motion: reduce`.
 - Dark-only: no theme toggle, no `dark:` variants in final code.
-- No new runtime dependencies beyond the two font packages.
+- Platform pins: `astro` ^7 (latest stable), `tailwindcss` 4.3.2 exactly, `react`/`react-dom` 19.2.7 exactly, Node ≥ 22 (Astro 6+ floor).
+- Tailwind 4 idiom throughout new code: theme in `@theme`, `@import "tailwindcss"` (no `@tailwind` directives), `outline-hidden` not `outline-none`, `bg-linear-to-*` not `bg-gradient-to-*`. No `tailwind.config.mjs`.
+- Content Layer API throughout: collections defined in `src/content.config.ts` with `glob()` loaders; `entry.id` (never `entry.slug`); `render(entry)` from `astro:content` (never `entry.render()`).
+- No new runtime dependencies beyond the two font packages and the platform set (`tailwindcss`, `@tailwindcss/vite`, `@tailwindcss/typography`).
 - Copy is final: take strings verbatim from the prototype HTML (they are reproduced in this plan).
 - No test framework exists; verification is `npm run build` + targeted `grep` + browser passes. Run builds from the repo root `/Users/interlinked/Projects/personal site`.
 - Commit after every task. End commit messages with `Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>`.
@@ -29,12 +32,251 @@
 
 ---
 
-### Task 1: Foundation — fonts, tokens, global.css, Tailwind config, BaseLayout
+### Task 0: Platform upgrade — Astro 7, Tailwind 4.3.2, React 19.2.7, Content Layer API
+
+Goal: the site builds and looks EXACTLY as it does today, on the new platform. No redesign work in this task — it isolates upgrade breakage from redesign breakage.
+
+**Files:**
+- Modify: `package.json` (via npm commands)
+- Modify: `astro.config.mjs` (full rewrite)
+- Delete: `tailwind.config.mjs` (absorbed into CSS)
+- Move + rewrite: `src/content/config.ts` → `src/content.config.ts`
+- Modify: `src/styles/global.css` (Tailwind 4 conversion, old tokens kept)
+- Modify: every consumer of `entry.slug` / `entry.render()` (found by grep in Step 5)
+
+**Interfaces:**
+- Produces: Content Layer collections — later tasks use `entry.id` for URLs (`/work/${study.id}/`) and `render(entry)` for MDX bodies. For `glob()` loaders, `entry.id` is the extension-less filename, identical to the old `entry.slug`, so existing URLs do not change.
+- Produces: Tailwind 4 pipeline — later tasks write `@theme`/`@utility`-era CSS and Tailwind 4 class names.
+
+- [ ] **Step 1: Check Node version**
+
+```bash
+node -v
+```
+
+Expected: v22 or higher. If lower, stop and install Node 22 LTS before continuing (Astro 6+ dropped Node 18/20).
+
+- [ ] **Step 2: Upgrade packages**
+
+```bash
+npm install astro@latest @astrojs/mdx@latest @astrojs/react@latest @astrojs/sitemap@latest react@19.2.7 react-dom@19.2.7
+npm uninstall @astrojs/tailwind
+npm install tailwindcss@4.3.2 @tailwindcss/vite@latest @tailwindcss/typography@latest
+npm ls astro tailwindcss react
+```
+
+Expected: `astro@7.x`, `tailwindcss@4.3.2`, `react@19.2.7`. If `@astrojs/mdx`/`react`/`sitemap` latest majors declare a peer conflict with astro 7, install the exact majors the error message names.
+
+- [ ] **Step 3: Rewrite `astro.config.mjs`** with exactly:
+
+```js
+import { defineConfig } from 'astro/config';
+import mdx from '@astrojs/mdx';
+import sitemap from '@astrojs/sitemap';
+import react from '@astrojs/react';
+import tailwindcss from '@tailwindcss/vite';
+
+export default defineConfig({
+  site: 'https://ronmeck.dev',
+  base: '/',
+  integrations: [
+    mdx(),
+    sitemap(),
+    react(),
+  ],
+  vite: {
+    plugins: [tailwindcss()],
+  },
+  build: { format: 'directory' },
+});
+```
+
+(Leave `tailwind.config.mjs` in place for now — the Step 4 codemod reads it.)
+
+- [ ] **Step 4: Convert `src/styles/global.css` to Tailwind 4 (keeping the OLD look)**
+
+First try the official codemod, which converts directives, migrates the JS config's theme into CSS, and renames changed utility classes across `src/`:
+
+```bash
+npx @tailwindcss/upgrade
+```
+
+Review the diff it produces, then delete the JS config Tailwind 4 no longer reads (if the codemod didn't already):
+
+```bash
+git rm --ignore-unmatch tailwind.config.mjs
+```
+
+If the tool fails or the result doesn't build, do the conversion manually:
+
+1. In `global.css`, replace the three `@tailwind base; @tailwind components; @tailwind utilities;` lines with:
+
+```css
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* Class-based dark variant: no element ever gets .dark after the redesign,
+   which neutralizes legacy dark: classes until Task 9 deletes them. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --color-ink: rgb(var(--ink));
+  --color-ink-muted: rgb(var(--ink-muted));
+  --color-ink-subtle: rgb(var(--ink-subtle));
+  --color-surface: rgb(var(--surface));
+  --color-surface-raised: rgb(var(--surface-raised));
+  --color-surface-sunken: rgb(var(--surface-sunken));
+  --color-line: rgb(var(--line));
+  --color-line-strong: rgb(var(--line-strong));
+  --color-accent: rgb(var(--accent));
+  --color-accent-soft: rgb(var(--accent-soft));
+  --font-sans: 'Geist', sans-serif;
+  --font-display: 'Fraunces Variable', serif;
+  --font-mono: 'JetBrains Mono Variable', monospace;
+  --container-site: 1180px;
+  --tracking-mono-wide: 0.05em;
+}
+```
+
+(`@theme inline` keeps the utilities pointing at the runtime `--ink`/`--surface` vars so the existing `.dark` toggle keeps working until Task 1 removes it.)
+
+2. Apply Tailwind 4 renames in `global.css` and `src/`:
+   - `@apply outline-none` → `@apply outline-hidden` (in `:focus-visible`)
+   - `bg-gradient-to-b`/`bg-gradient-to-br` → `bg-linear-to-b`/`bg-linear-to-br` (`grep -rn "bg-gradient" src/`)
+   - `theme('fontFamily.sans')` in the `html` rule → `var(--font-sans)`
+
+- [ ] **Step 5: Migrate content collections to the Content Layer API**
+
+```bash
+git mv src/content/config.ts src/content.config.ts
+```
+
+Rewrite `src/content.config.ts` with exactly:
+
+```ts
+import { defineCollection, z } from 'astro:content';
+import { glob } from 'astro/loaders';
+
+const experience = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/experience' }),
+  schema: z.object({
+    company: z.string(),
+    role: z.string(),
+    startDate: z.string(),       // "2024-01"
+    endDate: z.string().nullable(), // null = present
+    location: z.string(),
+    sector: z.enum(['banking', 'fortune-100', 'gov-public', 'consulting', 'military']),
+    featured: z.boolean().default(false),
+    order: z.number(),           // for ties; lower = appears first
+    summary: z.string(),         // 1-2 sentence summary
+    achievements: z.array(z.string()).optional(), // bullet points for resume
+  }),
+});
+
+const patents = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/patents' }),
+  schema: z.object({
+    title: z.string(),
+    patentNumber: z.string(),    // USPTO number e.g. "US 11,238,541 B2"
+    filedDate: z.string().optional(),
+    grantedDate: z.string().optional(),
+    inventors: z.array(z.string()),
+    assignee: z.string(),
+    abstract: z.string(),        // PARAPHRASED in Ron's words, not USPTO copy
+    tags: z.array(z.string()).default([]),
+    usptoUrl: z.url().optional(), // Zod 4: z.string().url() is gone
+  }),
+});
+
+const caseStudies = defineCollection({
+  loader: glob({ pattern: '**/*.mdx', base: './src/content/case-studies' }),
+  schema: z.object({
+    title: z.string(),
+    company: z.string(),
+    role: z.string(),
+    period: z.string(),          // "2016 – 2023"
+    dek: z.string(),             // 1-line subtitle, used on detail page
+    summary: z.string(),         // 2-3 sentence summary for the index card
+    scale: z.array(z.object({    // metrics surfaced in sidebar
+      label: z.string(),
+      value: z.string(),
+    })),
+    tools: z.array(z.string()),  // e.g. ["AWS", "Kubernetes", "Kafka"]
+    outcomes: z.array(z.string()),
+    publishedAt: z.string(),
+    featured: z.boolean().default(false),
+  }),
+});
+
+const writing = defineCollection({
+  loader: glob({ pattern: '**/*.mdx', base: './src/content/writing' }),
+  schema: z.object({
+    title: z.string(),
+    dek: z.string(),
+    publishedAt: z.string(),
+    updatedAt: z.string().optional(),
+    tags: z.array(z.string()).default([]),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { experience, patents, 'case-studies': caseStudies, writing };
+```
+
+Then update every consumer:
+
+```bash
+grep -rn "\.slug\b" src/
+grep -rn "\.render()" src/
+```
+
+For each `.slug` hit on a collection entry (expected: `src/pages/index.astro`, `src/pages/work/index.astro`, `src/pages/writing/index.astro`, possibly `src/components/PatentCard.astro`): change `entry.slug` → `entry.id`.
+
+For each dynamic route (`src/pages/work/[slug].astro`, `src/pages/patents/[slug].astro`, `src/pages/writing/[slug].astro`), apply the canonical migration — `getStaticPaths` maps params from `entry.id`, and rendering uses the standalone `render()`:
+
+```astro
+---
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('case-studies'); // per file: its own collection
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+```
+
+Keep each file's existing markup and any extra frontmatter logic; only the API calls change.
+
+- [ ] **Step 6: Build and fix what the stricter platform flags**
+
+```bash
+npm run build
+```
+
+Fix any errors, which will fall into three known buckets:
+1. **Rust compiler strictness** (Astro 7): unclosed tags / unterminated attributes in `.astro` files — close them; no behavior change intended.
+2. **Markdown pipeline** (Sätteri): if MDX content fails to process, run `npm install @astrojs/markdown-remark` and follow the error's configuration hint.
+3. **Tailwind 4 class renames** the codemod missed — fix per the rename list in Step 4.
+
+Then view `/`, `/work/`, `/patents/`, `/writing/`, `/resume/`, `/contact/` in the dev server: the site must look IDENTICAL to pre-upgrade (same fonts, colors, light/dark toggle still working). Fix regressions before committing.
+
+- [ ] **Step 7: Commit**
+
+```bash
+git add -A
+git commit -m "chore(revision): upgrade to Astro 7, Tailwind 4.3.2, React 19.2.7; migrate to Content Layer API"
+```
+
+---
+
+### Task 1: Foundation — fonts, tokens, global.css, BaseLayout
 
 **Files:**
 - Modify: `package.json` (via npm commands)
 - Modify: `src/styles/global.css` (full rewrite)
-- Modify: `tailwind.config.mjs` (full rewrite)
 - Modify: `src/layouts/BaseLayout.astro` (full rewrite)
 - Delete: `src/components/ThemeScript.astro`
 
@@ -68,34 +310,51 @@ Expected: a `wdth.css` file is listed. If it is NOT there, use `standard.css` (a
 @import '@fontsource/instrument-serif/400.css';
 @import '@fontsource/instrument-serif/400-italic.css';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* Class-based dark variant so legacy dark: classes stay dead (no .dark class
+   is ever set). The whole line is deleted in Task 10 after Task 9's sweep. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-ink: #EDEBE6;
+  --color-ink-muted: rgb(237 235 230 / 0.55);
+  --color-ink-subtle: rgb(237 235 230 / 0.45);
+  --color-surface: #0A0A0B;
+  --color-surface-raised: #16161A;
+  --color-surface-sunken: #060607;
+  --color-line: rgb(237 235 230 / 0.12);
+  --color-line-strong: rgb(237 235 230 / 0.2);
+  --color-accent: #F5A524;
+  --color-accent-soft: rgb(245 165 36 / 0.35);
+  --color-paper: #E9E5DC;
+  --color-paper-ink: #141412;
+  --color-paper-accent: #8A6A1F;
+  --color-paper-accent-bright: #B07C1E;
+  --color-paper-line: rgb(20 20 18 / 0.2);
+
+  --font-sans: 'Archivo Variable', sans-serif;
+  --font-serif: 'Instrument Serif', serif;
+  --font-mono: 'JetBrains Mono Variable', monospace;
+
+  --container-site: 1200px;
+  --tracking-mono-wide: 0.05em;
+}
 
 @layer base {
-  :root {
-    --ink: 237 235 230;
-    --surface: 10 10 11;
-    --surface-raised: 22 22 26;
-    --surface-sunken: 6 6 7;
-    --accent: 245 165 36;
-    --paper: 233 229 220;
-    --paper-ink: 20 20 18;
-  }
-
   html {
-    @apply bg-surface text-ink antialiased;
-    font-family: theme('fontFamily.sans');
+    @apply bg-surface font-sans text-ink antialiased;
     scroll-behavior: smooth;
     text-rendering: optimizeLegibility;
   }
 
   body { @apply bg-surface text-ink; min-height: 100vh; }
 
-  ::selection { background-color: rgb(var(--accent)); color: rgb(var(--surface)); }
+  ::selection { background-color: var(--color-accent); color: var(--color-surface); }
 
   :focus-visible {
-    @apply outline-none ring-2 ring-accent ring-offset-2 ring-offset-surface;
+    @apply outline-hidden ring-2 ring-accent ring-offset-2 ring-offset-surface;
   }
 }
 
@@ -160,52 +419,17 @@ Expected: a `wdth.css` file is listed. If it is NOT there, use `standard.css` (a
 }
 ```
 
-Note: the old `flow`/`flow-reverse`/`scan` keyframes used by `CaseStudyVisual.astro` were defined in the components layer. `CaseStudyVisual` survives (used on `/work/`), so ALSO keep these at the end of the file (copy verbatim from the pre-rewrite `global.css` lines 111–139: `@keyframes flow`, `@keyframes flow-reverse`, `@keyframes scan`, `.animate-flow`, `.animate-flow-reverse`, `.animate-scan`).
+Note: the old `flow`/`flow-reverse`/`scan` keyframes used by `CaseStudyVisual.astro` were defined in the old stylesheet's components layer. `CaseStudyVisual` survives (used on `/work/`), so ALSO keep these at the end of the file (copy verbatim from the pre-rewrite `global.css` — the `@keyframes flow`, `@keyframes flow-reverse`, `@keyframes scan` blocks and the `.animate-flow`, `.animate-flow-reverse`, `.animate-scan` classes).
 
-- [ ] **Step 3: Rewrite `tailwind.config.mjs`** with exactly:
+- [ ] **Step 3: Confirm no Tailwind JS config remains**
 
-```js
-/** @type {import('tailwindcss').Config} */
-export default {
-  content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
-  darkMode: 'class', // no element ever gets .dark now; removed entirely in Task 10
-  theme: {
-    extend: {
-      colors: {
-        ink: 'rgb(var(--ink) / <alpha-value>)',
-        'ink-muted': 'rgb(var(--ink) / 0.55)',
-        'ink-subtle': 'rgb(var(--ink) / 0.45)',
-        surface: 'rgb(var(--surface) / <alpha-value>)',
-        'surface-raised': 'rgb(var(--surface-raised) / <alpha-value>)',
-        'surface-sunken': 'rgb(var(--surface-sunken) / <alpha-value>)',
-        line: 'rgb(var(--ink) / 0.12)',
-        'line-strong': 'rgb(var(--ink) / 0.2)',
-        accent: 'rgb(var(--accent) / <alpha-value>)',
-        'accent-soft': 'rgb(var(--accent) / 0.35)',
-        paper: 'rgb(var(--paper) / <alpha-value>)',
-        'paper-ink': 'rgb(var(--paper-ink) / <alpha-value>)',
-        'paper-accent': '#8A6A1F',
-        'paper-accent-bright': '#B07C1E',
-        'paper-line': 'rgba(20, 20, 18, 0.2)',
-      },
-      fontFamily: {
-        sans: ['Archivo Variable', 'sans-serif'],
-        serif: ['Instrument Serif', 'serif'],
-        mono: ['JetBrains Mono Variable', 'monospace'],
-      },
-      maxWidth: {
-        site: '1200px',
-      },
-      letterSpacing: {
-        'mono-wide': '0.05em',
-      },
-    },
-  },
-  plugins: [
-    require('@tailwindcss/typography'),
-  ],
-};
+Tailwind 4's theme now lives entirely in the `@theme` block above (Task 0 deleted `tailwind.config.mjs`). Verify:
+
+```bash
+ls tailwind.config.* 2>/dev/null; grep -rn "@config" src/styles/
 ```
+
+Expected: no config file, no `@config` directive. If the Task 0 codemod left an `@config "./tailwind.config.mjs"` line or a config file behind, delete both — the `@theme` block is the single source of truth.
 
 - [ ] **Step 4: Rewrite `src/layouts/BaseLayout.astro`** with exactly:
 
@@ -843,7 +1067,7 @@ git commit -m "feat(revision): Origin (paper) and Scale (count-up stats) section
 ### Task 5: The Work + Timeline sections (schema extensions + content reconciliation)
 
 **Files:**
-- Modify: `src/content/config.ts` (extend `case-studies` and `experience` schemas)
+- Modify: `src/content.config.ts` (extend `case-studies` and `experience` schemas)
 - Modify: `src/content/case-studies/capital-one-payments-platform.mdx` (frontmatter)
 - Modify: `src/content/case-studies/vdot-architecture-governance.mdx` (frontmatter)
 - Modify: `src/content/experience/*.md` (frontmatter, per the table below)
@@ -855,7 +1079,7 @@ git commit -m "feat(revision): Origin (paper) and Scale (count-up stats) section
 - Consumes: `SectionHeader.astro` from Task 4.
 - Produces schema fields: case-studies `cardHeader?: string`, `cardSummary?: string`, `cardTags?: string[]`, `order: number` (default 99); experience `shortCompany?: string`, `tag?: string`.
 
-- [ ] **Step 1: Extend schemas in `src/content/config.ts`**
+- [ ] **Step 1: Extend schemas in `src/content.config.ts`**
 
 In the `caseStudies` schema object, add after `featured`:
 
@@ -936,8 +1160,8 @@ const scanDurations = ['5s', '6.5s'];
     <SectionHeader index="03" name="THE WORK" meta="FEATURED CASE STUDIES" />
     <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
       {studies.map((study: CollectionEntry<'case-studies'>, i: number) => (
-        <a data-reveal href={`/work/${study.slug}/`} class="group relative block overflow-hidden border border-line p-9 text-ink no-underline transition-[border-color,transform] duration-300 hover:-translate-y-1 hover:border-accent">
-          <div class="pointer-events-none absolute left-0 right-0 h-[40%] bg-gradient-to-b from-accent/[0.06] to-transparent" style={`animation: rm-scan ${scanDurations[i % 2]} linear infinite;`}></div>
+        <a data-reveal href={`/work/${study.id}/`} class="group relative block overflow-hidden border border-line p-9 text-ink no-underline transition-[border-color,transform] duration-300 hover:-translate-y-1 hover:border-accent">
+          <div class="pointer-events-none absolute left-0 right-0 h-[40%] bg-linear-to-b from-accent/[0.06] to-transparent" style={`animation: rm-scan ${scanDurations[i % 2]} linear infinite;`}></div>
           <div class="mb-12 font-mono text-[11px] tracking-[0.14em] text-ink-subtle">{study.data.cardHeader ?? `${study.data.company.toUpperCase()} // ARCH_VISUAL_v1.2`}</div>
           <h3 class="mb-4 text-[32px] font-extrabold leading-[1.05] tracking-[-0.01em] [font-stretch:115%]">{study.data.title}</h3>
           <p class="mb-8 text-[15px] leading-[1.6] text-ink/60">{study.data.cardSummary ?? study.data.dek}</p>
@@ -1114,13 +1338,13 @@ import SectionHeader from './SectionHeader.astro';
 import PatentAccordion from './islands/PatentAccordion';
 
 const patents = (await getCollection('patents'))
-  .sort((a: CollectionEntry<'patents'>, b: CollectionEntry<'patents'>) => a.slug.localeCompare(b.slug));
+  .sort((a: CollectionEntry<'patents'>, b: CollectionEntry<'patents'>) => a.id.localeCompare(b.id));
 const items = patents.map((p: CollectionEntry<'patents'>) => ({
   number: p.data.patentNumber,
   title: p.data.title,
   desc: p.data.abstract,
   tags: p.data.tags.join(' · '),
-  href: `/patents/${p.slug}/`,
+  href: `/patents/${p.id}/`,
 }));
 ---
 
@@ -1639,7 +1863,7 @@ git commit -m "feat(revision): reskin inner pages — display headlines, sharp c
 **Files:**
 - Modify: `astro.config.mjs` (redirect)
 - Delete: `src/pages/contact.astro`
-- Modify: `tailwind.config.mjs` (drop `darkMode`)
+- Modify: `src/styles/global.css` (drop the dark `@custom-variant`)
 - Modify: `package.json` (via npm)
 
 **Interfaces:** none new.
@@ -1658,7 +1882,7 @@ git commit -m "feat(revision): reskin inner pages — display headlines, sharp c
 git rm src/pages/contact.astro
 ```
 
-- [ ] **Step 3: Remove `darkMode: 'class',`** from `tailwind.config.mjs` (Task 9 removed the last `dark:` variants).
+- [ ] **Step 3: Remove the dark-variant shim** — delete the `@custom-variant dark (&:where(.dark, .dark *));` line (and its comment) from `src/styles/global.css`; Task 9 removed the last `dark:` variants, so nothing references it.
 
 - [ ] **Step 4: Drop unused dependencies**
 

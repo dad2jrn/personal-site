@@ -10,6 +10,7 @@ Rebuild ronmeck.dev around the handoff's cinematic single-page design: boot over
 
 ## Decisions made during brainstorming
 
+- **Platform upgrade first (user decision, 2026-07-03):** the revision lands on Astro 7 (latest stable), Tailwind CSS 4.3.2, React 19.2.7. Consequences: Tailwind config moves to a CSS-first `@theme` block via `@tailwindcss/vite` (`tailwind.config.mjs` and `@astrojs/tailwind` deleted); content collections migrate to the Content Layer API (`src/content.config.ts` with `glob()` loaders, `entry.id`, `render(entry)`); Node ≥ 22. The upgrade is its own isolated, verifiable step before any redesign work.
 - **Scope: whole site.** Homepage rebuilt per the handoff; inner pages (`/work/*`, `/patents/*`, `/writing/*`, `/resume`, `404`) keep their content and structure but are reskinned with the new tokens.
 - **`/contact` is removed** and redirects to `/#contact` via Astro `redirects` config. The homepage TRANSMIT section replaces it.
 - **`/resume` stays** (reskinned). The Record section links to the existing `/Ron_Meck_Resume.pdf`.
@@ -25,7 +26,7 @@ In-place rebuild on the `revision` branch (no parallel `/v2` route, no wholesale
 
 ## 1. Foundation
 
-### Tokens (`tailwind.config.mjs` + `src/styles/global.css`)
+### Tokens (Tailwind 4 `@theme` block in `src/styles/global.css`)
 
 - Colors per handoff: `--bg` #0A0A0B (boot overlay #060607), `--ink` #EDEBE6, muted at 0.55/0.45/0.4 alpha, `--accent` #F5A524 (the only accent), paper set #E9E5DC / ink #141412 / accent-on-paper #8A6A1F & #B07C1E (Origin only), hairlines rgba(237,235,230,0.10–0.14) on dark and rgba(20,20,18,0.2) on paper. Selection: amber background, #0A0A0B text.
 - Fonts via `@fontsource` (self-hosted, matching current pattern): **Archivo variable** (display/body; replaces Geist and Fraunces), **JetBrains Mono** (kept), **Instrument Serif** italic (new; hero subline and inline emphasis). Remove the Geist and Fraunces packages.
