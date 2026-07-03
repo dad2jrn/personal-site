@@ -32,6 +32,7 @@ export default function PatentAccordion({ items }: { items: PatentItem[] }) {
           <button
             type="button"
             onClick={() => toggle(i)}
+            aria-expanded={open === i}
             className="grid w-full grid-cols-[1fr_40px] items-center gap-6 px-7 py-[26px] text-left transition-colors hover:bg-accent/[0.06] md:grid-cols-[170px_1fr_40px]"
           >
             <span className="font-mono text-[13px] text-accent">{pat.number}</span>

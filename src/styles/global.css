@@ -5,7 +5,6 @@
 @import '@fontsource/instrument-serif/400-italic.css';
 
 @import "tailwindcss";
-@plugin "@tailwindcss/typography";
 
 @theme {
   --color-ink: #EDEBE6;
@@ -17,7 +16,6 @@
   --color-line: rgb(237 235 230 / 0.12);
   --color-line-strong: rgb(237 235 230 / 0.2);
   --color-accent: #F5A524;
-  --color-accent-soft: rgb(245 165 36 / 0.35);
   --color-paper: #E9E5DC;
   --color-paper-ink: #141412;
   --color-paper-accent: #8A6A1F;
@@ -107,4 +105,5 @@
   html, body { background: white !important; color: black !important; font-size: 10.5pt; }
   .no-print { display: none !important; }
   a { color: black !important; text-decoration: none !important; }
+  nav, footer, #scroll-progress { display: none !important; }
 }

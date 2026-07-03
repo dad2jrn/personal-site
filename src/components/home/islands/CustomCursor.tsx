@@ -10,6 +10,7 @@ export default function CustomCursor() {
 
   useEffect(() => {
     if (!window.matchMedia('(pointer: fine)').matches) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     setActive(true);
   }, []);
 
