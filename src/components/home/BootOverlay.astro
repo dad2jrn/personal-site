@@ -1,0 +1,26 @@
+{/* Terminal boot intro. Hidden by default (no-JS never blocks); inline script
+    shows it only when it should play, once per session, never under reduced motion. */}
+<div id="boot-overlay" class="fixed inset-0 z-[150] hidden items-center justify-center bg-surface-sunken transition-opacity duration-500">
+  <div class="min-w-[340px] font-mono text-[14px] leading-[2.1] text-accent">
+    <div class="boot-line" style="animation-delay: 0.1s">&gt; RM_OS v26.07 — initializing</div>
+    <div class="boot-line text-ink/75" style="animation-delay: 0.55s">&gt; mounting /career ······· 25 YRS · OK</div>
+    <div class="boot-line text-ink/75" style="animation-delay: 1s">&gt; loading platforms ····· $2.0T · OK</div>
+    <div class="boot-line text-ink/75" style="animation-delay: 1.45s">&gt; verifying patents ······ [4/4] · OK</div>
+    <div class="boot-line" style="animation-delay: 1.9s">&gt; render: ronmeck.dev<span class="ml-[6px] inline-block h-[15px] w-[9px] translate-y-[2px] animate-[rm-blink_0.9s_infinite] bg-accent"></span></div>
+  </div>
+</div>
+
+<script is:inline>
+  (() => {
+    const el = document.getElementById('boot-overlay');
+    if (!el) return;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let played = false;
+    try { played = !!sessionStorage.getItem('rm-boot-played'); } catch {}
+    if (reduced || played) { el.remove(); return; }
+    try { sessionStorage.setItem('rm-boot-played', '1'); } catch {}
+    el.style.display = 'flex';
+    setTimeout(() => { el.style.opacity = '0'; }, 2600);
+    setTimeout(() => { el.remove(); }, 3150);
+  })();
+</script>

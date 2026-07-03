@@ -1,0 +1,41 @@
+---
+import ParticleField from './islands/ParticleField';
+
+const ticker = [
+  '$2T+ ANNUAL VOLUME',
+  '60M MONTHLY USERS',
+  '4 US PATENTS',
+  '75% FASTER DELIVERY',
+  '$30M REVENUE UNLOCKED',
+];
+---
+
+<header id="top" class="relative flex min-h-screen flex-col justify-end overflow-hidden">
+  <div class="absolute inset-0">
+    <ParticleField client:idle />
+  </div>
+  <div class="pointer-events-none absolute inset-0 [background:radial-gradient(ellipse_at_50%_100%,rgba(10,10,11,0)_30%,rgba(10,10,11,0.85)_100%)]"></div>
+  <div class="relative px-6 md:px-10">
+    <div class="mb-6 flex flex-wrap gap-6 font-mono text-[12px] tracking-[0.14em] text-accent">
+      <span><span class="mr-2 inline-block h-[7px] w-[7px] animate-[rm-pulse_2s_infinite] rounded-full bg-accent"></span>AVAILABLE</span>
+      <span class="text-ink/50">GREATER RICHMOND, VA</span>
+      <span class="text-ink/50">37.5407° N / 77.4360° W</span>
+    </div>
+    <h1 class="m-0 text-[clamp(72px,15.5vw,260px)] font-black uppercase leading-[0.86] tracking-[-0.03em] [font-stretch:125%]">Ron<br />Meck</h1>
+    <div class="flex flex-wrap items-end justify-between gap-10 pb-10 pt-8">
+      <p class="m-0 max-w-[560px] font-serif text-[clamp(24px,3vw,40px)] italic leading-[1.15] text-ink">I design the systems money moves through.</p>
+      <p class="m-0 max-w-[340px] font-mono text-[13px] leading-[1.8] text-ink-muted">Enterprise architect &amp; technology transformation leader. Twenty-five years across Fortune 100 finance and statewide government.</p>
+    </div>
+  </div>
+  <div class="relative overflow-hidden whitespace-nowrap border-t border-line-strong py-[14px]">
+    <div class="inline-flex animate-[rm-marquee_28s_linear_infinite] will-change-transform">
+      {[0, 1].map(() => (
+        <span class="font-mono text-[13px] tracking-[0.12em] text-ink/70">
+          {ticker.map((t) => (
+            <>{t}&nbsp;&nbsp;<span class="text-accent">◆</span>&nbsp;&nbsp;</>
+          ))}
+        </span>
+      ))}
+    </div>
+  </div>
+</header>
