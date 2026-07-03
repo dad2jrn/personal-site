@@ -5,16 +5,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 <BaseLayout title="404: Not Found">
   <section class="py-32">
     <div class="container-site text-center">
-      <div class="label-mono mb-8">Error 404</div>
-      <h1 class="text-4xl md:text-6xl font-medium text-ink mb-8 leading-tight">
+      <div class="eyebrow mb-8">ERROR 404</div>
+      <h1 class="h-display mb-8 text-[clamp(36px,5vw,72px)] text-ink">
         Page not found
       </h1>
       <p class="text-xl text-ink-muted mb-12 max-w-[50ch] mx-auto">
         The page you're looking for doesn't exist or has been moved.
       </p>
-      <a href="/" class="inline-flex h-12 items-center justify-center rounded-full bg-ink px-8 text-sm font-medium text-surface hover:bg-accent transition-colors">
-        Back to home
-      </a>
+      <a href="/" class="btn-solid">BACK TO HOME →</a>
     </div>
   </section>
 </BaseLayout>

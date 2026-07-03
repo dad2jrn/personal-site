@@ -27,7 +27,7 @@ const { Content } = await render(entry);
         </a>
 
         <div class="label-mono text-accent mb-4">{entry.data.patentNumber}</div>
-        <h1 class="text-4xl md:text-6xl font-medium text-ink mb-8 leading-[1.1] tracking-tight">
+        <h1 class="h-display mb-8 text-[clamp(36px,5vw,72px)] text-ink">
           {entry.data.title}
         </h1>
 
@@ -55,7 +55,7 @@ const { Content } = await render(entry);
         </div>
 
         <div class="mt-24 pt-12 border-t border-line">
-          <div class="bg-surface-sunken rounded-lg p-8 border border-line">
+          <div class="bg-surface-sunken p-8 border border-line">
             <h3 class="text-xl font-medium text-ink mb-4">Scale Fluency</h3>
             <p class="text-ink-muted leading-relaxed">
               The work behind this patent touched the kind of footprint where a 5% efficiency gain translates into real dollars and a 0.1% reliability improvement translates into thousands of customers having a better day. It represents the discipline required to operate cloud at the scale of a major bank.

@@ -32,7 +32,7 @@ const formatDate = (date: Date | string) => {
     <div class="container-site">
       <div class="max-w-[720px] mx-auto">
         <div class="label-mono mb-8">{formatDate(entry.data.publishedAt)}</div>
-        <h1 class="text-4xl md:text-6xl font-medium text-ink mb-8 leading-[1.1] tracking-tight">
+        <h1 class="h-display mb-8 text-[clamp(36px,5vw,72px)] text-ink">
           {entry.data.title}
         </h1>
         <p class="text-xl md:text-2xl text-ink-muted leading-relaxed mb-16">
@@ -46,7 +46,7 @@ const formatDate = (date: Date | string) => {
         <div class="mt-24 pt-12 border-t border-line">
           <div class="flex flex-wrap gap-2">
             {entry.data.tags.map((tag: string) => (
-              <span class="px-3 py-1 bg-surface-sunken border border-line rounded-full text-xs text-ink-subtle">
+              <span class="px-3 py-1 bg-surface-sunken border border-line text-xs text-ink-subtle">
                 #{tag}
               </span>
             ))}
