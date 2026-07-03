@@ -16,4 +16,7 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
   build: { format: 'directory' },
+  redirects: {
+    '/contact': '/#contact',
+  },
 });

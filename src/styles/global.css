@@ -7,10 +7,6 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-/* Class-based dark variant so legacy dark: classes stay dead (no .dark class
-   is ever set). The whole line is deleted in Task 10 after Task 9's sweep. */
-@custom-variant dark (&:where(.dark, .dark *));
-
 @theme {
   --color-ink: #EDEBE6;
   --color-ink-muted: rgb(237 235 230 / 0.55);
