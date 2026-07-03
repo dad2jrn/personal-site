@@ -27,15 +27,42 @@ const ticker = [
       <p class="m-0 max-w-[340px] font-mono text-[13px] leading-[1.8] text-ink-muted">Enterprise architect &amp; technology transformation leader. Twenty-five years across Fortune 100 finance and statewide government.</p>
     </div>
   </div>
-  <div class="relative overflow-hidden whitespace-nowrap border-t border-line-strong py-[14px]">
-    <div class="inline-flex animate-[rm-marquee_28s_linear_infinite] will-change-transform">
-      {[0, 1].map(() => (
-        <span class="font-mono text-[13px] tracking-[0.12em] text-ink/70">
-          {ticker.map((t) => (
-            <>{t}&nbsp;&nbsp;<span class="text-accent">◆</span>&nbsp;&nbsp;</>
-          ))}
-        </span>
-      ))}
+  <div id="ticker-viewport" class="relative overflow-hidden whitespace-nowrap border-t border-line-strong py-[14px]">
+    <div id="ticker-entry">
+      <div id="ticker-loop" class="inline-flex animate-[rm-marquee_28s_linear_infinite] will-change-transform">
+        {[0, 1].map(() => (
+          <span class="font-mono text-[13px] tracking-[0.12em] text-ink/70">
+            {ticker.map((t) => (
+              <>{t}&nbsp;&nbsp;<span class="text-accent">◆</span>&nbsp;&nbsp;</>
+            ))}
+          </span>
+        ))}
+      </div>
     </div>
   </div>
 </header>
+
+<script>
+  // Ticker entrance: the crawl starts fully offscreen right and enters at the
+  // exact speed of the infinite loop, which takes over seamlessly (no gap).
+  // Without JS the plain CSS loop still runs — this is an enhancement only.
+  const viewport = document.getElementById('ticker-viewport');
+  const entry = document.getElementById('ticker-entry');
+  const loop = document.getElementById('ticker-loop');
+  if (viewport && entry && loop && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const half = loop.scrollWidth / 2; // content is duplicated; one copy = half
+    const speed = half / 28;           // px per second — must match rm-marquee
+    if (speed > 0) {
+      const distance = viewport.clientWidth;
+      const duration = distance / speed;
+      // Restart the loop deterministically, delayed until the entrance lands.
+      loop.style.animation = 'none';
+      void loop.offsetWidth; // reflow so the animation reset takes
+      loop.style.animation = `rm-marquee 28s linear infinite ${duration}s`;
+      entry.animate(
+        [{ transform: `translateX(${distance}px)` }, { transform: 'translateX(0)' }],
+        { duration: duration * 1000, easing: 'linear', fill: 'both' }
+      );
+    }
+  }
+</script>

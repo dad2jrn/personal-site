@@ -57,6 +57,7 @@
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0s !important; /* staggered content (boot lines/launch button) appears at once */
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
@@ -94,7 +95,8 @@
   .prose code { @apply bg-surface-raised px-1.5 py-0.5 font-mono text-[0.9em] text-accent; }
   .prose code::before, .prose code::after { content: ""; }
   .prose blockquote { @apply border-l-2 border-accent pl-6 italic text-ink-muted; }
-  .prose ul, .prose ol { @apply mb-8 list-outside space-y-3; }
+  .prose ul { @apply mb-8 list-outside list-disc pl-5 space-y-3; }
+  .prose ol { @apply mb-8 list-outside list-decimal pl-5 space-y-3; }
   .prose li { @apply pl-2; }
   .prose li::marker { @apply font-bold text-accent; }
 

@@ -92,8 +92,17 @@ Kept but restyled — still used by inner index pages: `PatentCard.astro` (`/pat
 
 ## Deferred (explicitly not in this revision)
 
-- **Mouse-responsive particle field** — future brainstorm + enhancement to `ParticleField.tsx`.
 - Any light theme.
+
+## Post-launch revisions (user feedback, 2026-07-03)
+
+1. Sound is ON by default (WebAudio still unlocks on first user gesture — the boot LAUNCH click provides it).
+2. Sound toggle moved from the footer to the nav, right of CONTACT.
+3. Boot overlay is now a gate: a "LAUNCH APPLICATION →" button (appearing after the boot lines) must be clicked to enter; scroll locked until then; still once per session.
+4. Origin section container widened to 1360px so the display H2 clears the right-hand column.
+5. Ticker crawl enters from offscreen right at loop speed, then the seamless infinite loop takes over (JS-measured; plain CSS loop without JS).
+6. Particle field: 110 particles (was 80), velocity ±0.525 (was ±0.35), and mouse interaction — cursor acts as an extra network node (amber tether lines within 160px) with gentle positional repulsion inside 90px. This resolves the previously deferred mouse-responsiveness TODO.
+7. Favicon: #F5A524 square with "RM." in dark Archivo-style type.
 
 ## Error handling
 

@@ -3,7 +3,9 @@ import SectionHeader from './SectionHeader.astro';
 ---
 
 <section id="origin" class="relative bg-paper px-6 pb-[140px] pt-[120px] text-paper-ink md:px-10">
-  <div class="mx-auto max-w-site">
+  {/* Wider than max-w-site: the stretched display H2 needs the extra column
+      width to clear the right-hand paragraphs (revision feedback #4). */}
+  <div class="mx-auto max-w-[1360px]">
     <SectionHeader index="01" name="ORIGIN" meta="1997 → 2016" paper />
     <div class="grid grid-cols-1 items-start gap-[60px] md:grid-cols-2">
       <h2 data-reveal class="h-display m-0 text-[clamp(40px,5vw,76px)]">Every architecture has a foundation<span class="text-paper-accent-bright">.</span></h2>

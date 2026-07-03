@@ -1,4 +1,4 @@
-// WebAudio sine blips. Off by default; footer toggle flips it.
+// WebAudio sine blips. On by default; the nav toggle flips it.
 // State lives on window so every bundle (Astro scripts, React islands) shares it.
 type RMSound = { on: boolean; ctx?: AudioContext };
 
@@ -7,7 +7,7 @@ declare global {
 }
 
 function store(): RMSound {
-  if (!window.__rmSound) window.__rmSound = { on: false };
+  if (!window.__rmSound) window.__rmSound = { on: true };
   return window.__rmSound;
 }
 
@@ -23,8 +23,11 @@ export function setSound(on: boolean): void {
 export function blip(freq: number, gain: number): void {
   try {
     const s = store();
-    if (!s.ctx) s.ctx = new AudioContext(); // lazily created on first user gesture
+    if (!s.ctx) s.ctx = new AudioContext(); // lazily created on first use
     const ctx = s.ctx;
+    // Autoplay policy: the context stays suspended until the page has had a
+    // real user gesture (the boot LAUNCH click provides one on first visit).
+    if (ctx.state === 'suspended') ctx.resume().catch(() => {});
     const osc = ctx.createOscillator();
     const g = ctx.createGain();
     osc.type = 'sine';
