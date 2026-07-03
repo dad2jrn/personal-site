@@ -8,6 +8,12 @@
     "directory": "./dist",
     "not_found_handling": "404-page"
   },
-  "workers_dev": true,
+  // Custom domains — Cloudflare manages the DNS records for these automatically.
+  "routes": [
+    { "pattern": "ronmeck.dev", "custom_domain": true },
+    { "pattern": "www.ronmeck.dev", "custom_domain": true }
+  ],
+  // Site is served on the custom domain; disable the *.workers.dev URL.
+  "workers_dev": false,
   "preview_urls": true
 }
