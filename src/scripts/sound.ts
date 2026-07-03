@@ -1,9 +1,10 @@
-// WebAudio engine: sampled UI sounds + ambient music loop + legacy sine blips.
-// On by default; the nav toggle flips it. State lives on window so every
-// bundle (Astro scripts, React islands) shares it; the ON flag persists
+// WebAudio engine: sampled UI sounds + looping music tracks + legacy sine
+// blips. On by default; the nav toggle flips it. State lives on window so
+// every bundle (Astro scripts, React islands) shares it; the ON flag persists
 // across page loads in sessionStorage.
 
 export type SfxName = 'hover' | 'click' | 'open' | 'deny' | 'boot' | 'launch' | 'type';
+export type MusicName = 'boot' | 'main';
 
 type RMSound = {
   on: boolean;
@@ -13,6 +14,7 @@ type RMSound = {
   gestured?: boolean;
   buffers?: Map<string, Promise<AudioBuffer>>;
   musicSrc?: AudioBufferSourceNode;
+  musicName?: MusicName;
 };
 
 declare global {
@@ -29,8 +31,10 @@ const SFX: Record<SfxName, { url: string; gain: number }> = {
   type: { url: '/sounds/typearrayloop.ogg', gain: 0.4 },
 };
 
-const MUSIC_URL = '/sounds/musicLoop.ogg';
-const MUSIC_GAIN = 0.25;
+const MUSIC: Record<MusicName, { url: string; gain: number }> = {
+  boot: { url: '/sounds/musicLoop.ogg', gain: 0.25 },
+  main: { url: '/sounds/mainLoop.ogg', gain: 0.25 },
+};
 
 function store(): RMSound {
   if (!window.__rmSound) {
@@ -97,16 +101,31 @@ export function sfx(name: SfxName): void {
   } catch { /* audio unavailable */ }
 }
 
-export function startMusic(): void {
+// While the boot overlay is up the page plays its intro loop; everywhere
+// else — and once the overlay starts its dismiss fade (opacity 0) — the
+// main site loop plays.
+function currentTrack(): MusicName {
+  const el = document.getElementById('boot-overlay');
+  return el && el.style.opacity !== '0' ? 'boot' : 'main';
+}
+
+export function startMusic(name?: MusicName): void {
   try {
     const s = store();
-    if (!s.on || s.musicSrc) return;
-    loadBuffer(MUSIC_URL).then((buf) => {
+    if (!s.on) return;
+    const track = name ?? currentTrack();
+    if (s.musicSrc && s.musicName === track) return;
+    stopMusic(); // switching tracks ends the old loop immediately
+    s.musicName = track;
+    const { url, gain } = MUSIC[track];
+    loadBuffer(url).then((buf) => {
       const s2 = store();
-      if (!s2.on || s2.musicSrc) return;
+      // Abandon if sound went off, another track was requested meanwhile,
+      // or a concurrent call already started this one.
+      if (!s2.on || s2.musicName !== track || s2.musicSrc) return;
       // Unlike one-shots, starting a loop into a suspended context is what we
       // want: it begins the instant autoplay is granted or a gesture resumes.
-      s2.musicSrc = playBuffer(buf, MUSIC_GAIN, true);
+      s2.musicSrc = playBuffer(buf, gain, true);
       ctx().resume().catch(() => {});
     }).catch(() => {});
   } catch { /* audio unavailable */ }

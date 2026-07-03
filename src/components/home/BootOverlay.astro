@@ -31,12 +31,15 @@
 <script>
   // Bundled (non-inline) so it can import the sound module. Runs a beat after
   // the inline gate — acceptable: the boot text animates for ~2.3s anyway.
-  import { sfx } from '../../scripts/sound';
+  import { sfx, startMusic } from '../../scripts/sound';
   const btn = document.getElementById('boot-launch');
   if (btn) {
     // On a truly first visit this is blocked by autoplay policy (no gesture
     // yet) and silently skipped — accepted in the spec.
     sfx('boot');
-    btn.addEventListener('click', () => sfx('launch'));
+    btn.addEventListener('click', () => {
+      sfx('launch');
+      startMusic('main'); // ends the boot intro loop, starts the site loop
+    });
   }
 </script>
