@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Replace the current 5-line terminal `BootOverlay` on ronmeck.dev with the full-screen HUD console specified in `bootoverlay.md` (project root) — a self-assembling "Field Station" console with greebles, a streamed boot log, and a scramble-decoded `APPLICATION READY TO DEPLOY ▶` button that dismisses into the hero.
+**Goal:** Add the full-screen HUD console specified in `bootoverlay.md` (project root) — a self-assembling "Field Station" console with greebles, a streamed boot log, and a scramble-decoded `APPLICATION READY TO DEPLOY ▶` button that dismisses into the hero — as the boot experience for **tablet and desktop** visitors. **Phone-width visitors keep the current 5-line terminal `BootOverlay`, unchanged, for now.**
 
-**Architecture:** A single React island (`BootConsole.tsx`, `client:load`) replaces almost all of `src/components/home/BootOverlay.astro`, which becomes a thin wrapper. The island is split into small focused files under `src/components/home/islands/boot/`: pure data/logic (no DOM) in `data.ts`/`scramble.ts`, a state-machine hook in `useBootTimeline.ts`, and presentational widgets grouped by how tightly they're coupled (`Greebles.tsx`, `SystemBox.tsx`, `Panels.tsx`, `Chrome.tsx`). `BootConsole.tsx` composes them into the header/rails/center/footer grid and owns sound + dismiss wiring.
+**Architecture:** A new React island (`BootConsole.tsx`, `client:load`) is added alongside (not instead of) the existing terminal overlay markup in `src/components/home/BootOverlay.astro`. Both self-gate at runtime on the same `(min-width: 768px)` check — the classic overlay's inline scripts only activate below that width; `BootConsole` only mounts its real content at or above it — so exactly one is ever live, never both. The new island is split into small focused files under `src/components/home/islands/boot/`: pure data/logic (no DOM) in `data.ts`/`scramble.ts`, a state-machine hook in `useBootTimeline.ts`, and presentational widgets grouped by how tightly they're coupled (`Greebles.tsx`, `SystemBox.tsx`, `Panels.tsx`, `Chrome.tsx`). `BootConsole.tsx` composes them into the header/rails/center/footer grid and owns sound + dismiss wiring for the desktop/tablet path only.
 
 **Tech Stack:** Astro 7 + `@astrojs/react` (React 19) + Tailwind v4 (CSS-first `@theme`, arbitrary-value and arbitrary-breakpoint variants) + existing `src/scripts/sound.ts` WebAudio module. No test runner exists in this repo.
 
@@ -19,6 +19,8 @@
 - **`client:load` per spec** ("it must paint before anything else"). Any per-mount random values (e.g. signal-tick heights/timings) must be generated inside `useEffect` or a lazy `useState(() => ...)` initializer — never at module scope or in the function body directly — so the server-rendered markup and the first client render match (no hydration mismatch).
 - **Non-standard breakpoints.** The spec's responsive rules (drop rails <1100px, log+button only <700px) don't align with Tailwind's default scale. Use Tailwind v4 arbitrary breakpoint variants: `min-[1100px]:` and `max-[699px]:`.
 - **Verify after every task** that touches `.astro`/`.tsx`: `npx astro check` must report the same error/warning count as before the task (58 hints, 0 errors, 0 warnings as of this plan).
+- **Device gating.** Phone-width visitors (`< 768px`, matching the project's existing Tailwind `md:` breakpoint) keep the current 5-line terminal overlay verbatim — no changes to its markup, its two `<script>` blocks, or its behavior, beyond wrapping each in a runtime width check. Tablet/desktop visitors (`>= 768px`) get `BootConsole`. The check runs once, client-side, per component — not via CSS `display` toggling — so the inactive experience never mounts its scripts/timers/sound calls at all.
+- **The sound system is out of scope.** `src/scripts/sound.ts` is not modified by this plan. `BootConsole` calls its existing exports (`sfx`, `startMusic`) the same way the classic overlay already does; nothing new is added to that module.
 
 ---
 
@@ -919,12 +921,12 @@ git commit -m "feat(boot): add boot console header/footer chrome and remaining k
 
 **Interfaces:**
 - Consumes: everything produced in Tasks 1-6, plus `sfx`, `startMusic` from `../../../scripts/sound`.
-- Produces: `export default function BootConsole(): JSX.Element` — the full HUD, mountable with `client:load`.
+- Produces: `export function BootConsoleInner(): JSX.Element` (the full HUD, no device check of its own) and `export default function BootConsole(): JSX.Element | null` (the device-gated wrapper `client:load` actually mounts — renders `null` until a client-side check confirms `>= 768px`, then renders `BootConsoleInner`).
 
 - [ ] **Step 1: Create the file**
 
 ```tsx
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useBootTimeline } from './boot/useBootTimeline';
 import { HeaderBand, Footer } from './boot/Chrome';
 import { MicroSelectRow, ArrayChip, SyncWidget, NineDWidget, LockBox } from './boot/Greebles';
@@ -949,7 +951,24 @@ const ENTRANCE = {
   footer: 0.8,
 } as const;
 
+// Tablet/desktop only — matches the project's existing Tailwind `md:` breakpoint.
+// Phone-width visitors keep the classic terminal overlay (see BootOverlay.astro).
+const DESKTOP_QUERY = '(min-width: 768px)';
+
 export default function BootConsole() {
+  // Starts `false` so server render and first client paint agree (no
+  // hydration mismatch) — flips to `true` a tick after mount if this is a
+  // tablet/desktop viewport. All of BootConsoleInner's timers/sound/effects
+  // stay unmounted until then, so phone visitors never run any of this.
+  const [enabled, setEnabled] = useState(false);
+  useEffect(() => {
+    setEnabled(window.matchMedia(DESKTOP_QUERY).matches);
+  }, []);
+  if (!enabled) return null;
+  return <BootConsoleInner />;
+}
+
+export function BootConsoleInner() {
   const t = useBootTimeline();
   const rootRef = useRef<HTMLDivElement>(null);
   const bootedRef = useRef(false);
@@ -1112,28 +1131,68 @@ git commit -m "feat(boot): add BootConsole top-level composition"
 
 ---
 
-### Task 8: Wire into `BootOverlay.astro` and full visual QA
+### Task 8: Wire `BootConsole` alongside the classic overlay (device-gated) + full visual QA
 
 **Files:**
-- Modify: `src/components/home/BootOverlay.astro` (replace entire body)
+- Modify: `src/components/home/BootOverlay.astro` (keep the existing terminal markup and both `<script>` blocks verbatim; gate each script's body behind a width check; add `<BootConsole client:load />`)
 
 **Interfaces:**
 - Consumes: `BootConsole` (default export) from `./islands/BootConsole`.
 
-- [ ] **Step 1: Replace `BootOverlay.astro`**
+- [ ] **Step 1: Gate the classic overlay's two scripts and add `BootConsole`**
+
+Read the current `src/components/home/BootOverlay.astro` first — do not retype its markup or the sound-related script from memory; wrap the *existing* script bodies in the width check shown below, keeping every other line (including the sound import and comments) unchanged. The `<div id="boot-overlay">` markup itself is untouched. Add the `BootConsole` import and mount at the end of the file:
+
+```astro
+<script is:inline>
+  (() => {
+    // Phone-width only — tablet/desktop gets <BootConsole> below instead.
+    if (window.matchMedia('(min-width: 768px)').matches) return;
+    const el = document.getElementById('boot-overlay');
+    const btn = document.getElementById('boot-launch');
+    if (!el || !btn) return;
+    el.style.display = 'flex';
+    document.documentElement.style.overflow = 'hidden';
+    btn.addEventListener('click', () => {
+      document.documentElement.style.overflow = '';
+      el.addEventListener('animationend', () => { el.remove(); }, { once: true });
+      el.classList.add('boot-overlay-exit');
+    });
+  })();
+</script>
+
+<script>
+  // Phone-width only — see the guard at the top; unchanged otherwise.
+  import { sfx, startMusic } from '../../scripts/sound';
+  if (window.matchMedia('(min-width: 768px)').matches) {
+    // no-op: tablet/desktop uses BootConsole's own sound wiring instead
+  } else {
+    const btn = document.getElementById('boot-launch');
+    if (btn) {
+      sfx('boot');
+      btn.addEventListener('click', () => {
+        sfx('launch');
+        startMusic('main');
+      });
+    }
+  }
+</script>
+
+<BootConsole client:load />
+```
+
+And add to the frontmatter:
 
 ```astro
 ---
 import BootConsole from './islands/BootConsole';
 ---
-
-<BootConsole client:load />
 ```
 
 - [ ] **Step 2: Type-check**
 
 Run: `npx astro check`
-Expected: 0 errors (58 hints baseline may shift slightly since the old inline `<script is:inline>` and second `<script>` blocks are gone — that's expected; there should be no new *errors*).
+Expected: 0 errors, same 58-hint baseline (nothing about the classic overlay's structure changed, only the guard clauses inside its scripts — plus the new `BootConsole` import/mount).
 
 - [ ] **Step 3: Build**
 
@@ -1185,18 +1244,45 @@ In the same Playwright context (cookies/session storage persist per-context, not
 
 On a fresh context, click a NAV module (e.g. "WORK DECRYPT") before the choreography finishes. Expected: overlay dismisses (same CRT-collapse as the button) and the page ends up scrolled to `#work`.
 
-- [ ] **Step 11: Stop the dev server, clean up scratch files**
+- [ ] **Step 11: Phone-width gets the classic overlay, not the HUD**
+
+```js
+// screenshot-phone.mjs
+import { chromium } from 'playwright';
+const browser = await chromium.launch();
+const page = await browser.newPage({ viewport: { width: 390, height: 844 } }); // iPhone-class width, < 768px
+await page.goto('http://localhost:4321', { waitUntil: 'networkidle' });
+await page.waitForTimeout(2500);
+await page.screenshot({ path: 'boot-phone.png' });
+const consoleMounted = await page.evaluate(() => !!document.querySelector('[role="status"][aria-label="Site loading"]'));
+const classicVisible = await page.evaluate(() => getComputedStyle(document.getElementById('boot-overlay')).display !== 'none');
+console.log({ consoleMounted, classicVisible }); // expect { consoleMounted: false, classicVisible: true }
+await browser.close();
+```
+
+Run: `node screenshot-phone.mjs`
+Expected: `boot-phone.png` shows the classic 5-line terminal ("RM_OS v26.07 — initializing..."), and the logged object is `{ consoleMounted: false, classicVisible: true }` — confirms `BootConsole` never mounted below 768px and the classic overlay is the one actually running.
+
+- [ ] **Step 12: Desktop/tablet gets the HUD, not the classic overlay**
+
+Repeat Step 11's script with `viewport: { width: 900, height: 900 }` (tablet-class, >= 768px). Expected: the logged object is `{ consoleMounted: true, classicVisible: false }` — the classic `#boot-overlay` div stays `hidden` (its script's width guard returned early) while `BootConsole` rendered the HUD.
+
+- [ ] **Step 13: No double `sfx('boot')` on either path**
+
+In each of the Step 11 / Step 12 contexts, before navigating, inject a counter: `await page.addInitScript(() => { window.__bootSfxCalls = 0; const orig = console.log; /* placeholder hook point */ });` — simpler: open dev tools network/console and confirm only one `AudioContext` fetch of `/sounds/PixelAnimate.ogg` (the `boot` sfx) fires per load, via `page.on('request', r => { if (r.url().includes('PixelAnimate')) count++; })`, asserting `count === 1` on both the phone-width and desktop-width runs.
+
+- [ ] **Step 14: Stop the dev server, clean up scratch files**
 
 ```bash
 kill %1 2>/dev/null || pkill -f "astro dev"
-rm -f screenshot.mjs boot-desktop-ready.png
+rm -f screenshot.mjs screenshot-phone.mjs boot-desktop-ready.png boot-phone.png
 ```
 
-- [ ] **Step 12: Commit**
+- [ ] **Step 15: Commit**
 
 ```bash
 git add src/components/home/BootOverlay.astro
-git commit -m "feat(boot): mount BootConsole HUD, replacing the 5-line terminal overlay"
+git commit -m "feat(boot): add BootConsole HUD for tablet/desktop, keep classic overlay on phones"
 ```
 
 ---
@@ -1205,4 +1291,5 @@ git commit -m "feat(boot): mount BootConsole HUD, replacing the 5-line terminal 
 
 - **Spec coverage:** §1 tokens → Global Constraints + Tailwind theme reuse. §2 layout → Task 7's grid + `min-[1100px]:`/`min-[700px]:` breakpoints. §3 widgets 1-12 → Tasks 3-6 (all 12 accounted for: micro-select, array chip, sync, 9D, system box, seq row, nav module, career bars, patent chips, transmission window, lock box, status dots). §4 keyframes → Task 6 Step 1 (rm-bootline/rm-pulse/rm-blink reused, others added; `rm-pulse` intentionally renamed `rm-boot-pulse` per Global Constraints). §5 choreography → `useBootTimeline` timers + `ENTRANCE` delays. §6 payoff button → Task 7 (with noted dismiss-animation substitution). §7 accessibility → skip listener, `aria-hidden` on greebles, `role="status"`, `autoFocus` button, tab-hidden pause, cleanup on unmount. §8 state → `BootTimelineState` shape matches almost exactly.
 - **Placeholder scan:** no TBD/TODO; every step has complete code.
-- **Type consistency:** `LogLine`/`NavItem`/`CareerItem`/`PatentChipData`/`MicroSelectSeed`/`ArrayChipData`/`SeqRowData` defined once in `types.ts` and used identically across `data.ts`, `Greebles.tsx`, `SystemBox.tsx`, `Panels.tsx`, `Chrome.tsx`, `BootConsole.tsx`. `BootTimelineState` fields match `useBootTimeline`'s return object and `BootConsole`'s usage (`t.phase`, `t.reduced`, `t.logLines`, etc.) 1:1.
+- **Type consistency:** `LogLine`/`NavItem`/`CareerItem`/`PatentChipData`/`MicroSelectSeed`/`ArrayChipData`/`SeqRowData` defined once in `types.ts` and used identically across `data.ts`, `Greebles.tsx`, `SystemBox.tsx`, `Panels.tsx`, `Chrome.tsx`, `BootConsole.tsx`. `BootTimelineState` fields match `useBootTimeline`'s return object and `BootConsoleInner`'s usage (`t.phase`, `t.reduced`, `t.logLines`, etc.) 1:1.
+- **Device gating (added after user feedback):** the classic overlay in `BootOverlay.astro` is preserved byte-for-byte except for one early-return guard added to each of its two `<script>` bodies; `BootConsole`'s default export is a thin `useState`/`useEffect` gate around the real `BootConsoleInner`, so on phones neither `useBootTimeline`'s timers nor its `sfx('boot')` call ever run — only the classic overlay's existing script does. Task 8 Steps 11-13 verify both sides mount exclusively and that `sfx('boot')` fires exactly once regardless of viewport. `src/scripts/sound.ts` itself is untouched by every task in this plan.
