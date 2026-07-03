@@ -1,13 +1,13 @@
 import { useEffect, useRef } from 'react';
 
 const ACCENT = '245,165,36';
-const N = 110; // ~40% more than the prototype's 80 (revision feedback #6)
+const N = 150; // nearly double the prototype's 80 (revision feedback rounds 1–2)
 const LINK_DIST = 130;
 // Visibility bumped over the prototype (0.22 / 2px / 0.7) per spec — clearer, not overbearing.
 const LINE_ALPHA = 0.32;
 const DOT_SIZE = 2.5;
 const DOT_ALPHA = 0.85;
-const SPEED = 0.525; // prototype 0.35 × 1.5 (revision feedback #6)
+const SPEED = 0.8; // prototype 0.35, raised twice per user feedback
 // Mouse interaction: the cursor acts as an extra node — nearby particles tether
 // to it with amber lines, and the closest ones are gently pushed aside.
 const CURSOR_LINK = 160;   // px — tether radius

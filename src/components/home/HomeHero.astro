@@ -29,8 +29,11 @@ const ticker = [
   </div>
   <div id="ticker-viewport" class="relative overflow-hidden whitespace-nowrap border-t border-line-strong py-[14px]">
     <div id="ticker-entry">
-      <div id="ticker-loop" class="inline-flex animate-[rm-marquee_28s_linear_infinite] will-change-transform">
-        {[0, 1].map(() => (
+      {/* 4 copies: the -50% loop shifts two copies, so wrap-around stays seamless
+          even on viewports wider than a single copy (~1400px). 56s keeps the same
+          px/s crawl speed the 2-copy 28s version had. */}
+      <div id="ticker-loop" class="inline-flex animate-[rm-marquee_56s_linear_infinite] will-change-transform">
+        {[0, 1, 2, 3].map(() => (
           <span class="font-mono text-[13px] tracking-[0.12em] text-ink/70">
             {ticker.map((t) => (
               <>{t}&nbsp;&nbsp;<span class="text-accent">◆</span>&nbsp;&nbsp;</>
@@ -46,19 +49,19 @@ const ticker = [
   // Ticker entrance: the crawl starts fully offscreen right and enters at the
   // exact speed of the infinite loop, which takes over seamlessly (no gap).
   // Without JS the plain CSS loop still runs — this is an enhancement only.
+  const LOOP_S = 56; // must match the rm-marquee duration on #ticker-loop
   const viewport = document.getElementById('ticker-viewport');
   const entry = document.getElementById('ticker-entry');
   const loop = document.getElementById('ticker-loop');
   if (viewport && entry && loop && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    const half = loop.scrollWidth / 2; // content is duplicated; one copy = half
-    const speed = half / 28;           // px per second — must match rm-marquee
+    const speed = loop.scrollWidth / 2 / LOOP_S; // px/s: the loop travels half its width per cycle
     if (speed > 0) {
       const distance = viewport.clientWidth;
       const duration = distance / speed;
       // Restart the loop deterministically, delayed until the entrance lands.
       loop.style.animation = 'none';
       void loop.offsetWidth; // reflow so the animation reset takes
-      loop.style.animation = `rm-marquee 28s linear infinite ${duration}s`;
+      loop.style.animation = `rm-marquee ${LOOP_S}s linear infinite ${duration}s`;
       entry.animate(
         [{ transform: `translateX(${distance}px)` }, { transform: 'translateX(0)' }],
         { duration: duration * 1000, easing: 'linear', fill: 'both' }

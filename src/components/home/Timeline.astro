@@ -21,7 +21,7 @@ const years = (start: string, end: string | null) =>
     <SectionHeader index="04" name="TIMELINE" meta="1997 → NOW" />
     <div>
       {entries.map((job: CollectionEntry<'experience'>) => (
-        <div data-reveal class="grid grid-cols-1 items-baseline gap-2 border-b border-line px-3 py-[22px] transition-[background,padding-left] duration-[250ms] hover:bg-accent/5 hover:pl-6 md:grid-cols-[180px_1fr_220px_110px] md:gap-6">
+        <div data-reveal data-tl-row class="grid grid-cols-1 items-baseline gap-2 border-b border-line px-3 py-[22px] transition-[background,padding-left] duration-[250ms] hover:bg-accent/5 hover:pl-6 md:grid-cols-[180px_1fr_220px_110px] md:gap-6">
           <span class="font-mono text-[13px] text-ink-subtle">{years(job.data.startDate, job.data.endDate)}</span>
           <span class="text-[clamp(18px,2vw,26px)] font-bold tracking-[-0.01em] [font-stretch:112%]">{job.data.role}</span>
           <span class="text-[14px] text-ink-muted">{job.data.shortCompany ?? job.data.company}</span>
@@ -31,3 +31,15 @@ const years = (start: string, end: string | null) =>
     </div>
   </div>
 </section>
+
+<script>
+  import { blip, soundOn } from '../../scripts/sound';
+
+  // Rows are divs, not links, so the cursor's a/button hover blip doesn't
+  // cover them — give them the same hover blip the IP accordion gets.
+  document.querySelectorAll('#timeline [data-tl-row]').forEach((row) => {
+    row.addEventListener('mouseenter', () => {
+      if (soundOn()) blip(1400, 0.02);
+    });
+  });
+</script>
