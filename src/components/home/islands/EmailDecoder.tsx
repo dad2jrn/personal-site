@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { sfx } from '../../../scripts/sound';
 
 const CHARS = '#$%&@*+=?!<>/\\0123456789ABCDEF';
 
@@ -25,6 +26,7 @@ export default function EmailDecoder() {
         if (!e.isIntersecting) return;
         io.disconnect();
         if (reduced) { el.textContent = target; return; }
+        sfx('type');
         const t0 = performance.now();
         const dur = 1200;
         const tick = (t: number) => {
