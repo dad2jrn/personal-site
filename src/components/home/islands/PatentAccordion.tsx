@@ -1,5 +1,5 @@
 import { Fragment, useState } from 'react';
-import { blip, soundOn } from '../../../scripts/sound';
+import { sfx } from '../../../scripts/sound';
 
 export interface PatentItem {
   number: string;
@@ -21,8 +21,8 @@ export default function PatentAccordion({ items }: { items: PatentItem[] }) {
   const [open, setOpen] = useState(-1); // single-open accordion
 
   const toggle = (i: number) => {
-    setOpen((prev) => (prev === i ? -1 : i));
-    if (soundOn()) blip(660, 0.04);
+    sfx(open === i ? 'deny' : 'open');
+    setOpen(open === i ? -1 : i);
   };
 
   return (
@@ -31,6 +31,7 @@ export default function PatentAccordion({ items }: { items: PatentItem[] }) {
         <div key={pat.number} className="mb-4 overflow-hidden border border-line">
           <button
             type="button"
+            data-sfx-silent
             onClick={() => toggle(i)}
             aria-expanded={open === i}
             className="grid w-full grid-cols-[1fr_40px] items-center gap-6 px-7 py-[26px] text-left transition-colors hover:bg-accent/[0.06] md:grid-cols-[170px_1fr_40px]"
