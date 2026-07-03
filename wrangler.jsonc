@@ -1,0 +1,13 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // Must match the Worker name in the Cloudflare dashboard (Workers Builds).
+  "name": "personal-site",
+  "compatibility_date": "2026-06-01",
+  // Fully static Astro build — serve dist/ as static assets, no server code.
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  },
+  "workers_dev": true,
+  "preview_urls": true
+}
