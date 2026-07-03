@@ -1,0 +1,25 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import SectionHeader from './SectionHeader.astro';
+import PatentAccordion from './islands/PatentAccordion';
+
+const patents = (await getCollection('patents'))
+  .sort((a: CollectionEntry<'patents'>, b: CollectionEntry<'patents'>) => a.id.localeCompare(b.id));
+const items = patents.map((p: CollectionEntry<'patents'>) => ({
+  number: p.data.patentNumber,
+  title: p.data.title,
+  desc: p.data.abstract,
+  tags: p.data.tags.join(' · '),
+  href: `/patents/${p.id}/`,
+}));
+---
+
+<section id="patents" class="border-b border-line px-6 py-[140px] md:px-10">
+  <div class="mx-auto max-w-site">
+    <SectionHeader index="05" name="INTELLECTUAL PROPERTY" meta="USPTO · 4 GRANTED" />
+    <h2 data-reveal class="h-display mb-16 text-[clamp(40px,5vw,76px)]">Systems that run themselves<span class="text-accent">.</span></h2>
+    <div data-reveal>
+      <PatentAccordion client:visible items={items} />
+    </div>
+  </div>
+</section>
