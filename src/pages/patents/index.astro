@@ -15,13 +15,14 @@ const sortedPatents = patents.sort((a, b) => {
   <section class="py-24">
     <div class="container-site">
       <div class="max-w-[800px]">
-        <h1 class="text-5xl md:text-6xl font-medium text-ink mb-8 tracking-tight">
+        <div class="eyebrow mb-8">/ INTELLECTUAL PROPERTY</div>
+        <h1 class="h-display mb-8 text-[clamp(48px,7vw,96px)] text-ink">
           Four U.S. patents. One thesis: make the cloud run itself.
         </h1>
         <p class="text-xl md:text-2xl text-ink-muted leading-relaxed mb-12">
           I'm a named inventor on four issued U.S. patents, all assigned to Capital One Services, LLC. They were filed and granted during the most consequential cloud transformation in U.S. financial services — the period in which Capital One became the first major American bank to operate fully on the public cloud.
         </p>
-        <div class="prose prose-ink max-w-none text-lg text-ink-muted">
+        <div class="prose max-w-none text-lg text-ink-muted">
           <p>
             These weren't theoretical inventions. Each one came directly out of a real operational problem I was solving on the ground: cost overruns, deployment failures, over-permissioned applications, and manual infrastructure decisions that didn't scale.
           </p>
@@ -42,7 +43,7 @@ const sortedPatents = patents.sort((a, b) => {
       </div>
 
       <div class="mt-24 pt-12 border-t border-line max-w-[800px]">
-        <h2 class="text-2xl font-medium text-ink mb-6">The pattern across all four</h2>
+        <h2 class="mb-6 text-[24px] font-extrabold uppercase tracking-[-0.01em] text-ink [font-stretch:115%]">The pattern across all four</h2>
         <div class="space-y-6 text-ink-muted leading-relaxed">
           <p>
             Read the patents back to back and a thesis emerges. Every one of them takes a piece of cloud operations that organizations normally run with humans in the loop — scheduling, recovery, permissions, configuration — and replaces the human bottleneck with a system that's automated, governed, and auditable.

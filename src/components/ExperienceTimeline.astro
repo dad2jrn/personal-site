@@ -79,7 +79,7 @@ const modalEntries = displayEntries.map((entry) => ({
 
     {enableModal && (
       <>
-        <script id="experience-modal-data" type="application/json" set:html={JSON.stringify(modalEntries)}></script>
+        <script id="experience-modal-data" type="application/json" set:html={JSON.stringify(modalEntries).replace(/</g, '\u003c')}></script>
         <div id="experience-role-modal" class="experience-modal" hidden aria-hidden="true">
           <div class="experience-modal__backdrop" data-experience-close></div>
           <div
@@ -232,16 +232,6 @@ const modalEntries = displayEntries.map((entry) => ({
 
     let teardownExperienceModal = setupExperienceModal();
 
-    document.addEventListener('astro:before-swap', () => {
-      teardownExperienceModal();
-      teardownExperienceModal = () => {};
-    });
-
-    document.addEventListener('astro:after-swap', () => {
-      teardownExperienceModal();
-      teardownExperienceModal = setupExperienceModal();
-    });
-
     window.addEventListener('beforeunload', () => {
       teardownExperienceModal();
     });
@@ -256,13 +246,13 @@ const modalEntries = displayEntries.map((entry) => ({
     }
 
     .experience-row:hover {
-      background: rgb(var(--surface-sunken) / 0.5);
+      background: color-mix(in srgb, var(--color-surface-sunken) 50%, transparent);
     }
 
     .experience-modal {
       position: fixed;
       inset: 0;
-      z-index: 70;
+      z-index: 100;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -285,9 +275,8 @@ const modalEntries = displayEntries.map((entry) => ({
       width: min(760px, 100%);
       max-height: min(86vh, 860px);
       overflow-y: auto;
-      border: 1px solid rgb(var(--line-strong));
-      border-radius: 12px;
-      background: rgb(var(--surface-raised));
+      border: 1px solid var(--color-line-strong);
+      background: var(--color-surface-raised);
       padding: 28px;
       box-shadow: 0 24px 72px rgb(0 0 0 / 0.25);
     }
@@ -306,10 +295,9 @@ const modalEntries = displayEntries.map((entry) => ({
       right: 12px;
       width: 32px;
       height: 32px;
-      border: 1px solid rgb(var(--line));
-      border-radius: 999px;
-      background: rgb(var(--surface));
-      color: rgb(var(--ink));
+      border: 1px solid var(--color-line);
+      background: var(--color-surface);
+      color: var(--color-ink);
       font-size: 18px;
       line-height: 1;
       cursor: pointer;
@@ -317,8 +305,8 @@ const modalEntries = displayEntries.map((entry) => ({
     }
 
     .experience-modal__close:hover {
-      border-color: rgb(var(--accent) / 0.55);
-      color: rgb(var(--accent));
+      border-color: color-mix(in srgb, var(--color-accent) 55%, transparent);
+      color: var(--color-accent);
     }
 
     .experience-modal__achievement {
@@ -330,7 +318,7 @@ const modalEntries = displayEntries.map((entry) => ({
       content: '•';
       position: absolute;
       left: 0;
-      color: rgb(var(--accent));
+      color: var(--color-accent);
     }
 
     @media (max-width: 640px) {

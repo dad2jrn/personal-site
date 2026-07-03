@@ -1,0 +1,15 @@
+---
+interface Props {
+  index: string;
+  name: string;
+  meta?: string;
+  paper?: boolean;
+}
+const { index, name, meta, paper = false } = Astro.props;
+---
+
+<div data-reveal class="mb-[72px] flex items-baseline gap-5">
+  <span class:list={["font-mono text-[13px] tracking-[0.14em]", paper ? "text-paper-accent" : "text-accent"]}>{index} / {name}</span>
+  <div class:list={["h-px flex-1", paper ? "bg-paper-line" : "bg-ink/[0.14]"]}></div>
+  {meta && <span class:list={["font-mono text-[13px]", paper ? "text-paper-ink/45" : "text-ink/40"]}>{meta}</span>}
+</div>

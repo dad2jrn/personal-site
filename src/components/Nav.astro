@@ -1,47 +1,42 @@
 ---
-const { currentPath = "" } = Astro.props;
-
 const navItems = [
-  { label: 'work', href: '/work/' },
-  { label: 'patents', href: '/patents/' },
-  { label: 'writing', href: '/writing/' },
-  { label: 'resume', href: '/resume/' },
-  { label: 'contact', href: '/contact/' },
+  { label: 'WORK', href: '/#work' },
+  { label: 'PATENTS', href: '/#patents' },
+  { label: 'WRITING', href: '/#writing' },
+  { label: 'RESUME', href: '/#resume' },
+  { label: 'CONTACT', href: '/#contact' },
 ];
-
-const isActive = (href: string) => {
-  const normalizedPath = currentPath.replace(/^\/|\/$/g, '');
-  const normalizedHref = href.replace(/^\/|\/$/g, '');
-
-  if (normalizedHref === '' && normalizedPath === '') return true;
-  if (normalizedHref !== '' && normalizedPath.startsWith(normalizedHref)) return true;
-  return false;
-};
 ---
 
-<nav class="py-8">
-  <div class="container-site flex items-center justify-between">
-    <a href="/" class="group flex items-center gap-1 font-display text-2xl font-medium tracking-tight text-ink">
-      RM<span class="text-accent">.</span>
-    </a>
-
-    <div class="flex items-center gap-6 md:gap-10">
-      <ul class="flex items-center gap-4 md:gap-8">
-        {navItems.map((item) => (
-          <li>
-            <a
-              href={item.href}
-              class:list={[
-                "font-mono text-[11px] uppercase tracking-mono-wide transition-all duration-150 hover:text-ink",
-                isActive(item.href) ? "text-ink underline decoration-accent decoration-2 underline-offset-4" : "text-ink-muted underline decoration-transparent decoration-1 underline-offset-4 hover:decoration-ink-subtle"
-              ]}
-            >
-              {item.label}
-            </a>
-          </li>
-        ))}
-      </ul>
-
-    </div>
+<div id="scroll-progress" class="fixed left-0 top-0 z-[90] h-[2px] w-0 bg-accent"></div>
+<nav class="fixed left-0 right-0 top-0 z-[80] flex items-center justify-between px-6 py-5 [mix-blend-mode:difference] md:px-10">
+  <a href="/" class="text-[20px] font-extrabold tracking-[-0.02em] text-ink no-underline [font-stretch:125%]">RM<span class="text-accent">.</span></a>
+  <div class="hidden items-center gap-7 font-mono text-[12px] tracking-[0.08em] min-[700px]:flex">
+    {navItems.map((item) => (
+      <a href={item.href} class="text-ink no-underline transition-colors hover:text-accent">{item.label}</a>
+    ))}
+    <button id="sound-toggle" type="button" class="border border-ink/25 px-3 py-[5px] font-mono text-[12px] tracking-[0.08em] text-ink transition-colors hover:border-accent hover:text-accent">SOUND · ON</button>
   </div>
 </nav>
+
+<script>
+  import { soundOn, setSound } from '../scripts/sound';
+
+  const bar = document.getElementById('scroll-progress');
+  const onScroll = () => {
+    const h = document.documentElement;
+    const pct = (h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight)) * 100;
+    if (bar) bar.style.width = pct + '%';
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  const btn = document.getElementById('sound-toggle');
+  if (btn) {
+    btn.textContent = `SOUND · ${soundOn() ? 'ON' : 'OFF'}`;
+    btn.addEventListener('click', () => {
+      setSound(!soundOn());
+      btn.textContent = `SOUND · ${soundOn() ? 'ON' : 'OFF'}`;
+    });
+  }
+</script>

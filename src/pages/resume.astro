@@ -26,7 +26,7 @@ const skills = {
 ---
 
 <BaseLayout title="Resume">
-  <section class="py-12 md:py-20 bg-white text-black font-serif">
+  <section class="pt-28 pb-12 md:pt-32 md:pb-20 bg-white text-black font-serif">
     <div class="max-w-[850px] mx-auto px-8 sm:px-12">
       <!-- Header -->
       <header class="text-center mb-12">
@@ -38,18 +38,16 @@ const skills = {
           <span class="text-gray-400">|</span>
           <a href={`tel:${site.phone.replace(/\s+/g, '')}`} class="hover:underline">{site.phone}</a>
           <span class="text-gray-400">|</span>
-          <a href={`mailto:${site.email}`} class="hover:underline">{site.email}</a>
+          <a id="resume-email-link" href="#" class="hover:underline"></a>
           <span class="text-gray-400">|</span>
           <a href={site.links.linkedin} class="hover:underline">LinkedIn</a>
         </div>
       </header>
 
       <!-- Download Action (Hidden in PDF) -->
-      <div class="mb-12 p-6 bg-surface-sunken rounded-lg border border-line text-center no-print">
-        <p class="text-ink-muted mb-4">Need a PDF version for your records?</p>
-        <a href={site.links.resumePdf} download class="inline-flex h-11 items-center justify-center rounded-full bg-ink px-8 text-sm font-medium text-surface hover:bg-accent transition-colors">
-          Download PDF Resume
-        </a>
+      <div class="mb-12 border border-gray-300 p-6 text-center no-print">
+        <p class="mb-4 text-gray-700">Need a PDF version for your records?</p>
+        <a href={site.links.resumePdf} download class="inline-block bg-[#F5A524] px-8 py-[14px] font-mono text-[13px] font-bold tracking-[0.12em] text-black no-underline transition-transform hover:-translate-y-[3px]">DOWNLOAD PDF RESUME ↓</a>
       </div>
 
       <div class="space-y-12 text-black font-sans">
@@ -130,6 +128,16 @@ const skills = {
     </div>
   </section>
 </BaseLayout>
+
+<script>
+  const codes = [114, 111, 110, 109, 101, 99, 107, 64, 103, 109, 97, 105, 108, 46, 99, 111, 109];
+  const link = document.getElementById('resume-email-link');
+  if (link) {
+    const email = codes.map((c) => String.fromCharCode(c)).join('');
+    link.setAttribute('href', `mailto:${email}`);
+    link.textContent = email;
+  }
+</script>
 
 <style>
   .print-only {

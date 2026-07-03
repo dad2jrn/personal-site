@@ -1,80 +1,26 @@
 ---
-import { getCollection, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Hero from '../components/Hero.astro';
-import MetricStrip from '../components/MetricStrip.astro';
-import ExperienceTimeline from '../components/ExperienceTimeline.astro';
-import PatentCard from '../components/PatentCard.astro';
-import CaseStudyVisual from '../components/CaseStudyVisual.astro';
-
-const experience = await getCollection('experience');
-const patents = await getCollection('patents');
-const caseStudies = await getCollection('case-studies', ({ data }: CollectionEntry<'case-studies'>) => data.featured);
-
-const metrics = [
-  { label: "Annual Volume", value: "$2T+" },
-  { label: "Monthly Users", value: "60M" },
-  { label: "Patents Held", value: "4" }
-];
+import BootOverlay from '../components/home/BootOverlay.astro';
+import HomeHero from '../components/home/HomeHero.astro';
+import Origin from '../components/home/Origin.astro';
+import Scale from '../components/home/Scale.astro';
+import TheWork from '../components/home/TheWork.astro';
+import Timeline from '../components/home/Timeline.astro';
+import PatentsSection from '../components/home/PatentsSection.astro';
+import FieldNotes from '../components/home/FieldNotes.astro';
+import TheRecord from '../components/home/TheRecord.astro';
+import Transmit from '../components/home/Transmit.astro';
 ---
 
 <BaseLayout title="Enterprise Architect & Technology Leader">
-  <Hero />
-
-  <MetricStrip metrics={metrics} />
-
-  <section class="py-24 bg-surface-sunken border-y border-line">
-    <div class="container-site">
-      <div class="label-mono mb-12">— Featured Case Studies</div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {caseStudies.map((study: CollectionEntry<'case-studies'>) => (
-          <a href={`/work/${study.slug}/`} class="group relative block p-6 bg-surface rounded-lg border border-line transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.5)] overflow-hidden">
-            <div class="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-
-            <div class="relative z-10">
-              <div class="aspect-[16/9] bg-surface-sunken rounded border border-line overflow-hidden mb-6">
-                <div class="w-full h-full group-hover:scale-105 transition-transform duration-700">
-                  <CaseStudyVisual company={study.data.company} />
-                </div>
-              </div>
-              <h3 class="text-2xl font-medium text-ink group-hover:text-accent transition-colors duration-300 mb-2">
-                {study.data.title}
-              </h3>
-              <p class="text-ink-muted line-clamp-2 group-hover:text-ink transition-colors duration-300">
-                {study.data.dek}
-              </p>
-              <div class="mt-6 flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-ink-subtle group-hover:text-accent transition-colors duration-300">
-                View Case Study <span>→</span>
-              </div>
-            </div>
-          </a>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <ExperienceTimeline entries={experience} limit={5} showViewAll={true} />
-
-  <section class="py-24 bg-surface-sunken border-t border-line">
-    <div class="container-site">
-      <div class="flex items-center justify-between mb-12">
-        <div class="label-mono">— Intellectual Property</div>
-        <a href="/patents/" class="text-sm font-medium text-ink-muted hover:text-ink transition-colors">view all</a>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {patents.map((patent: CollectionEntry<'patents'>) => (
-          <PatentCard entry={patent} />
-        ))}
-      </div>
-    </div>
-  </section>
-
-  <section class="py-24">
-    <div class="container-site text-center">
-      <h2 class="text-3xl md:text-4xl font-medium text-ink mb-8">Ready to modernize your enterprise?</h2>
-      <a href="/contact" class="inline-flex h-12 items-center justify-center rounded-full bg-ink px-8 text-sm font-medium text-surface hover:bg-accent transition-colors">
-        Get in touch
-      </a>
-    </div>
-  </section>
+  <BootOverlay />
+  <HomeHero />
+  <Origin />
+  <Scale />
+  <TheWork />
+  <Timeline />
+  <PatentsSection />
+  <FieldNotes />
+  <TheRecord />
+  <Transmit />
 </BaseLayout>

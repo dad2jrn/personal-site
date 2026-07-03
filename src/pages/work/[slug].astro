@@ -1,11 +1,11 @@
 ---
-import { getCollection, type CollectionEntry } from 'astro:content';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
 export async function getStaticPaths() {
   const caseStudies = await getCollection('case-studies');
   return caseStudies.map((entry: CollectionEntry<'case-studies'>) => ({
-    params: { slug: entry.slug },
+    params: { slug: entry.id },
     props: { entry },
   }));
 }
@@ -15,7 +15,7 @@ interface Props {
 }
 
 const { entry } = Astro.props;
-const { Content } = await entry.render();
+const { Content } = await render(entry);
 ---
 
 <BaseLayout title={entry.data.title}>
@@ -23,7 +23,7 @@ const { Content } = await entry.render();
     <div class="container-site">
       <div class="max-w-[800px]">
         <div class="label-mono mb-8">{entry.data.company} · {entry.data.period}</div>
-        <h1 class="text-4xl md:text-6xl font-medium text-ink mb-8 leading-[1.1] tracking-tight">
+        <h1 class="h-display mb-8 text-[clamp(36px,5vw,72px)] text-ink">
           {entry.data.title}
         </h1>
         <p class="text-xl md:text-2xl text-ink-muted leading-relaxed mb-16">
@@ -39,7 +39,7 @@ const { Content } = await entry.render();
           ))}
         </div>
 
-        <div class="prose prose-ink max-w-none">
+        <div class="prose max-w-none">
           <Content />
         </div>
 
@@ -47,7 +47,7 @@ const { Content } = await entry.render();
           <div class="label-mono mb-8">Technologies used</div>
           <div class="flex flex-wrap gap-3">
             {entry.data.tools.map((tool: string) => (
-              <span class="px-4 py-2 bg-surface-sunken border border-line rounded-full text-sm text-ink">
+              <span class="px-4 py-2 bg-surface-sunken border border-line text-sm text-ink">
                 {tool}
               </span>
             ))}

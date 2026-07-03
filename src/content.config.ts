@@ -1,7 +1,8 @@
 import { defineCollection, z } from 'astro:content';
+import { glob } from 'astro/loaders';
 
 const experience = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.md', base: './src/content/experience' }),
   schema: z.object({
     company: z.string(),
     role: z.string(),
@@ -12,12 +13,14 @@ const experience = defineCollection({
     featured: z.boolean().default(false),
     order: z.number(),           // for ties; lower = appears first
     summary: z.string(),         // 1-2 sentence summary
+    shortCompany: z.string().optional(),  // timeline display name when company is too long
+    tag: z.string().optional(),           // timeline category tag override (defaults from sector)
     achievements: z.array(z.string()).optional(), // bullet points for resume
   }),
 });
 
 const patents = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.md', base: './src/content/patents' }),
   schema: z.object({
     title: z.string(),
     patentNumber: z.string(),    // USPTO number e.g. "US 11,238,541 B2"
@@ -27,12 +30,12 @@ const patents = defineCollection({
     assignee: z.string(),
     abstract: z.string(),        // PARAPHRASED in Ron's words, not USPTO copy
     tags: z.array(z.string()).default([]),
-    usptoUrl: z.string().url().optional(),
+    usptoUrl: z.url().optional(), // Zod 4: z.string().url() is gone
   }),
 });
 
 const caseStudies = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.mdx', base: './src/content/case-studies' }),
   schema: z.object({
     title: z.string(),
     company: z.string(),
@@ -48,11 +51,15 @@ const caseStudies = defineCollection({
     outcomes: z.array(z.string()),
     publishedAt: z.string(),
     featured: z.boolean().default(false),
+    order: z.number().default(99),        // homepage card order; lower first
+    cardHeader: z.string().optional(),    // mono header on the homepage card
+    cardSummary: z.string().optional(),   // homepage card description (falls back to dek)
+    cardTags: z.array(z.string()).optional(), // homepage card chips (falls back to tools)
   }),
 });
 
 const writing = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.mdx', base: './src/content/writing' }),
   schema: z.object({
     title: z.string(),
     dek: z.string(),

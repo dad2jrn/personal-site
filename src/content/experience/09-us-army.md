@@ -8,6 +8,7 @@ sector: "gov-public"
 featured: false
 order: 9
 summary: "Re-architected middleware at Fort Lee (Gregg-Adams) to reduce unplanned system outages and improve operational efficiency."
+shortCompany: "US Army — Fort Lee"
 achievements:
   - "Re-architected middleware to reduce unplanned system outages."
   - "Improved operational efficiencies through architectural modernization."

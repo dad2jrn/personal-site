@@ -8,6 +8,7 @@ sector: "gov-public"
 featured: true
 order: 1
 summary: "Lead statewide enterprise architecture strategy governing mission-critical transportation platforms, aligning IT investments with agency-wide business and operational priorities."
+shortCompany: "Virginia Dept. of Transportation"
 achievements:
   - "Established architecture governance, standards, and performance metrics to strengthen compliance, accountability, and cross-division alignment."
   - "Directed product line roadmaps and budget forecasting to ensure modernization initiatives aligned with fiscal constraints and long-term strategy."

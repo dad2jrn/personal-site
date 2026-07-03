@@ -1,0 +1,30 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import SectionHeader from './SectionHeader.astro';
+
+const studies = (await getCollection('case-studies', ({ data }: CollectionEntry<'case-studies'>) => data.featured))
+  .sort((a: CollectionEntry<'case-studies'>, b: CollectionEntry<'case-studies'>) => a.data.order - b.data.order);
+const scanDurations = ['5s', '6.5s'];
+---
+
+<section id="work" class="border-b border-line px-6 py-[140px] md:px-10">
+  <div class="mx-auto max-w-site">
+    <SectionHeader index="03" name="THE WORK" meta="FEATURED CASE STUDIES" />
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+      {studies.map((study: CollectionEntry<'case-studies'>, i: number) => (
+        <a data-reveal href={`/work/${study.id}/`} class="group relative block overflow-hidden border border-line p-9 text-ink no-underline transition-[border-color,transform] duration-300 hover:-translate-y-1 hover:border-accent">
+          <div class="pointer-events-none absolute left-0 right-0 h-[40%] bg-linear-to-b from-accent/[0.06] to-transparent" style={`animation: rm-scan ${scanDurations[i % 2]} linear infinite;`}></div>
+          <div class="mb-12 font-mono text-[11px] tracking-[0.14em] text-ink-subtle">{study.data.cardHeader ?? `${study.data.company.toUpperCase()} // ARCH_VISUAL_v1.2`}</div>
+          <h3 class="mb-4 text-[32px] font-extrabold leading-[1.05] tracking-[-0.01em] [font-stretch:115%]">{study.data.title}</h3>
+          <p class="mb-8 text-[15px] leading-[1.6] text-ink/60">{study.data.cardSummary ?? study.data.dek}</p>
+          <div class="mb-7 flex flex-wrap gap-[10px]">
+            {(study.data.cardTags ?? study.data.tools.slice(0, 4)).map((t: string) => (
+              <span class="tag-chip">{t}</span>
+            ))}
+          </div>
+          <span class="font-mono text-[12px] tracking-[0.12em] text-accent">VIEW CASE STUDY →</span>
+        </a>
+      ))}
+    </div>
+  </div>
+</section>

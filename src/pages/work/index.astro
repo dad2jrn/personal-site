@@ -13,7 +13,8 @@ const sortedExperience = experience.sort((a: CollectionEntry<'experience'>, b: C
 <BaseLayout title="Work & Experience">
   <section class="py-24">
     <div class="container-site">
-      <h1 class="text-5xl font-medium text-ink mb-8">Work</h1>
+      <div class="eyebrow mb-8">/ WORK</div>
+      <h1 class="h-display mb-8 text-[clamp(48px,7vw,96px)] text-ink">Work</h1>
       <p class="text-xl text-ink-muted max-w-[60ch]">
         A comprehensive timeline of my career in enterprise architecture, engineering leadership, and technology transformation.
       </p>
@@ -25,8 +26,8 @@ const sortedExperience = experience.sort((a: CollectionEntry<'experience'>, b: C
       <div class="label-mono mb-12">— Case Studies</div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
         {caseStudies.map((study: CollectionEntry<'case-studies'>) => (
-          <a href={`/work/${study.slug}/`} class="group block">
-            <div class="aspect-video bg-surface rounded-lg border border-line overflow-hidden mb-6">
+          <a href={`/work/${study.id}/`} class="group block">
+            <div class="aspect-video bg-surface border border-line overflow-hidden mb-6">
               <div class="w-full h-full group-hover:scale-105 transition-transform duration-500">
                 <CaseStudyVisual company={study.data.company} />
               </div>
@@ -39,7 +40,7 @@ const sortedExperience = experience.sort((a: CollectionEntry<'experience'>, b: C
             </p>
             <div class="flex flex-wrap gap-2">
               {study.data.tools.map((tool: string) => (
-                <span class="px-2 py-1 bg-surface border border-line rounded text-[10px] uppercase tracking-wider text-ink-subtle">
+                <span class="px-2 py-1 bg-surface border border-line text-[10px] uppercase tracking-wider text-ink-subtle">
                   {tool}
                 </span>
               ))}
