@@ -38,7 +38,7 @@ const skills = {
           <span class="text-gray-400">|</span>
           <a href={`tel:${site.phone.replace(/\s+/g, '')}`} class="hover:underline">{site.phone}</a>
           <span class="text-gray-400">|</span>
-          <a href={`mailto:${site.email}`} class="hover:underline">{site.email}</a>
+          <a id="resume-email-link" href="#" class="hover:underline"></a>
           <span class="text-gray-400">|</span>
           <a href={site.links.linkedin} class="hover:underline">LinkedIn</a>
         </div>
@@ -130,6 +130,16 @@ const skills = {
     </div>
   </section>
 </BaseLayout>
+
+<script>
+  const codes = [114, 111, 110, 109, 101, 99, 107, 64, 103, 109, 97, 105, 108, 46, 99, 111, 109];
+  const link = document.getElementById('resume-email-link');
+  if (link) {
+    const email = codes.map((c) => String.fromCharCode(c)).join('');
+    link.setAttribute('href', `mailto:${email}`);
+    link.textContent = email;
+  }
+</script>
 
 <style>
   .print-only {
