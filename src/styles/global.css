@@ -62,6 +62,14 @@
 @keyframes rm-pulse { 0%, 100% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.5); opacity: 1; } }
 @keyframes rm-scan { from { top: -20%; } to { top: 120%; } }
 @keyframes rm-fadeup { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes rm-fillx   { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes rm-slidex  { from { transform: translateX(0); } to { transform: translateX(26px); } }
+@keyframes rm-flicker { 0%, 100% { opacity: 0.15; } 50% { opacity: 0.9; } }
+@keyframes rm-scrolly { from { transform: translateY(0); } to { transform: translateY(-50%); } }
+@keyframes rm-fall    { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(54px); opacity: 0; } }
+@keyframes rm-rot     { to { transform: rotate(360deg); } }
+@keyframes rm-stamp   { 0% { opacity: 0; transform: scale(2.2); } 60% { opacity: 1; transform: scale(0.96); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes rm-boot-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 @keyframes rm-boot-exit {
   0% { transform: scale(1); filter: brightness(1); opacity: 1; }
   12% { transform: scale(1.01); filter: brightness(2.4); opacity: 1; }
