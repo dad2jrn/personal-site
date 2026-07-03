@@ -42,9 +42,16 @@ Add on top:
 | Boot overlay text lines animating (`BootOverlay.astro`) | `PixelAnimate.ogg` |
 | LAUNCH button press | `deephit-withglitch.ogg` |
 | EmailDecoder scramble (`EmailDecoder.tsx`) | `typearrayloop.ogg` |
+| Boot overlay intro music (while overlay is up) | `musicLoop.ogg`, looping |
 | Ambient music after launch (site-wide) | `mainLoop.ogg`, looping |
 
-Unused for now: `musicLoop1.ogg`, `typearrayloop_fullscan.ogg`.
+(Amended 2026-07-03: two-track music. The boot overlay opens on `musicLoop.ogg`
+looping; pressing LAUNCH stops it, plays `deephit-withglitch.ogg` once, and
+starts `mainLoop.ogg` looping for the rest of the site. `startMusic(name?)`
+picks the track from whether the boot overlay is on screen when no name is
+given. Any file with "Loop" in the name loops.)
+
+Unused for now: `typearrayloop_fullscan.ogg`.
 
 All playback respects `soundOn()`.
 
