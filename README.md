@@ -1,43 +1,39 @@
-# Astro Starter Kit: Minimal
+# ronmeck.dev
 
-```sh
-npm create astro@latest -- --template minimal
-```
+Personal site for Ron Meck — enterprise architect. A single cinematic scrolling homepage (terminal boot gate → particle-field hero → chaptered sections → scramble-decode contact) with detail pages for case studies, patents, writing, and an HTML/print resume.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Stack
 
-## 🚀 Project Structure
+- [Astro 7](https://astro.build) (static output, Content Layer collections)
+- React 19.2 islands for the interactive pieces (particle field, patent accordion, email decoder, custom cursor)
+- Tailwind CSS 4.3 (CSS-first config — the design tokens live in the `@theme` block in `src/styles/global.css`; there is no `tailwind.config`)
+- Self-hosted fonts via @fontsource: Archivo (variable width), JetBrains Mono, Instrument Serif
 
-Inside of your Astro project, you'll see the following folders and files:
+## Commands
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+| Command | Action |
+| --- | --- |
+| `npm install` | Install dependencies (Node ≥ 22 required) |
+| `npm run dev` | Dev server at `localhost:4321` |
+| `npm run build` | Production build to `./dist/` |
+| `npm run preview` | Serve the production build locally |
+| `npm run check` | Type-check (`astro check`) |
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Content
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+All page data is driven by Content Layer collections in `src/content/` (schemas in `src/content.config.ts`):
 
-Any static assets, like images, can be placed in the `public/` directory.
+- `experience/` — career timeline rows + resume entries
+- `patents/` — USPTO patents (homepage accordion + detail pages)
+- `case-studies/` — featured work cards + `/work/*` pages
+- `writing/` — essays at `/writing/*`
 
-## 🧞 Commands
+The contact email never appears in source or built HTML — it is assembled from character codes at runtime.
 
-All commands are run from the root of the project, from a terminal:
+## Deploy
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+GitHub Actions (`.github/workflows/deploy.yml`) builds on Node 22 and publishes `dist/` to GitHub Pages. `PUBLIC_GIT_SHA` is injected at build time for the footer's build line.
 
-## 👀 Want to learn more?
+## Design record
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+The redesign's spec and implementation plan live in `docs/superpowers/`; the original design handoff (pixel reference prototype) is in `design_handoff_ronmeck_site/`.

@@ -3,7 +3,6 @@ export const site = {
   tagline: 'Enterprise architect and technology transformation leader.',
   phone: '+1 804 695 4749',
   location: 'Greater Richmond, VA',
-  status: 'available' as const,
   links: {
     linkedin: 'https://www.linkedin.com/in/ronmeck',
     github: 'https://github.com/dad2jrn',

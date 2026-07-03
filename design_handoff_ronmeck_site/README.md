@@ -67,7 +67,7 @@ Canvas, ~80 points, random velocity ±0.35px/frame, bounce off edges. Lines betw
 Hide native cursor (`* { cursor: none }`). 6px amber dot tracks mouse exactly; 30px amber ring (1px border, 0.6 opacity) follows with lerp factor 0.16. Ring grows to 52px over links/buttons (0.2s transition).
 
 ### Email anti-scrape
-The address must NEVER appear in delivered HTML source. Assemble `ronmeck@gmail.com` from character codes at runtime. Display: starts masked (`r*******@*****.***`), plays a scramble-decode on scroll into view (1200ms; left-to-right settle, unsettled chars cycle through `#$%&@*+=?!<>/\0-9A-F`). `href` is a dummy anchor; real `mailto:` set in the click handler.
+The address must NEVER appear in delivered HTML source (nor in this repo). Assemble it — `r******@g****.com`, chars per `EmailDecoder.tsx` — from character codes at runtime. Display: starts masked (`r*******@*****.***`), plays a scramble-decode on scroll into view (1200ms; left-to-right settle, unsettled chars cycle through `#$%&@*+=?!<>/\0-9A-F`). `href` is a dummy anchor; real `mailto:` set in the click handler.
 
 ### Floating artifacts (contact section) — the "wow" interaction
 5 absolutely-positioned objects around the headline (desktop >900px + fine pointer only; hidden otherwise):
