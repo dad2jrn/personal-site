@@ -256,7 +256,7 @@ const modalEntries = displayEntries.map((entry) => ({
     }
 
     .experience-row:hover {
-      background: rgb(var(--surface-sunken) / 0.5);
+      background: color-mix(in srgb, var(--color-surface-sunken) 50%, transparent);
     }
 
     .experience-modal {
@@ -285,9 +285,9 @@ const modalEntries = displayEntries.map((entry) => ({
       width: min(760px, 100%);
       max-height: min(86vh, 860px);
       overflow-y: auto;
-      border: 1px solid rgb(var(--line-strong));
+      border: 1px solid var(--color-line-strong);
       border-radius: 12px;
-      background: rgb(var(--surface-raised));
+      background: var(--color-surface-raised);
       padding: 28px;
       box-shadow: 0 24px 72px rgb(0 0 0 / 0.25);
     }
@@ -306,10 +306,10 @@ const modalEntries = displayEntries.map((entry) => ({
       right: 12px;
       width: 32px;
       height: 32px;
-      border: 1px solid rgb(var(--line));
+      border: 1px solid var(--color-line);
       border-radius: 999px;
-      background: rgb(var(--surface));
-      color: rgb(var(--ink));
+      background: var(--color-surface);
+      color: var(--color-ink);
       font-size: 18px;
       line-height: 1;
       cursor: pointer;
@@ -317,8 +317,8 @@ const modalEntries = displayEntries.map((entry) => ({
     }
 
     .experience-modal__close:hover {
-      border-color: rgb(var(--accent) / 0.55);
-      color: rgb(var(--accent));
+      border-color: color-mix(in srgb, var(--color-accent) 55%, transparent);
+      color: var(--color-accent);
     }
 
     .experience-modal__achievement {
@@ -330,7 +330,7 @@ const modalEntries = displayEntries.map((entry) => ({
       content: '•';
       position: absolute;
       left: 0;
-      color: rgb(var(--accent));
+      color: var(--color-accent);
     }
 
     @media (max-width: 640px) {

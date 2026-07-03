@@ -1,9 +1,7 @@
 ---
-import ThemeScript from '../components/ThemeScript.astro';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import '../styles/global.css';
-import { ClientRouter } from 'astro:transitions';
 
 interface Props {
   title?: string;
@@ -14,12 +12,10 @@ const {
   title = "Ron Meck — Enterprise Architect",
   description = "Enterprise architect and technology transformation leader. I design platforms that move trillions and serve tens of millions."
 } = Astro.props;
-
-const currentPath = Astro.url.pathname.replace(/^\/|\/$/g, '');
 ---
 
 <!doctype html>
-<html lang="en" class="dark" style="color-scheme: dark;">
+<html lang="en" style="color-scheme: dark;">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
@@ -27,11 +23,9 @@ const currentPath = Astro.url.pathname.replace(/^\/|\/$/g, '');
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     <meta name="description" content={description} />
-    <ThemeScript />
-    <ClientRouter />
   </head>
   <body class="flex min-h-screen flex-col">
-    <Nav currentPath={currentPath} />
+    <Nav />
     <main class="flex-grow">
       <slot />
     </main>

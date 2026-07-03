@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <title>Ron Meck — Enterprise Architect</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: #0A0A0B; }
+    ::selection { background: #F5A524; color: #0A0A0B; }
+    @keyframes rm-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    @keyframes rm-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+    @keyframes rm-bootline { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes rm-pulse { 0%, 100% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.5); opacity: 1; } }
+    @keyframes rm-dash { to { stroke-dashoffset: 0; } }
+    @keyframes rm-scan { from { top: -20%; } to { top: 120%; } }
+    @keyframes rm-fadeup { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</helmet>
+<div style="--accent: {{ accent }}; background: #0A0A0B; color: #EDEBE6; font-family: 'Archivo', sans-serif; min-height: 100vh; overflow-x: clip; position: relative;">
+
+  <!-- scroll progress -->
+  <div ref="{{ progressRef }}" style="position: fixed; top: 0; left: 0; height: 2px; width: 0%; background: var(--accent, #F5A524); z-index: 90;"></div>
+
+  <!-- custom cursor -->
+  <div ref="{{ cursorDotRef }}" style="position: fixed; top: 0; left: 0; width: 6px; height: 6px; border-radius: 50%; background: var(--accent, #F5A524); z-index: 200; pointer-events: none; transform: translate(-100px, -100px);"></div>
+  <div ref="{{ cursorRingRef }}" style="position: fixed; top: 0; left: 0; width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--accent, #F5A524); opacity: 0.6; z-index: 200; pointer-events: none; transform: translate(-100px, -100px); transition: width 0.2s, height 0.2s;"></div>
+
+  <!-- boot overlay -->
+  <sc-if value="{{ bootVisible }}" hint-placeholder-val="{{ false }}">
+    <div style="position: fixed; inset: 0; background: #060607; z-index: 150; display: flex; align-items: center; justify-content: center; opacity: {{ bootOpacity }}; transition: opacity 0.5s;">
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 14px; line-height: 2.1; color: var(--accent, #F5A524); min-width: 340px;">
+        <div style="animation: rm-bootline 0.3s both 0.1s;">&gt; RM_OS v26.07 — initializing</div>
+        <div style="animation: rm-bootline 0.3s both 0.55s; color: rgba(237,235,230,0.75);">&gt; mounting /career ······· 25 YRS · OK</div>
+        <div style="animation: rm-bootline 0.3s both 1.0s; color: rgba(237,235,230,0.75);">&gt; loading platforms ····· $2.0T · OK</div>
+        <div style="animation: rm-bootline 0.3s both 1.45s; color: rgba(237,235,230,0.75);">&gt; verifying patents ······ [4/4] · OK</div>
+        <div style="animation: rm-bootline 0.3s both 1.9s;">&gt; render: ronmeck.dev<span style="display: inline-block; width: 9px; height: 15px; background: var(--accent, #F5A524); margin-left: 6px; vertical-align: -2px; animation: rm-blink 0.9s infinite;"></span></div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- nav -->
+  <nav style="position: fixed; top: 0; left: 0; right: 0; z-index: 80; display: flex; align-items: center; justify-content: space-between; padding: 20px 40px; mix-blend-mode: difference;">
+    <a href="#top" style="font-weight: 800; font-size: 20px; letter-spacing: -0.02em; color: #EDEBE6; text-decoration: none; font-stretch: 125%;">RM<span style="color: #F5A524;">.</span></a>
+    <div style="display: flex; gap: 28px; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.08em;">
+      <a href="#work" style="color: #EDEBE6; text-decoration: none;" style-hover="color: #F5A524;">WORK</a>
+      <a href="#patents" style="color: #EDEBE6; text-decoration: none;" style-hover="color: #F5A524;">PATENTS</a>
+      <a href="#writing" style="color: #EDEBE6; text-decoration: none;" style-hover="color: #F5A524;">WRITING</a>
+      <a href="#resume" style="color: #EDEBE6; text-decoration: none;" style-hover="color: #F5A524;">RESUME</a>
+      <a href="#contact" style="color: #EDEBE6; text-decoration: none;" style-hover="color: #F5A524;">CONTACT</a>
+    </div>
+  </nav>
+
+  <!-- ============ HERO ============ -->
+  <header id="top" style="position: relative; min-height: 100vh; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden;">
+    <canvas ref="{{ heroCanvasRef }}" style="position: absolute; inset: 0; width: 100%; height: 100%;"></canvas>
+    <div style="position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 100%, rgba(10,10,11,0) 30%, rgba(10,10,11,0.85) 100%); pointer-events: none;"></div>
+    <div style="position: relative; padding: 0 40px 0;">
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.14em; color: var(--accent, #F5A524); display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 24px;">
+        <span><span style="display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--accent, #F5A524); margin-right: 8px; animation: rm-pulse 2s infinite;"></span>AVAILABLE</span>
+        <span style="color: rgba(237,235,230,0.5);">GREATER RICHMOND, VA</span>
+        <span style="color: rgba(237,235,230,0.5);">37.5407° N / 77.4360° W</span>
+      </div>
+      <h1 style="margin: 0; font-weight: 900; font-stretch: 125%; font-size: clamp(72px, 15.5vw, 260px); line-height: 0.86; letter-spacing: -0.03em; text-transform: uppercase;">Ron<br>Meck</h1>
+      <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; flex-wrap: wrap; padding: 32px 0 40px;">
+        <p style="margin: 0; font-family: 'Instrument Serif', serif; font-style: italic; font-size: clamp(24px, 3vw, 40px); line-height: 1.15; max-width: 560px; color: #EDEBE6;">I design the systems money moves through.</p>
+        <p style="margin: 0; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.8; color: rgba(237,235,230,0.55); max-width: 340px;">Enterprise architect &amp; technology transformation leader. Twenty-five years across Fortune 100 finance and statewide government.</p>
+      </div>
+    </div>
+    <div style="position: relative; border-top: 1px solid rgba(237,235,230,0.14); overflow: hidden; padding: 14px 0; white-space: nowrap;">
+      <div style="display: inline-flex; gap: 0; animation: rm-marquee 28s linear infinite; will-change: transform;">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.12em; color: rgba(237,235,230,0.7);">$2T+ ANNUAL VOLUME&nbsp;&nbsp;<span style="color: var(--accent, #F5A524);">◆</span>&nbsp;&nbsp;60M MONTHLY USERS&nbsp;&nbsp;<span style="color: var(--accent, #F5A524);">◆</span>&nbsp;&nbsp;4 US PATENTS&nbsp;&nbsp;<span style="color: var(--accent, #F5A524);">◆</span>&nbsp;&nbsp;75% FASTER DELIVERY&nbsp;&nbsp;<span style="color: var(--accent, #F5A524);">◆</span>&nbsp;&nbsp;$30M REVENUE UNLOCKED&nbsp;&nbsp;<span style="color: var(--accent, #F5A524);">◆</span>&nbsp;&nbsp;</span>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.12em; color: rgba(237,235,230,0.7);">$2T+ ANNUAL VOLUME&nbsp;&nbsp;<span style="color: var(--accent, #F5A524);">◆</span>&nbsp;&nbsp;60M MONTHLY USERS&nbsp;&nbsp;<span style="color: var(--accent, #F5A524);">◆</span>&nbsp;&nbsp;4 US PATENTS&nbsp;&nbsp;<span style="color: var(--accent, #F5A524);">◆</span>&nbsp;&nbsp;75% FASTER DELIVERY&nbsp;&nbsp;<span style="color: var(--accent, #F5A524);">◆</span>&nbsp;&nbsp;$30M REVENUE UNLOCKED&nbsp;&nbsp;<span style="color: var(--accent, #F5A524);">◆</span>&nbsp;&nbsp;</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ 01 ORIGIN (paper) ============ -->
+  <section id="origin" data-screen-label="01 Origin" style="background: #E9E5DC; color: #141412; padding: 120px 40px 140px; position: relative;">
+    <div style="max-width: 1200px; margin: 0 auto;">
+      <div data-reveal style="display: flex; align-items: baseline; gap: 20px; margin-bottom: 72px;">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.14em; color: #8A6A1F;">01 / ORIGIN</span>
+        <div style="flex: 1; height: 1px; background: rgba(20,20,18,0.2);"></div>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: rgba(20,20,18,0.45);">1997 → 2016</span>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start;">
+        <h2 data-reveal style="margin: 0; font-weight: 800; font-stretch: 118%; font-size: clamp(40px, 5vw, 76px); line-height: 0.98; letter-spacing: -0.02em; text-transform: uppercase;">Every architecture has a foundation<span style="color: #B07C1E;">.</span></h2>
+        <div>
+          <p data-reveal style="margin: 0 0 28px; font-size: 19px; line-height: 1.65; color: rgba(20,20,18,0.85);">1997. A nineteen-year-old petty officer learns the first rule of mission-critical systems: <em style="font-family: 'Instrument Serif', serif; font-size: 22px;">they don't get to fail.</em></p>
+          <p data-reveal style="margin: 0 0 28px; font-size: 19px; line-height: 1.65; color: rgba(20,20,18,0.85);">Four years in the Navy. Then a decade architecting enterprise systems for the Army, the Navy, and Bank of America. The scale kept growing. The rule never changed.</p>
+          <div data-reveal style="display: flex; gap: 32px; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em; color: rgba(20,20,18,0.55); border-top: 1px solid rgba(20,20,18,0.2); padding-top: 20px;">
+            <span>US NAVY · 1997</span>
+            <span>US ARMY · 2002</span>
+            <span>BANK OF AMERICA · 2008</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 02 SCALE ============ -->
+  <section id="scale" data-screen-label="02 Scale" style="padding: 140px 40px; position: relative; border-bottom: 1px solid rgba(237,235,230,0.1);">
+    <div style="max-width: 1200px; margin: 0 auto;">
+      <div data-reveal style="display: flex; align-items: baseline; gap: 20px; margin-bottom: 72px;">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.14em; color: var(--accent, #F5A524);">02 / SCALE</span>
+        <div style="flex: 1; height: 1px; background: rgba(237,235,230,0.14);"></div>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: rgba(237,235,230,0.4);">CAPITAL ONE · 2016 → 2023</span>
+      </div>
+      <h2 data-reveal style="margin: 0 0 24px; font-weight: 800; font-stretch: 118%; font-size: clamp(40px, 5vw, 76px); line-height: 0.98; letter-spacing: -0.02em; text-transform: uppercase; max-width: 900px;">Then the numbers got serious<span style="color: var(--accent, #F5A524);">.</span></h2>
+      <p data-reveal style="margin: 0 0 80px; font-size: 19px; line-height: 1.65; color: rgba(237,235,230,0.65); max-width: 620px;">Seven years architecting mission-critical payment systems for a Fortune 100 bank — owning platform architecture end to end, from engineering to security to the board-level roadmap.</p>
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: rgba(237,235,230,0.12); border: 1px solid rgba(237,235,230,0.12);">
+        <div data-reveal style="background: #0A0A0B; padding: 36px 28px;">
+          <div style="font-weight: 900; font-stretch: 115%; font-size: clamp(44px, 4.5vw, 72px); line-height: 1; color: var(--accent, #F5A524);"><span data-count="2" data-prefix="$" data-suffix="T+">$2T+</span></div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.12em; color: rgba(237,235,230,0.5); margin-top: 16px;">ANNUAL VOLUME</div>
+        </div>
+        <div data-reveal style="background: #0A0A0B; padding: 36px 28px;">
+          <div style="font-weight: 900; font-stretch: 115%; font-size: clamp(44px, 4.5vw, 72px); line-height: 1;"><span data-count="60" data-suffix="M">60M</span></div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.12em; color: rgba(237,235,230,0.5); margin-top: 16px;">MONTHLY USERS</div>
+        </div>
+        <div data-reveal style="background: #0A0A0B; padding: 36px 28px;">
+          <div style="font-weight: 900; font-stretch: 115%; font-size: clamp(44px, 4.5vw, 72px); line-height: 1;"><span data-count="30" data-prefix="$" data-suffix="M">$30M</span></div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.12em; color: rgba(237,235,230,0.5); margin-top: 16px;">REVENUE UNLOCKED / YR</div>
+        </div>
+        <div data-reveal style="background: #0A0A0B; padding: 36px 28px;">
+          <div style="font-weight: 900; font-stretch: 115%; font-size: clamp(44px, 4.5vw, 72px); line-height: 1;"><span data-count="75" data-suffix="%">75%</span></div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.12em; color: rgba(237,235,230,0.5); margin-top: 16px;">FASTER DELIVERY</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 03 WORK ============ -->
+  <section id="work" data-screen-label="03 Work" style="padding: 140px 40px; border-bottom: 1px solid rgba(237,235,230,0.1);">
+    <div style="max-width: 1200px; margin: 0 auto;">
+      <div data-reveal style="display: flex; align-items: baseline; gap: 20px; margin-bottom: 72px;">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.14em; color: var(--accent, #F5A524);">03 / THE WORK</span>
+        <div style="flex: 1; height: 1px; background: rgba(237,235,230,0.14);"></div>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: rgba(237,235,230,0.4);">FEATURED CASE STUDIES</span>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
+        <a data-reveal href="https://ronmeck.dev/work/capital-one-payments-platform/" style="display: block; text-decoration: none; color: #EDEBE6; border: 1px solid rgba(237,235,230,0.14); padding: 36px; position: relative; overflow: hidden; transition: border-color 0.3s, transform 0.3s;" style-hover="border-color: var(--accent, #F5A524); transform: translateY(-4px);">
+          <div style="position: absolute; left: 0; right: 0; height: 40%; background: linear-gradient(rgba(245,165,36,0.06), transparent); animation: rm-scan 5s linear infinite; pointer-events: none;"></div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: rgba(237,235,230,0.45); margin-bottom: 48px;">CAPITAL ONE // ARCH_VISUAL_v1.2</div>
+          <h3 style="margin: 0 0 16px; font-weight: 800; font-stretch: 115%; font-size: 32px; line-height: 1.05; letter-spacing: -0.01em;">Re-architecting payments at $2T scale</h3>
+          <p style="margin: 0 0 32px; font-size: 15px; line-height: 1.6; color: rgba(237,235,230,0.6);">A phased decomposition of a legacy payment platform that unlocked $30M in annual revenue and cut feature delivery time by 75%.</p>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 28px;">
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; border: 1px solid rgba(237,235,230,0.2); padding: 5px 10px;">AWS</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; border: 1px solid rgba(237,235,230,0.2); padding: 5px 10px;">KAFKA</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; border: 1px solid rgba(237,235,230,0.2); padding: 5px 10px;">MICROSERVICES</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; border: 1px solid rgba(237,235,230,0.2); padding: 5px 10px;">TERRAFORM</span>
+          </div>
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.12em; color: var(--accent, #F5A524);">VIEW CASE STUDY →</span>
+        </a>
+        <a data-reveal href="https://ronmeck.dev/work/vdot-architecture-governance/" style="display: block; text-decoration: none; color: #EDEBE6; border: 1px solid rgba(237,235,230,0.14); padding: 36px; position: relative; overflow: hidden; transition: border-color 0.3s, transform 0.3s;" style-hover="border-color: var(--accent, #F5A524); transform: translateY(-4px);">
+          <div style="position: absolute; left: 0; right: 0; height: 40%; background: linear-gradient(rgba(245,165,36,0.06), transparent); animation: rm-scan 6.5s linear infinite; pointer-events: none;"></div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: rgba(237,235,230,0.45); margin-bottom: 48px;">VIRGINIA DOT // ARCH_VISUAL_v1.2</div>
+          <h3 style="margin: 0 0 16px; font-weight: 800; font-stretch: 115%; font-size: 32px; line-height: 1.05; letter-spacing: -0.01em;">Enterprise architecture governance for a state agency</h3>
+          <p style="margin: 0 0 32px; font-size: 15px; line-height: 1.6; color: rgba(237,235,230,0.6);">Establishing a modern architecture practice to govern mission-critical transportation platforms statewide.</p>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 28px;">
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; border: 1px solid rgba(237,235,230,0.2); padding: 5px 10px;">AZURE</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; border: 1px solid rgba(237,235,230,0.2); padding: 5px 10px;">GOVERNANCE</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.08em; border: 1px solid rgba(237,235,230,0.2); padding: 5px 10px;">IT STRATEGY</span>
+          </div>
+          <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.12em; color: var(--accent, #F5A524);">VIEW CASE STUDY →</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 04 TIMELINE ============ -->
+  <section id="timeline" data-screen-label="04 Timeline" style="padding: 140px 40px; border-bottom: 1px solid rgba(237,235,230,0.1);">
+    <div style="max-width: 1200px; margin: 0 auto;">
+      <div data-reveal style="display: flex; align-items: baseline; gap: 20px; margin-bottom: 72px;">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.14em; color: var(--accent, #F5A524);">04 / TIMELINE</span>
+        <div style="flex: 1; height: 1px; background: rgba(237,235,230,0.14);"></div>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: rgba(237,235,230,0.4);">1997 → NOW</span>
+      </div>
+      <div>
+        <sc-for list="{{ timeline }}" as="job" hint-placeholder-count="10">
+          <div data-reveal style="display: grid; grid-template-columns: 180px 1fr 220px 110px; gap: 24px; align-items: baseline; padding: 22px 12px; border-bottom: 1px solid rgba(237,235,230,0.1); transition: background 0.25s, padding-left 0.25s;" style-hover="background: rgba(245,165,36,0.05); padding-left: 24px;">
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: rgba(237,235,230,0.45);">{{ job.years }}</span>
+            <span style="font-weight: 700; font-stretch: 112%; font-size: clamp(18px, 2vw, 26px); letter-spacing: -0.01em;">{{ job.role }}</span>
+            <span style="font-size: 14px; color: rgba(237,235,230,0.55);">{{ job.org }}</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: var(--accent, #F5A524); border: 1px solid rgba(245,165,36,0.35); padding: 4px 8px; text-align: center;">{{ job.tag }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 05 PATENTS ============ -->
+  <section id="patents" data-screen-label="05 Patents" style="padding: 140px 40px; border-bottom: 1px solid rgba(237,235,230,0.1);">
+    <div style="max-width: 1200px; margin: 0 auto;">
+      <div data-reveal style="display: flex; align-items: baseline; gap: 20px; margin-bottom: 40px;">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.14em; color: var(--accent, #F5A524);">05 / INTELLECTUAL PROPERTY</span>
+        <div style="flex: 1; height: 1px; background: rgba(237,235,230,0.14);"></div>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: rgba(237,235,230,0.4);">USPTO · 4 GRANTED</span>
+      </div>
+      <h2 data-reveal style="margin: 0 0 64px; font-weight: 800; font-stretch: 118%; font-size: clamp(40px, 5vw, 76px); line-height: 0.98; letter-spacing: -0.02em; text-transform: uppercase;">Systems that run themselves<span style="color: var(--accent, #F5A524);">.</span></h2>
+      <div>
+        <sc-for list="{{ patents }}" as="pat" hint-placeholder-count="4">
+          <div data-reveal style="border: 1px solid rgba(237,235,230,0.14); margin-bottom: 16px; overflow: hidden;">
+            <button onClick="{{ pat.onToggle }}" style="all: unset; box-sizing: border-box; display: grid; grid-template-columns: 170px 1fr 40px; gap: 24px; align-items: center; width: 100%; padding: 26px 28px; transition: background 0.25s;" style-hover="background: rgba(245,165,36,0.06);">
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent, #F5A524);">{{ pat.number }}</span>
+              <span style="font-weight: 700; font-stretch: 112%; font-size: clamp(18px, 2.2vw, 28px); letter-spacing: -0.01em;">{{ pat.title }}</span>
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 20px; color: rgba(237,235,230,0.6); text-align: right;">{{ pat.chevron }}</span>
+            </button>
+            <sc-if value="{{ pat.open }}" hint-placeholder-val="{{ false }}">
+              <div style="padding: 8px 28px 32px; display: grid; grid-template-columns: 1fr 300px; gap: 48px; align-items: center; animation: rm-fadeup 0.4s both;">
+                <div>
+                  <p style="margin: 0 0 20px; font-size: 16px; line-height: 1.65; color: rgba(237,235,230,0.7); max-width: 620px;">{{ pat.desc }}</p>
+                  <div style="display: flex; gap: 16px; flex-wrap: wrap; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; color: var(--accent, #F5A524); margin-bottom: 20px;">{{ pat.tags }}</div>
+                  <a href="{{ pat.href }}" style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.12em; color: #EDEBE6; text-decoration: none; border-bottom: 1px solid var(--accent, #F5A524); padding-bottom: 3px;" style-hover="color: var(--accent, #F5A524);">VIEW PATENT DETAILS →</a>
+                </div>
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 0 8px;">
+                  <span style="width: 10px; height: 10px; border-radius: 50%; background: var(--accent, #F5A524); animation: rm-pulse 2s infinite;"></span>
+                  <span style="flex: 1; height: 1px; background: repeating-linear-gradient(90deg, rgba(245,165,36,0.6) 0 6px, transparent 6px 12px);"></span>
+                  <span style="width: 10px; height: 10px; border: 1px solid var(--accent, #F5A524); transform: rotate(45deg); animation: rm-pulse 2s infinite 0.4s;"></span>
+                  <span style="flex: 1; height: 1px; background: repeating-linear-gradient(90deg, rgba(245,165,36,0.6) 0 6px, transparent 6px 12px);"></span>
+                  <span style="width: 10px; height: 10px; border-radius: 50%; border: 1px solid var(--accent, #F5A524); animation: rm-pulse 2s infinite 0.8s;"></span>
+                  <span style="flex: 1; height: 1px; background: repeating-linear-gradient(90deg, rgba(245,165,36,0.6) 0 6px, transparent 6px 12px);"></span>
+                  <span style="width: 10px; height: 10px; background: var(--accent, #F5A524); animation: rm-pulse 2s infinite 1.2s;"></span>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 06 WRITING ============ -->
+  <section id="writing" data-screen-label="06 Writing" style="padding: 120px 40px; border-bottom: 1px solid rgba(237,235,230,0.1);">
+    <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;">
+      <div>
+        <div data-reveal style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.14em; color: var(--accent, #F5A524); margin-bottom: 28px;">06 / FIELD NOTES</div>
+        <h2 data-reveal style="margin: 0; font-weight: 800; font-stretch: 118%; font-size: clamp(36px, 4vw, 60px); line-height: 1; letter-spacing: -0.02em; text-transform: uppercase;">Writing on architecture &amp; resilient systems<span style="color: var(--accent, #F5A524);">.</span></h2>
+      </div>
+      <div data-reveal>
+        <p style="margin: 0 0 28px; font-size: 17px; line-height: 1.65; color: rgba(237,235,230,0.6);">Essays on enterprise architecture, cloud economics, and the discipline of building platforms that don't get to fail.</p>
+        <a href="https://ronmeck.dev/writing/" style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.12em; color: #EDEBE6; text-decoration: none; border: 1px solid rgba(237,235,230,0.3); padding: 14px 24px; display: inline-block; transition: border-color 0.25s, color 0.25s;" style-hover="border-color: var(--accent, #F5A524); color: var(--accent, #F5A524);">READ THE WRITING →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 07 RESUME + CONTACT ============ -->
+  <section id="resume" data-screen-label="07 Resume" style="padding: 120px 40px 60px;">
+    <div style="max-width: 1200px; margin: 0 auto;">
+      <div data-reveal style="display: flex; align-items: baseline; gap: 20px; margin-bottom: 48px;">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.14em; color: var(--accent, #F5A524);">07 / THE RECORD</span>
+        <div style="flex: 1; height: 1px; background: rgba(237,235,230,0.14);"></div>
+      </div>
+      <div data-reveal style="display: flex; align-items: center; justify-content: space-between; gap: 40px; flex-wrap: wrap; border: 1px solid rgba(237,235,230,0.14); padding: 40px;">
+        <div>
+          <div style="font-weight: 800; font-stretch: 115%; font-size: 28px; letter-spacing: -0.01em; margin-bottom: 10px;">The full record, on paper.</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em; color: rgba(237,235,230,0.5);">ENTERPRISE ARCHITECTURE · CLOUD STRATEGY · GOVERNANCE · AWS · AZURE · CI/CD</div>
+        </div>
+        <a href="https://ronmeck.dev/Ron_Meck_Resume.pdf" style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.12em; color: #0A0A0B; background: var(--accent, #F5A524); text-decoration: none; padding: 18px 32px; font-weight: 700; transition: transform 0.2s;" style-hover="transform: translateY(-3px);">DOWNLOAD PDF RESUME ↓</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" data-screen-label="08 Contact" ref="{{ contactRef }}" style="padding: 140px 40px 160px; text-align: center; position: relative; overflow: hidden; min-height: 90vh; display: flex; flex-direction: column; justify-content: center;">
+    <div ref="{{ floatLayerRef }}" style="position: absolute; inset: 0; pointer-events: none; z-index: 1;">
+      <!-- credit card -->
+      <div ref="{{ floatRef0 }}" style="position: absolute; top: 10%; left: 6%; pointer-events: auto; will-change: transform;">
+        <div style="width: 200px; height: 124px; border-radius: 12px; background: linear-gradient(135deg, #16161A, #0D0D10); border: 1px solid rgba(245,165,36,0.4); padding: 16px; text-align: left; box-shadow: 0 20px 50px rgba(0,0,0,0.5); transition: transform 0.3s;" style-hover="transform: scale(1.1) rotate(-4deg);">
+          <div style="width: 34px; height: 26px; border-radius: 5px; background: linear-gradient(135deg, var(--accent, #F5A524), #8A5A10); margin-bottom: 22px;"></div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.12em; color: #EDEBE6;">4323 7645 2828 0713</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.14em; color: rgba(237,235,230,0.45); margin-top: 10px;">R MECK · $2T/YR</div>
+        </div>
+      </div>
+      <!-- dog tag -->
+      <div ref="{{ floatRef1 }}" style="position: absolute; top: 14%; right: 7%; pointer-events: auto; will-change: transform;">
+        <div style="width: 150px; height: 88px; border-radius: 44px 44px 44px 44px / 30px 30px 30px 30px; background: linear-gradient(160deg, #26262B, #131316); border: 1px solid rgba(237,235,230,0.3); display: flex; flex-direction: column; justify-content: center; padding: 0 22px; text-align: left; box-shadow: 0 20px 50px rgba(0,0,0,0.5); position: relative; transition: transform 0.3s;" style-hover="transform: scale(1.1) rotate(6deg);">
+          <div style="position: absolute; top: 10px; left: 18px; width: 9px; height: 9px; border-radius: 50%; background: #0A0A0B; border: 1px solid rgba(237,235,230,0.35);"></div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; color: #EDEBE6;">MECK, RON</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: rgba(237,235,230,0.5); margin-top: 4px;">US NAVY</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: var(--accent, #F5A524); margin-top: 4px;">1997 — 2001</div>
+        </div>
+      </div>
+      <!-- patent chip -->
+      <div ref="{{ floatRef2 }}" style="position: absolute; bottom: 16%; left: 9%; pointer-events: auto; will-change: transform;">
+        <div style="width: 130px; height: 130px; background: #101013; border: 1px solid rgba(245,165,36,0.5); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 0 10px #0A0A0B, inset 0 0 0 11px rgba(245,165,36,0.25); transition: transform 0.3s;" style-hover="transform: scale(1.12) rotate(8deg);">
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.08em; color: rgba(237,235,230,0.5);">USPTO</div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.04em; color: var(--accent, #F5A524); text-align: center; line-height: 1.5;">10,951,542<br>×4 GRANTED</div>
+        </div>
+      </div>
+      <!-- terminal window -->
+      <div ref="{{ floatRef3 }}" style="position: absolute; bottom: 14%; right: 8%; pointer-events: auto; will-change: transform;">
+        <div style="width: 190px; border-radius: 8px; background: #0D0D10; border: 1px solid rgba(237,235,230,0.25); overflow: hidden; text-align: left; box-shadow: 0 20px 50px rgba(0,0,0,0.5); transition: transform 0.3s;" style-hover="transform: scale(1.1) rotate(-5deg);">
+          <div style="display: flex; gap: 5px; padding: 8px 10px; border-bottom: 1px solid rgba(237,235,230,0.12);">
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: rgba(237,235,230,0.25);"></span>
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: rgba(237,235,230,0.25);"></span>
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent, #F5A524);"></span>
+          </div>
+          <div style="padding: 12px 14px; font-family: 'JetBrains Mono', monospace; font-size: 11px; line-height: 1.8; color: var(--accent, #F5A524);">$ uptime<br><span style="color: rgba(237,235,230,0.6);">25y · 0 failures</span><span style="display: inline-block; width: 7px; height: 12px; background: var(--accent, #F5A524); margin-left: 5px; vertical-align: -2px; animation: rm-blink 0.9s infinite;"></span></div>
+        </div>
+      </div>
+      <!-- RM coin -->
+      <div ref="{{ floatRef4 }}" style="position: absolute; top: 46%; left: 2.5%; pointer-events: auto; will-change: transform;">
+        <div style="width: 96px; height: 96px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #1C1C21, #0C0C0F); border: 1px solid rgba(245,165,36,0.55); display: flex; align-items: center; justify-content: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 0 6px rgba(245,165,36,0.12); transition: transform 0.3s;" style-hover="transform: scale(1.14) rotate(14deg);">
+          <span style="font-weight: 900; font-stretch: 125%; font-size: 26px; color: #EDEBE6;">RM<span style="color: var(--accent, #F5A524);">.</span></span>
+        </div>
+      </div>
+    </div>
+    <div style="position: relative; z-index: 2;">
+    <div data-reveal style="font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 0.14em; color: var(--accent, #F5A524); margin-bottom: 32px;">08 / TRANSMIT</div>
+    <h2 data-reveal style="margin: 0 auto 48px; font-weight: 900; font-stretch: 122%; font-size: clamp(48px, 8vw, 130px); line-height: 0.92; letter-spacing: -0.03em; text-transform: uppercase; max-width: 1100px;">Ready to modernize your enterprise<span style="color: var(--accent, #F5A524);">?</span></h2>
+    <a data-reveal href="{{ emailHref }}" onClick="{{ onEmailClick }}" style="display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: clamp(16px, 2.4vw, 28px); letter-spacing: 0.04em; color: #EDEBE6; text-decoration: none; border-bottom: 2px solid var(--accent, #F5A524); padding-bottom: 6px; transition: color 0.25s;" style-hover="color: var(--accent, #F5A524);"><span ref="{{ emailRef }}">r*******@*****.***</span></a>
+    <div data-reveal style="display: flex; justify-content: center; gap: 32px; margin-top: 40px; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.1em;">
+      <a href="https://linkedin.com/in/ronmeck" style="color: rgba(237,235,230,0.6); text-decoration: none;" style-hover="color: var(--accent, #F5A524);">LINKEDIN</a>
+      <a href="https://github.com/dad2jrn" style="color: rgba(237,235,230,0.6); text-decoration: none;" style-hover="color: var(--accent, #F5A524);">GITHUB</a>
+      <a href="tel:+18046954749" style="color: rgba(237,235,230,0.6); text-decoration: none;" style-hover="color: var(--accent, #F5A524);">+1 804 695 4749</a>
+    </div>
+    </div>
+  </section>
+
+  <!-- footer / system status -->
+  <footer style="border-top: 1px solid rgba(237,235,230,0.12); padding: 18px 40px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; color: rgba(237,235,230,0.45);">
+    <span>BUILD · main@dev / v2026.07</span>
+    <span>SESSION UPTIME · <span style="color: var(--accent, #F5A524);">{{ uptime }}</span> · SYS NOMINAL</span>
+    <button onClick="{{ toggleSound }}" style="all: unset; font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em; color: rgba(237,235,230,0.45); border: 1px solid rgba(237,235,230,0.2); padding: 6px 12px; transition: color 0.2s, border-color 0.2s;" style-hover="color: var(--accent, #F5A524); border-color: var(--accent, #F5A524);">SOUND · {{ soundLabel }}</button>
+    <span>© 2026 RON MECK</span>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;accent&quot;: { &quot;editor&quot;: &quot;color&quot;, &quot;default&quot;: &quot;#F5A524&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;options&quot;: [&quot;#F5A524&quot;, &quot;#4ADE80&quot;, &quot;#6B8BFF&quot;, &quot;#FF4D2E&quot;], &quot;section&quot;: &quot;Theme&quot; },
+  &quot;showBoot&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Experience&quot; },
+  &quot;customCursor&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Experience&quot; }
+}">
+class Component extends DCLogic {
+  state = {
+    bootVisible: true,
+    bootOpacity: 1,
+    openPatent: -1,
+    soundOn: false,
+    uptime: '00:00',
+  };
+
+  progressRef = React.createRef();
+  emailRef = React.createRef();
+  contactRef = React.createRef();
+  floatLayerRef = React.createRef();
+  floatRef0 = React.createRef();
+  floatRef1 = React.createRef();
+  floatRef2 = React.createRef();
+  floatRef3 = React.createRef();
+  floatRef4 = React.createRef();
+
+  // Assembled at runtime so the address never appears in the page source.
+  email() {
+    return [114, 111, 110, 109, 101, 99, 107].map(c => String.fromCharCode(c)).join('')
+      + String.fromCharCode(64)
+      + [103, 109, 97, 105, 108].map(c => String.fromCharCode(c)).join('')
+      + '.com';
+  }
+  cursorDotRef = React.createRef();
+  cursorRingRef = React.createRef();
+  heroCanvasRef = React.createRef();
+
+  timelineData = [
+    { years: '2024 — NOW', role: 'Sr. Enterprise Architect', org: 'Virginia Dept. of Transportation', tag: 'GOV' },
+    { years: '2016 — 2023', role: 'Sr. Manager, Software Engineering Architect', org: 'Capital One', tag: 'BANKING' },
+    { years: '2019 — 2021', role: 'Manager, Software Engineering', org: 'Capital One', tag: 'BANKING' },
+    { years: '2018 — 2019', role: 'Senior Software Engineer', org: 'Capital One', tag: 'BANKING' },
+    { years: '2016 — 2018', role: 'Senior Cloud Platform Engineer', org: 'Capital One', tag: 'BANKING' },
+    { years: '2010 — 2016', role: 'Enterprise Solutions Architect', org: 'Bank of America', tag: 'BANKING' },
+    { years: '2008 — 2010', role: 'Enterprise Architecture Consultant', org: 'Bank of America', tag: 'CONSULTING' },
+    { years: '2007 — 2008', role: 'IT Program Manager', org: 'US Navy — NOSTRA', tag: 'GOV' },
+    { years: '2002 — 2007', role: 'Senior Enterprise Architect', org: 'US Army — Fort Lee', tag: 'GOV' },
+    { years: '1997 — 2001', role: 'Petty Officer 3rd Class', org: 'US Navy', tag: 'MILITARY' },
+  ];
+
+  patentData = [
+    { number: 'US 10,951,542 B2', title: 'Tag-Driven Cloud Cost Automation', desc: 'A system for driving the on/off behavior of cloud resources automatically using metadata tags as the control mechanism — ensuring resources only bill when in use.', tags: 'FINOPS · CLOUD GOVERNANCE · AUTOMATION', href: 'https://ronmeck.dev/patents/01-operational-schedules/' },
+    { number: 'US 11,157,269 B2', title: 'Self-Healing Deployment Recovery', desc: 'A self-healing deployment system that automatically walks version history backward to a known-good state and reconstructs it as a new roll-forward version.', tags: 'SRE · CI/CD · RESILIENCE', href: 'https://ronmeck.dev/patents/02-automated-roll-forward/' },
+    { number: 'US 12,086,648 B2', title: 'Behavior-Driven Least-Privilege Access', desc: 'A system that observes application behavior at execution time to dynamically drive IAM policies — least-privilege access based on actual API calls and resources touched.', tags: 'ZERO TRUST · LEAST PRIVILEGE · IAM AUTOMATION', href: 'https://ronmeck.dev/patents/03-access-management/' },
+    { number: 'US 11,954,504 B2', title: 'Self-Optimizing Cloud Infrastructure', desc: 'A system that analyzes existing cloud infrastructure and generates optimized alternative configurations as executable code, using a learning model to improve over time.', tags: 'FINOPS · IAC · MACHINE LEARNING', href: 'https://ronmeck.dev/patents/04-infrastructure-conversion/' },
+  ];
+
+  componentDidMount() {
+    this.startTime = Date.now();
+    this.cleanupFns = [];
+
+    // Boot sequence
+    if (this.props.showBoot ?? true) {
+      this.bootT1 = setTimeout(() => this.setState({ bootOpacity: 0 }), 2600);
+      this.bootT2 = setTimeout(() => this.setState({ bootVisible: false }), 3150);
+    } else {
+      this.setState({ bootVisible: false });
+    }
+
+    // Uptime
+    this.uptimeInt = setInterval(() => {
+      const s = Math.floor((Date.now() - this.startTime) / 1000);
+      const mm = String(Math.floor(s / 60)).padStart(2, '0');
+      const ss = String(s % 60).padStart(2, '0');
+      this.setState({ uptime: mm + ':' + ss });
+    }, 1000);
+
+    // Scroll progress
+    const onScroll = () => {
+      const h = document.documentElement;
+      const pct = h.scrollTop / Math.max(1, h.scrollHeight - h.clientHeight) * 100;
+      if (this.progressRef.current) this.progressRef.current.style.width = pct + '%';
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    this.cleanupFns.push(() => window.removeEventListener('scroll', onScroll));
+
+    // Reveal on scroll
+    const revealEls = Array.from(document.querySelectorAll('[data-reveal]'));
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.style.opacity = '1';
+          e.target.style.transform = 'translateY(0)';
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    revealEls.forEach((el, i) => {
+      if (el.getBoundingClientRect().top > window.innerHeight * 0.92) {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(28px)';
+        el.style.transition = 'opacity 0.7s cubic-bezier(0.16,1,0.3,1) ' + (i % 4) * 0.08 + 's, transform 0.7s cubic-bezier(0.16,1,0.3,1) ' + (i % 4) * 0.08 + 's';
+        io.observe(el);
+      }
+    });
+    this.cleanupFns.push(() => io.disconnect());
+
+    // Count-ups
+    const counters = Array.from(document.querySelectorAll('[data-count]'));
+    const cio = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        cio.unobserve(e.target);
+        const el = e.target;
+        const target = parseFloat(el.getAttribute('data-count'));
+        const prefix = el.getAttribute('data-prefix') || '';
+        const suffix = el.getAttribute('data-suffix') || '';
+        const t0 = performance.now();
+        const dur = 1600;
+        const tick = (t) => {
+          const p = Math.min(1, (t - t0) / dur);
+          const eased = 1 - Math.pow(1 - p, 4);
+          el.textContent = prefix + Math.round(target * eased) + suffix;
+          if (p < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      });
+    }, { threshold: 0.5 });
+    counters.forEach((el) => cio.observe(el));
+    this.cleanupFns.push(() => cio.disconnect());
+
+    // Custom cursor
+    if ((this.props.customCursor ?? true) && window.matchMedia('(pointer: fine)').matches) {
+      const styleEl = document.createElement('style');
+      styleEl.textContent = '* { cursor: none !important; }';
+      document.head.appendChild(styleEl);
+      this.cleanupFns.push(() => styleEl.remove());
+      let mx = -100, my = -100, rx = -100, ry = -100;
+      const onMove = (e) => { mx = e.clientX; my = e.clientY; };
+      const onOver = (e) => {
+        const hot = e.target.closest && e.target.closest('a, button');
+        const ring = this.cursorRingRef.current;
+        if (ring) { ring.style.width = hot ? '52px' : '30px'; ring.style.height = hot ? '52px' : '30px'; }
+        if (hot && this.state.soundOn) this.blip(1400, 0.02);
+      };
+      window.addEventListener('mousemove', onMove, { passive: true });
+      window.addEventListener('mouseover', onOver, { passive: true });
+      this.cleanupFns.push(() => { window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseover', onOver); });
+      const loop = () => {
+        rx += (mx - rx) * 0.16; ry += (my - ry) * 0.16;
+        const dot = this.cursorDotRef.current, ring = this.cursorRingRef.current;
+        if (dot) dot.style.transform = 'translate(' + (mx - 3) + 'px,' + (my - 3) + 'px)';
+        if (ring) { const s = parseFloat(ring.style.width) || 30; ring.style.transform = 'translate(' + (rx - s / 2) + 'px,' + (ry - s / 2) + 'px)'; }
+        this.cursorRaf = requestAnimationFrame(loop);
+      };
+      loop();
+      this.cleanupFns.push(() => cancelAnimationFrame(this.cursorRaf));
+    }
+
+    // Email scramble-decode reveal (address only assembled by JS, invisible to scrapers)
+    const emailEl = this.emailRef.current;
+    if (emailEl) {
+      const target = this.email();
+      const chars = '#$%&@*+=?!<>/\\0123456789ABCDEF';
+      const eio = new IntersectionObserver((entries) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting) return;
+          eio.disconnect();
+          const t0 = performance.now();
+          const dur = 1200;
+          const tick = (t) => {
+            const p = Math.min(1, (t - t0) / dur);
+            const settled = Math.floor(target.length * p);
+            let out = target.slice(0, settled);
+            for (let i = settled; i < target.length; i++) {
+              out += chars[Math.floor(Math.random() * chars.length)];
+            }
+            emailEl.textContent = out;
+            if (p < 1) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        });
+      }, { threshold: 0.5 });
+      eio.observe(emailEl);
+      this.cleanupFns.push(() => eio.disconnect());
+    }
+
+    // Floating artifacts — spring physics + cursor repulsion (contact section)
+    const section = this.contactRef.current;
+    const layer = this.floatLayerRef.current;
+    if (section && layer && window.matchMedia('(pointer: fine)').matches && window.innerWidth > 900) {
+      const items = [this.floatRef0, this.floatRef1, this.floatRef2, this.floatRef3, this.floatRef4]
+        .map((r, i) => r.current && {
+          el: r.current,
+          x: 0, y: 0, vx: 0, vy: 0,
+          rot: 0, vr: 0,
+          baseRot: [-8, 7, -5, 6, -10][i],
+          phase: Math.random() * Math.PI * 2,
+          bobAmp: 10 + Math.random() * 8,
+          bobSpeed: 0.5 + Math.random() * 0.4,
+        }).filter(Boolean);
+      let mouseX = -9999, mouseY = -9999, inside = false;
+      const onMove = (e) => {
+        const rect = section.getBoundingClientRect();
+        mouseX = e.clientX - rect.left;
+        mouseY = e.clientY - rect.top;
+        inside = e.clientY >= rect.top && e.clientY <= rect.bottom;
+      };
+      window.addEventListener('mousemove', onMove, { passive: true });
+      this.cleanupFns.push(() => window.removeEventListener('mousemove', onMove));
+      const step = () => {
+        const t = performance.now() / 1000;
+        for (const it of items) {
+          // spring back home
+          it.vx += -it.x * 0.015;
+          it.vy += -it.y * 0.015;
+          it.vr += -it.rot * 0.02;
+          // cursor repulsion
+          if (inside) {
+            const r = it.el.getBoundingClientRect();
+            const sr = section.getBoundingClientRect();
+            const cx = r.left - sr.left + r.width / 2;
+            const cy = r.top - sr.top + r.height / 2;
+            const dx = cx - mouseX, dy = cy - mouseY;
+            const d = Math.hypot(dx, dy);
+            const R = 300;
+            if (d < R && d > 0.001) {
+              const f = Math.pow(1 - d / R, 2) * 3.2;
+              it.vx += (dx / d) * f;
+              it.vy += (dy / d) * f;
+              it.vr += (dx / d) * f * 0.7;
+            }
+          }
+          it.vx *= 0.9; it.vy *= 0.9; it.vr *= 0.9;
+          it.x += it.vx; it.y += it.vy; it.rot += it.vr;
+          const bob = Math.sin(t * it.bobSpeed + it.phase) * it.bobAmp;
+          const sway = Math.cos(t * it.bobSpeed * 0.7 + it.phase) * 3;
+          it.el.style.transform = 'translate(' + it.x + 'px,' + (it.y + bob) + 'px) rotate(' + (it.baseRot + sway + it.rot) + 'deg)';
+        }
+        this.floatRaf = requestAnimationFrame(step);
+      };
+      step();
+      this.cleanupFns.push(() => cancelAnimationFrame(this.floatRaf));
+    } else if (layer && (window.innerWidth <= 900 || !window.matchMedia('(pointer: fine)').matches)) {
+      layer.style.display = 'none';
+    }
+
+    // Hero particle field
+    const canvas = this.heroCanvasRef.current;
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      let w, h;
+      const resize = () => {
+        w = canvas.clientWidth; h = canvas.clientHeight;
+        canvas.width = w * devicePixelRatio; canvas.height = h * devicePixelRatio;
+        ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+      };
+      resize();
+      window.addEventListener('resize', resize);
+      this.cleanupFns.push(() => window.removeEventListener('resize', resize));
+      const N = 80;
+      const pts = Array.from({ length: N }, () => ({
+        x: Math.random() * 2000, y: Math.random() * 1200,
+        vx: (Math.random() - 0.5) * 0.35, vy: (Math.random() - 0.5) * 0.35,
+      }));
+      const accent = this.accentRGB();
+      const draw = () => {
+        if (document.hidden) { this.heroRaf = requestAnimationFrame(draw); return; }
+        ctx.clearRect(0, 0, w, h);
+        for (const p of pts) {
+          p.x += p.vx; p.y += p.vy;
+          if (p.x < 0 || p.x > w) p.vx *= -1;
+          if (p.y < 0 || p.y > h) p.vy *= -1;
+          p.x = Math.max(0, Math.min(w, p.x)); p.y = Math.max(0, Math.min(h, p.y));
+        }
+        ctx.lineWidth = 1;
+        for (let i = 0; i < N; i++) {
+          for (let j = i + 1; j < N; j++) {
+            const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
+            const d2 = dx * dx + dy * dy;
+            if (d2 < 130 * 130) {
+              const a = (1 - Math.sqrt(d2) / 130) * 0.22;
+              ctx.strokeStyle = 'rgba(' + accent + ',' + a + ')';
+              ctx.beginPath(); ctx.moveTo(pts[i].x, pts[i].y); ctx.lineTo(pts[j].x, pts[j].y); ctx.stroke();
+            }
+          }
+        }
+        for (const p of pts) {
+          ctx.fillStyle = 'rgba(' + accent + ',0.7)';
+          ctx.fillRect(p.x - 1, p.y - 1, 2, 2);
+        }
+        this.heroRaf = requestAnimationFrame(draw);
+      };
+      draw();
+      this.cleanupFns.push(() => cancelAnimationFrame(this.heroRaf));
+    }
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.bootT1); clearTimeout(this.bootT2);
+    clearInterval(this.uptimeInt);
+    (this.cleanupFns || []).forEach((f) => f());
+  }
+
+  accentRGB() {
+    const hex = (this.props.accent ?? '#F5A524').replace('#', '');
+    return parseInt(hex.slice(0, 2), 16) + ',' + parseInt(hex.slice(2, 4), 16) + ',' + parseInt(hex.slice(4, 6), 16);
+  }
+
+  blip(freq, gain) {
+    try {
+      if (!this.audioCtx) this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const ctx = this.audioCtx;
+      const osc = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.type = 'sine'; osc.frequency.value = freq;
+      g.gain.setValueAtTime(gain, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.08);
+      osc.connect(g); g.connect(ctx.destination);
+      osc.start(); osc.stop(ctx.currentTime + 0.09);
+    } catch (e) { /* audio unavailable */ }
+  }
+
+  renderVals() {
+    const open = this.state.openPatent;
+    return {
+      accent: this.props.accent ?? '#F5A524',
+      emailHref: '#contact',
+      emailRef: this.emailRef,
+      onEmailClick: (e) => { e.preventDefault(); window.location.href = 'mai' + 'lto:' + this.email(); },
+      contactRef: this.contactRef,
+      floatLayerRef: this.floatLayerRef,
+      floatRef0: this.floatRef0,
+      floatRef1: this.floatRef1,
+      floatRef2: this.floatRef2,
+      floatRef3: this.floatRef3,
+      floatRef4: this.floatRef4,
+      bootVisible: this.state.bootVisible,
+      bootOpacity: this.state.bootOpacity,
+      uptime: this.state.uptime,
+      soundLabel: this.state.soundOn ? 'ON' : 'OFF',
+      toggleSound: () => {
+        const next = !this.state.soundOn;
+        this.setState({ soundOn: next });
+        if (next) this.blip(880, 0.05);
+      },
+      progressRef: this.progressRef,
+      cursorDotRef: this.cursorDotRef,
+      cursorRingRef: this.cursorRingRef,
+      heroCanvasRef: this.heroCanvasRef,
+      timeline: this.timelineData,
+      patents: this.patentData.map((p, i) => ({
+        ...p,
+        open: open === i,
+        chevron: open === i ? '−' : '+',
+        onToggle: () => {
+          this.setState({ openPatent: open === i ? -1 : i });
+          if (this.state.soundOn) this.blip(660, 0.04);
+        },
+      })),
+    };
+  }
+}
+</script>
+</body>
+</html>
