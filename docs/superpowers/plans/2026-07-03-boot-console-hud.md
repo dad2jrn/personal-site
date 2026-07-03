@@ -933,7 +933,7 @@ import { MicroSelectRow, ArrayChip, SyncWidget, NineDWidget, LockBox } from './b
 import { SystemBox } from './boot/SystemBox';
 import { SeqRows, NavModules, CareerBars, PatentChips, TransmissionWindow } from './boot/Panels';
 import { MICRO_SELECT_SEED, ARRAY_CHIPS, CAREER_ITEMS, PATENT_CHIPS, NAV_ITEMS, SUBTITLE } from './boot/data';
-import { sfx, startMusic } from '../../scripts/sound';
+import { sfx, startMusic } from '../../../scripts/sound';
 
 // Entrance delays (seconds) — every element uses rm-bootline 0.3s both {delay};
 // these are the delays from bootoverlay.md §5, condensed to per-region values.
