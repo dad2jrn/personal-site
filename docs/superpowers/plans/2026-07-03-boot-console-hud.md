@@ -264,14 +264,14 @@ git commit -m "feat(boot): add boot console data, types, and scramble-decode alg
 - Create: `src/components/home/islands/boot/useBootTimeline.ts`
 
 **Interfaces:**
-- Consumes: `LOG_LINES`, `BUTTON_LABEL`, `SUBTITLE`, `CONNECTION_START` from `./data`; `scrambleDecode` from `./scramble`; `Phase`, `LogLine` from `./types`.
+- Consumes: `LOG_LINES`, `BUTTON_LABEL`, `CONNECTION_START` from `./data`; `scrambleDecode` from `./scramble`; `Phase`, `LogLine` from `./types`. (`SUBTITLE` the string is consumed later, directly by `BootConsole.tsx` — the hook only tracks `subtitleVisible: boolean`.)
 - Produces: `useBootTimeline(): BootTimelineState` where `BootTimelineState = { phase: Phase; reduced: boolean; logLines: LogLine[]; buttonVisible: boolean; buttonLabel: string; subtitleVisible: boolean; footerSuffix: boolean; clock: string; connection: number; dismissed: boolean; dismiss: () => void }`.
 
 - [ ] **Step 1: Create the hook**
 
 ```ts
 import { useEffect, useRef, useState } from 'react';
-import { LOG_LINES, BUTTON_LABEL, SUBTITLE, CONNECTION_START } from './data';
+import { LOG_LINES, BUTTON_LABEL, CONNECTION_START } from './data';
 import { scrambleDecode } from './scramble';
 import type { Phase, LogLine } from './types';
 

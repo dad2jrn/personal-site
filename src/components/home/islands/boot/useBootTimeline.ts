@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { LOG_LINES, BUTTON_LABEL, SUBTITLE, CONNECTION_START } from './data';
+import { LOG_LINES, BUTTON_LABEL, CONNECTION_START } from './data';
 import { scrambleDecode } from './scramble';
 import type { Phase, LogLine } from './types';
 
