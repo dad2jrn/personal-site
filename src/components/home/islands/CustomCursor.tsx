@@ -62,8 +62,8 @@ export default function CustomCursor() {
   if (!active) return null;
   return (
     <>
-      <div ref={dotRef} className="pointer-events-none fixed left-0 top-0 z-[200] h-[6px] w-[6px] rounded-full bg-accent" style={{ transform: 'translate(-100px, -100px)' }} />
-      <div ref={ringRef} className="pointer-events-none fixed left-0 top-0 z-[200] h-[30px] w-[30px] rounded-full border border-accent opacity-60 [transition:width_0.2s,height_0.2s]" style={{ transform: 'translate(-100px, -100px)', width: '30px', height: '30px' }} />
+      <div ref={dotRef} className="pointer-events-none fixed left-0 top-0 z-[200] h-[6px] w-[6px] rounded-full bg-accent mix-blend-difference" style={{ transform: 'translate(-100px, -100px)' }} />
+      <div ref={ringRef} className="pointer-events-none fixed left-0 top-0 z-[200] h-[30px] w-[30px] rounded-full border border-accent opacity-60 mix-blend-difference [transition:width_0.2s,height_0.2s]" style={{ transform: 'translate(-100px, -100px)', width: '30px', height: '30px' }} />
     </>
   );
 }
