@@ -33,13 +33,11 @@ const years = (start: string, end: string | null) =>
 </section>
 
 <script>
-  import { blip, soundOn } from '../../scripts/sound';
+  import { sfx } from '../../scripts/sound';
 
-  // Rows are divs, not links, so the cursor's a/button hover blip doesn't
-  // cover them — give them the same hover blip the IP accordion gets.
+  // Rows are divs, not links, so the cursor's a/button hover sound doesn't
+  // cover them — give them the same hover sample.
   document.querySelectorAll('#timeline [data-tl-row]').forEach((row) => {
-    row.addEventListener('mouseenter', () => {
-      if (soundOn()) blip(1400, 0.02);
-    });
+    row.addEventListener('mouseenter', () => sfx('hover'));
   });
 </script>

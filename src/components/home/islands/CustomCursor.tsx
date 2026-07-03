@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { blip, soundOn } from '../../../scripts/sound';
+import { sfx } from '../../../scripts/sound';
 
 // Desktop-only custom cursor: 6px dot tracks exactly; 30px ring lerps behind
 // and grows to 52px over links/buttons. Native cursor hidden only while mounted.
@@ -21,16 +21,18 @@ export default function CustomCursor() {
     document.head.appendChild(styleEl);
 
     let mx = -100, my = -100, rx = -100, ry = -100, raf = 0;
+    let prevHot: Element | null = null;
     const onMove = (e: MouseEvent) => { mx = e.clientX; my = e.clientY; };
     const onOver = (e: MouseEvent) => {
       const target = e.target as Element;
-      const hot = target.closest?.('a, button');
+      const hot = target.closest?.('a, button') ?? null;
       const ring = ringRef.current;
       if (ring) {
         ring.style.width = hot ? '52px' : '30px';
         ring.style.height = hot ? '52px' : '30px';
       }
-      if (hot && soundOn()) blip(1400, 0.02);
+      if (hot && hot !== prevHot) sfx('hover');
+      prevHot = hot;
     };
     window.addEventListener('mousemove', onMove, { passive: true });
     window.addEventListener('mouseover', onOver, { passive: true });
