@@ -6,6 +6,15 @@
 
 @import "tailwindcss";
 
+/* Display accent face — used sparingly via .other-accent, never body text */
+@font-face {
+  font-family: 'Machine';
+  src: url('/fonts/Machine.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   --color-ink: #EDEBE6;
   --color-ink-muted: rgb(237 235 230 / 0.55);
@@ -53,6 +62,12 @@
 @keyframes rm-pulse { 0%, 100% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.5); opacity: 1; } }
 @keyframes rm-scan { from { top: -20%; } to { top: 120%; } }
 @keyframes rm-fadeup { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes rm-boot-exit {
+  0% { transform: scale(1); filter: brightness(1); opacity: 1; }
+  12% { transform: scale(1.01); filter: brightness(2.4); opacity: 1; }
+  42% { transform: scaleY(0.035) scaleX(1.06); filter: brightness(3.2); opacity: 1; }
+  100% { transform: scaleY(0.0015) scaleX(0); filter: brightness(3.2); opacity: 0; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -80,6 +95,8 @@
   .btn-outline { @apply inline-block border border-ink/30 px-6 py-[14px] font-mono text-[12px] tracking-[0.12em] text-ink no-underline transition-colors hover:border-accent hover:text-accent; }
   .btn-solid { @apply inline-block bg-accent px-8 py-[18px] font-mono text-[13px] font-bold tracking-[0.12em] text-surface no-underline transition-transform hover:-translate-y-[3px]; }
   .boot-line { animation: rm-bootline 0.3s both; }
+  .other-accent { font-family: 'Machine', var(--font-sans); }
+  .boot-overlay-exit { animation: rm-boot-exit 0.65s cubic-bezier(0.5, 0, 0.75, 0.9) forwards; }
 
   /* Prose (MDX bodies) */
   .prose { @apply max-w-none leading-relaxed text-ink-muted; }

@@ -2,7 +2,7 @@
     script shows it on every home-page load — refresh or navigation alike.
     The site unlocks when the user clicks LAUNCH — that click is also the
     user gesture that unlocks WebAudio and starts the music loop. */}
-<div id="boot-overlay" class="fixed inset-0 z-[150] hidden items-center justify-center bg-surface-sunken transition-opacity duration-500">
+<div id="boot-overlay" class="fixed inset-0 z-[150] hidden items-center justify-center bg-surface-sunken">
   <div class="min-w-[340px] font-mono text-[14px] leading-[2.1] text-accent">
     <div class="boot-line" style="animation-delay: 0.1s">&gt; RM_OS v26.07 — initializing</div>
     <div class="boot-line text-ink/75" style="animation-delay: 0.55s">&gt; mounting /career ······· 25 YRS · OK</div>
@@ -22,8 +22,8 @@
     document.documentElement.style.overflow = 'hidden';
     btn.addEventListener('click', () => {
       document.documentElement.style.overflow = '';
-      el.style.opacity = '0';
-      setTimeout(() => { el.remove(); }, 550);
+      el.addEventListener('animationend', () => { el.remove(); }, { once: true });
+      el.classList.add('boot-overlay-exit');
     });
   })();
 </script>
