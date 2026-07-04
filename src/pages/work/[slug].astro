@@ -1,6 +1,7 @@
 ---
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
 
 export async function getStaticPaths() {
   const caseStudies = await getCollection('case-studies');
@@ -22,6 +23,9 @@ const { Content } = await render(entry);
   <article class="py-24">
     <div class="container-site">
       <div class="max-w-[800px]">
+        <div class="mb-10">
+          <Breadcrumb segments={[{ label: 'THE_WORK', href: '/#work' }, { label: `${entry.id}.log`.toUpperCase() }]} />
+        </div>
         <div class="label-mono mb-8">{entry.data.company} · {entry.data.period}</div>
         <h1 class="h-display mb-8 text-[clamp(24px,7.5vw,72px)] text-ink">
           {entry.data.title}

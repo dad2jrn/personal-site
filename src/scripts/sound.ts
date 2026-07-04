@@ -15,6 +15,12 @@ type RMSound = {
   buffers?: Map<string, Promise<AudioBuffer>>;
   musicSrc?: AudioBufferSourceNode;
   musicName?: MusicName;
+  // Loop-position bookkeeping so navigation doesn't restart the track:
+  // where in the buffer this playback started, when (in ctx time), and the
+  // buffer's duration. Persisted to sessionStorage on pagehide.
+  musicStartOffset?: number;
+  musicStartTime?: number;
+  musicDur?: number;
 };
 
 declare global {
@@ -69,7 +75,7 @@ function loadBuffer(url: string): Promise<AudioBuffer> {
   return p;
 }
 
-function playBuffer(buffer: AudioBuffer, gain: number, loop = false): AudioBufferSourceNode {
+function playBuffer(buffer: AudioBuffer, gain: number, loop = false, offset = 0): AudioBufferSourceNode {
   const c = ctx();
   const src = c.createBufferSource();
   src.buffer = buffer;
@@ -78,8 +84,33 @@ function playBuffer(buffer: AudioBuffer, gain: number, loop = false): AudioBuffe
   g.gain.value = gain;
   src.connect(g);
   g.connect(c.destination);
-  src.start();
+  src.start(0, offset);
   return src;
+}
+
+// The music loop behaves like a radio station: its position is saved on
+// pagehide and, on the next page, resumed as if it had kept playing during
+// the navigation (wall-clock adjusted), instead of restarting from zero.
+function saveMusicPos(): void {
+  try {
+    const s = store();
+    if (!s.musicSrc || !s.musicName || !s.musicDur) return;
+    const elapsed = Math.max(0, (s.ctx?.currentTime ?? 0) - (s.musicStartTime ?? 0));
+    const offset = ((s.musicStartOffset ?? 0) + elapsed) % s.musicDur;
+    sessionStorage.setItem('rm-music-pos', JSON.stringify({ n: s.musicName, o: offset, t: Date.now() }));
+  } catch { /* private mode / audio unavailable */ }
+}
+
+function savedOffset(track: MusicName, duration: number): number {
+  try {
+    const raw = sessionStorage.getItem('rm-music-pos');
+    if (!raw || duration <= 0) return 0;
+    const p = JSON.parse(raw) as { n: string; o: number; t: number };
+    if (p.n !== track || typeof p.o !== 'number' || typeof p.t !== 'number') return 0;
+    return (p.o + (Date.now() - p.t) / 1000) % duration;
+  } catch {
+    return 0;
+  }
 }
 
 export function sfx(name: SfxName): void {
@@ -125,7 +156,11 @@ export function startMusic(name?: MusicName): void {
       if (!s2.on || s2.musicName !== track || s2.musicSrc) return;
       // Unlike one-shots, starting a loop into a suspended context is what we
       // want: it begins the instant autoplay is granted or a gesture resumes.
-      s2.musicSrc = playBuffer(buf, gain, true);
+      const offset = savedOffset(track, buf.duration);
+      s2.musicSrc = playBuffer(buf, gain, true, offset);
+      s2.musicStartOffset = offset;
+      s2.musicStartTime = s2.ctx?.currentTime ?? 0;
+      s2.musicDur = buf.duration;
       ctx().resume().catch(() => {});
     }).catch(() => {});
   } catch { /* audio unavailable */ }
@@ -162,6 +197,9 @@ function bindGlobal(): void {
     s.unlockBound = true;
     window.addEventListener('pointerdown', unlock, { once: true, capture: true });
     window.addEventListener('keydown', unlock, { once: true, capture: true });
+    // Persist the loop position when leaving so the next page resumes the
+    // track mid-stream instead of restarting it.
+    window.addEventListener('pagehide', saveMusicPos);
     // Try to start music immediately (allowed once the browser trusts the
     // origin); otherwise it starts on the unlock gesture above.
     startMusic();

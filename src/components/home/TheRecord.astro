@@ -12,7 +12,7 @@ const patents = (await getCollection('patents')).length;
       <span class="eyebrow">07 / THE RECORD</span>
       <div class="h-px flex-1 bg-ink/[0.14]"></div>
     </div>
-    <div data-reveal class="relative border border-line p-10">
+    <div data-reveal data-flicker class="relative border border-line p-10">
       <div aria-hidden="true">
         <CornerHandles />
       </div>
@@ -38,3 +38,8 @@ const patents = (await getCollection('patents')).length;
     </div>
   </div>
 </section>
+
+<script>
+  import { initCornerFlicker } from '../../scripts/flicker';
+  initCornerFlicker();
+</script>

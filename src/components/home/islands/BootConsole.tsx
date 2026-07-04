@@ -32,9 +32,14 @@ export default function BootConsole() {
   // hydration mismatch) — flips to `true` a tick after mount if this is a
   // tablet/desktop viewport. All of BootConsoleInner's timers/sound/effects
   // stay unmounted until then, so phone visitors never run any of this.
+  // Once per session: after a LAUNCH click (rm-boot-seen, shared with the
+  // phone overlay) the gate never mounts again, so visitors returning from
+  // inner pages land straight on the site.
   const [enabled, setEnabled] = useState(false);
   useEffect(() => {
-    setEnabled(window.matchMedia(DESKTOP_QUERY).matches);
+    let seen = false;
+    try { seen = sessionStorage.getItem('rm-boot-seen') === '1'; } catch { /* private mode */ }
+    setEnabled(!seen && window.matchMedia(DESKTOP_QUERY).matches);
   }, []);
   if (!enabled) return null;
   return <BootConsoleInner />;

@@ -3,7 +3,8 @@ import BootConsole from './islands/BootConsole';
 ---
 
 {/* Terminal boot gate. Hidden by default (no-JS never blocks); the inline
-    script shows it on every home-page load — refresh or navigation alike.
+    script shows it once per session (rm-boot-seen, shared with the desktop
+    BootConsole) so returning from inner pages never re-gates the visitor.
     The site unlocks when the user clicks LAUNCH — that click is also the
     user gesture that unlocks WebAudio and starts the music loop. */}
 <div id="boot-overlay" class="fixed inset-0 z-[150] hidden items-center justify-center bg-surface-sunken">
@@ -19,14 +20,20 @@ import BootConsole from './islands/BootConsole';
 
 <script is:inline>
   (() => {
+    const el = document.getElementById('boot-overlay');
+    // Once per session: removing the element (any width) also keeps the
+    // sound engine's currentTrack() from picking the boot loop.
+    let seen = false;
+    try { seen = sessionStorage.getItem('rm-boot-seen') === '1'; } catch { /* private mode */ }
+    if (seen) { el && el.remove(); return; }
     // Phone-width only — tablet/desktop gets <BootConsole> below instead.
     if (window.matchMedia('(min-width: 768px)').matches) return;
-    const el = document.getElementById('boot-overlay');
     const btn = document.getElementById('boot-launch');
     if (!el || !btn) return;
     el.style.display = 'flex';
     document.documentElement.style.overflow = 'hidden';
     btn.addEventListener('click', () => {
+      try { sessionStorage.setItem('rm-boot-seen', '1'); } catch { /* private mode */ }
       document.documentElement.style.overflow = '';
       el.addEventListener('animationend', () => { el.remove(); }, { once: true });
       el.classList.add('boot-overlay-exit');

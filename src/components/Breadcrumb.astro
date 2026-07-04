@@ -1,0 +1,29 @@
+---
+/* Terminal-style breadcrumb: `▼ RM://CONSOLE / SEGMENT / CURRENT` with a
+   blinking cursor. The console root always links home; segments with an
+   href link there, the last (current) segment renders in accent. */
+interface Segment {
+  label: string;
+  href?: string;
+}
+interface Props {
+  segments?: Segment[];
+}
+const { segments = [] } = Astro.props;
+---
+
+<nav aria-label="Breadcrumb" class="no-print flex flex-wrap items-center gap-2 font-mono text-[11px] tracking-[0.16em] text-ink/60">
+  <span class="text-accent" aria-hidden="true">&#9660;</span>
+  <a href="/" class="text-ink/60 no-underline transition-colors hover:text-accent">RM://CONSOLE</a>
+  {segments.map((seg) => (
+    <>
+      <span class="text-ink/30" aria-hidden="true">/</span>
+      {seg.href ? (
+        <a href={seg.href} class="text-ink/60 no-underline transition-colors hover:text-accent">{seg.label}</a>
+      ) : (
+        <span class="text-accent">{seg.label}</span>
+      )}
+    </>
+  ))}
+  <span class="ml-1 inline-block h-[12px] w-[7px] animate-[rm-blink_1.1s_steps(1)_infinite] bg-accent" aria-hidden="true"></span>
+</nav>
