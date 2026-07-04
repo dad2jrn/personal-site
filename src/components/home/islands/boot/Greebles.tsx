@@ -32,7 +32,7 @@ export function ArrayChip({ tag, code }: { tag: string; code: string }) {
       <span className="absolute -left-1 -top-1 bg-accent px-[3px] font-mono text-[7px] font-bold text-surface">{tag}</span>
       <span className="flex h-4 w-4 items-center justify-center border border-ink/30 text-[9px] text-accent">&#9664;</span>
       <span className="font-mono text-[9px] tracking-[0.1em] text-ink/60">
-        ARRAY <span className="text-accent/80">{code}</span>
+        ARRAY <span className="text-accent/80" data-scramble>{code}</span>
       </span>
     </div>
   );

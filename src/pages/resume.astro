@@ -195,7 +195,7 @@ const patents = [
                   <div data-tline class="mb-2 flex items-end justify-between gap-4">
                     <div class="font-mono text-[11px] tracking-[0.1em] text-ink/40">{group.label}</div>
                     {gi === 0 && (
-                      <div class="no-print hidden sm:block" aria-hidden="true">
+                      <div class="no-print relative -top-7 hidden sm:block" aria-hidden="true">
                         <ArrayChip tag="SKL" code="6YT" />
                       </div>
                     )}
@@ -355,6 +355,31 @@ const patents = [
       }
     }, { threshold: 0.15 });
     lines.forEach((el) => io.observe(el));
+  }
+
+  if (!reduced) {
+    // Corner-handle squares flicker independently: each gets a random
+    // period and phase so no two blink in sync (panel corners, LockBox).
+    document.querySelectorAll<HTMLElement>('.resume-panel span.bg-ink').forEach((sq) => {
+      const dur = (2.6 + Math.random() * 3.2).toFixed(2);
+      const delay = (-Math.random() * 5).toFixed(2);
+      sq.style.animation = `rm-flick ${dur}s linear infinite ${delay}s`;
+    });
+
+    // ArrayChip code: single letters mutate at random moments, like a
+    // register being rewritten.
+    const GLYPHS = 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789';
+    document.querySelectorAll<HTMLElement>('[data-scramble]').forEach((el) => {
+      const mutate = () => {
+        const t = el.textContent ?? '';
+        if (t.length) {
+          const i = Math.floor(Math.random() * t.length);
+          el.textContent = t.slice(0, i) + GLYPHS[Math.floor(Math.random() * GLYPHS.length)] + t.slice(i + 1);
+        }
+        setTimeout(mutate, 200 + Math.random() * 1400);
+      };
+      setTimeout(mutate, Math.random() * 800);
+    });
   }
 </script>
 
