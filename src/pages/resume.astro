@@ -1,6 +1,9 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeader from '../components/home/SectionHeader.astro';
+import ParticleField from '../components/home/islands/ParticleField';
+import { CornerHandles, LockBox, ArrayChip, StatusDots } from '../components/home/islands/boot/Greebles';
 import { site } from '../lib/site';
 
 const experience = await getCollection('experience');
@@ -26,104 +29,150 @@ const skills = {
 ---
 
 <BaseLayout title="Resume">
-  <section class="pt-28 pb-12 md:pt-32 md:pb-20 bg-white text-black font-serif">
-    <div class="max-w-[850px] mx-auto px-8 sm:px-12">
-      <!-- Header -->
-      <header class="text-center mb-12">
-        <h1 class="text-5xl font-bold mb-2 uppercase tracking-wide">{site.name}</h1>
-        <p class="text-xl font-bold mb-6 text-gray-800">{site.tagline}</p>
+  <section class="relative overflow-hidden px-6 pb-[100px] pt-28 md:px-10 md:pt-32">
+    <div class="no-print pointer-events-none absolute inset-0 opacity-40" aria-hidden="true">
+      <ParticleField client:idle />
+    </div>
+    <div
+      class="no-print pointer-events-none absolute inset-0 [background:radial-gradient(ellipse_at_50%_0%,rgba(10,10,11,0)_40%,rgba(10,10,11,0.92)_100%)]"
+      aria-hidden="true"
+    ></div>
 
-        <div class="flex flex-wrap justify-center items-center gap-x-2 text-[14px] text-gray-900 print-only">
-          <span>{site.location}</span>
-          <span class="text-gray-400">|</span>
-          <a href={`tel:${site.phone.replace(/\s+/g, '')}`} class="hover:underline">{site.phone}</a>
-          <span class="text-gray-400">|</span>
-          <a id="resume-email-link" href="#" class="hover:underline"></a>
-          <span class="text-gray-400">|</span>
-          <a href={site.links.linkedin} class="hover:underline">LinkedIn</a>
+    <div class="relative mx-auto max-w-[850px]">
+      <div class="resume-panel relative border border-line bg-surface-raised/80 p-8 backdrop-blur-sm sm:p-12">
+        <div class="no-print" aria-hidden="true">
+          <CornerHandles />
         </div>
-      </header>
+        <div class="no-print absolute -top-3 right-8" aria-hidden="true">
+          <LockBox code="RM97" />
+        </div>
 
-      <!-- Download Action (Hidden in PDF) -->
-      <div class="mb-12 border border-gray-300 p-6 text-center no-print">
-        <p class="mb-4 text-gray-700">Need a PDF version for your records?</p>
-        <a href={site.links.resumePdf} download class="inline-block bg-[#F5A524] px-8 py-[14px] font-mono text-[13px] font-bold tracking-[0.12em] text-black no-underline transition-transform hover:-translate-y-[3px]">DOWNLOAD PDF RESUME ↓</a>
-      </div>
-
-      <div class="space-y-12 text-black font-sans">
-        <!-- Work Experience -->
-        <section>
-          <h2 class="text-lg font-bold uppercase tracking-[0.15em] border-b-2 border-black mb-6 pb-1">Work Experience</h2>
-          <div class="space-y-10">
-            {featuredExperience.map((entry: CollectionEntry<'experience'>) => (
-              <div>
-                <div class="flex justify-between items-baseline mb-1">
-                  <h3 class="text-[17px] font-bold text-black">{entry.data.company}</h3>
-                  <span class="text-[14px] font-bold text-black">{formatDate(entry.data.startDate)} – {entry.data.endDate ? formatDate(entry.data.endDate) : 'Present'}</span>
-                </div>
-                <div class="flex justify-between items-baseline mb-3">
-                  <span class="text-[15px] font-bold italic text-gray-800">{entry.data.role}</span>
-                  <span class="text-[14px] text-gray-700">{entry.data.location}</span>
-                </div>
-                <p class="text-[14px] mb-4 leading-relaxed text-gray-900 font-medium">
-                  {entry.data.summary}
-                </p>
-                <ul class="list-disc ml-5 space-y-2 text-[14px]">
-                  {entry.data.achievements?.map((achievement: string) => (
-                    <li class="leading-relaxed text-gray-900 pl-1">
-                      {achievement}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+        <!-- Header -->
+        <header class="mb-12 text-center">
+          <div class="mb-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 font-mono text-[12px] tracking-[0.14em] text-ink/50">
+            <span>{site.location}</span>
+            <span class="text-accent">&#9670;</span>
+            <a href={`tel:${site.phone.replace(/\s+/g, '')}`} class="transition-colors hover:text-accent">{site.phone}</a>
+            <span class="text-accent">&#9670;</span>
+            <a id="resume-email-link" href="#" class="transition-colors hover:text-accent"></a>
+            <span class="text-accent">&#9670;</span>
+            <a href={site.links.linkedin} class="transition-colors hover:text-accent">LinkedIn</a>
           </div>
-        </section>
+          <h1 class="h-display m-0 text-[clamp(34px,6vw,60px)]">{site.name}</h1>
+          <p class="mx-auto mt-3 max-w-[520px] font-serif text-[20px] italic leading-snug text-ink/85">{site.tagline}</p>
+        </header>
 
-        <!-- Previous Experience -->
-        {previousExperience.length > 0 && (
+        <!-- Download Action (Hidden in PDF) -->
+        <div class="no-print mb-12 flex flex-wrap items-center justify-center gap-4 border border-line p-6 text-center">
+          <p class="m-0 mb-2 w-full font-mono text-[12px] tracking-[0.1em] text-ink/50">NEED A PDF FOR YOUR RECORDS?</p>
+          <a href={site.links.resumePdf} download class="btn-solid">DOWNLOAD PDF RESUME &#8595;</a>
+          <a href={site.links.resumePdfAts} download class="btn-outline">ATS-FRIENDLY VERSION &#8595;</a>
+        </div>
+
+        <div class="space-y-14">
+          <!-- Work Experience -->
           <section>
-            <h2 class="text-lg font-bold uppercase tracking-[0.15em] border-b-2 border-black mb-6 pb-1">Previous Experience</h2>
-            <div class="space-y-3">
-              {previousExperience.map((entry: CollectionEntry<'experience'>) => (
-                <div class="grid grid-cols-[1fr_auto] gap-4 items-baseline text-[14px]">
-                  <div class="truncate">
-                    <span class="font-bold text-black">{entry.data.role}</span>
-                    <span class="text-gray-400 mx-1">|</span>
-                    <span class="font-semibold text-gray-800">{entry.data.company}</span>
-                    <span class="text-gray-400 mx-1">|</span>
-                    <span class="italic text-gray-600">{entry.data.location}</span>
+            <SectionHeader index="01" name="WORK EXPERIENCE" />
+            <div class="space-y-10">
+              {featuredExperience.map((entry: CollectionEntry<'experience'>) => (
+                <div>
+                  <div class="mb-1 flex flex-wrap items-baseline justify-between gap-2">
+                    <h3 class="text-[17px] font-bold text-ink">{entry.data.company}</h3>
+                    <span class="font-mono text-[12px] tracking-[0.08em] text-ink/50">{formatDate(entry.data.startDate)} &ndash; {entry.data.endDate ? formatDate(entry.data.endDate) : 'Present'}</span>
                   </div>
-                  <span class="font-bold text-black whitespace-nowrap">
-                    {formatDate(entry.data.startDate)} – {entry.data.endDate ? formatDate(entry.data.endDate) : 'Present'}
-                  </span>
+                  <div class="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+                    <span class="font-serif text-[16px] italic text-ink/85">{entry.data.role}</span>
+                    <span class="font-mono text-[12px] tracking-[0.08em] text-ink/40">{entry.data.location}</span>
+                  </div>
+                  <p class="mb-4 text-[14px] leading-relaxed text-ink-muted">
+                    {entry.data.summary}
+                  </p>
+                  <ul class="ml-5 list-disc space-y-2 text-[14px] marker:text-accent">
+                    {entry.data.achievements?.map((achievement: string) => (
+                      <li class="pl-1 leading-relaxed text-ink-muted">
+                        {achievement}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               ))}
             </div>
           </section>
-        )}
 
-        <!-- Skills -->
-        <section>
-          <h2 class="text-lg font-bold uppercase tracking-[0.15em] border-b-2 border-black mb-6 pb-1">Skills</h2>
-          <div class="space-y-2 text-[14px]">
-            <p><span class="font-bold text-black">Hard Skills:</span> <span class="text-gray-800">{skills.hard.join(', ')}</span></p>
-            <p><span class="font-bold text-black">Techniques:</span> <span class="text-gray-800">{skills.techniques.join(', ')}</span></p>
-            <p><span class="font-bold text-black">Tools and Software:</span> <span class="text-gray-800">{skills.tools.join(', ')}</span></p>
-          </div>
-        </section>
+          <!-- Previous Experience -->
+          {previousExperience.length > 0 && (
+            <section>
+              <SectionHeader index="02" name="PREVIOUS EXPERIENCE" />
+              <div class="space-y-3">
+                {previousExperience.map((entry: CollectionEntry<'experience'>) => (
+                  <div class="grid grid-cols-[1fr_auto] items-baseline gap-4 text-[14px]">
+                    <div class="truncate">
+                      <span class="font-bold text-ink">{entry.data.role}</span>
+                      <span class="mx-1 text-ink/30">|</span>
+                      <span class="font-semibold text-ink/80">{entry.data.company}</span>
+                      <span class="mx-1 text-ink/30">|</span>
+                      <span class="italic text-ink/50">{entry.data.location}</span>
+                    </div>
+                    <span class="whitespace-nowrap font-mono text-[12px] tracking-[0.08em] text-ink/50">
+                      {formatDate(entry.data.startDate)} &ndash; {entry.data.endDate ? formatDate(entry.data.endDate) : 'Present'}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
 
-        <!-- Education -->
-        <section>
-          <h2 class="text-lg font-bold uppercase tracking-[0.15em] border-b-2 border-black mb-6 pb-1">Education</h2>
-          <div class="flex justify-between items-baseline text-[14px]">
-            <div>
-              <h3 class="font-bold text-[16px] text-black">Strayer University</h3>
-              <p class="italic text-gray-800">B.S. Information Systems</p>
+          <!-- Skills -->
+          <section>
+            <SectionHeader index="03" name="SKILLS" />
+            <div class="relative space-y-5">
+              <div class="no-print absolute -right-2 -top-2 hidden sm:block" aria-hidden="true">
+                <ArrayChip tag="SKL" code="6YT" />
+              </div>
+              <div>
+                <div class="mb-2 font-mono text-[11px] tracking-[0.1em] text-ink/40">HARD SKILLS</div>
+                <div class="flex flex-wrap gap-2">
+                  {skills.hard.map((s) => <span class="tag-chip">{s}</span>)}
+                </div>
+              </div>
+              <div>
+                <div class="mb-2 font-mono text-[11px] tracking-[0.1em] text-ink/40">TECHNIQUES</div>
+                <div class="flex flex-wrap gap-2">
+                  {skills.techniques.map((s) => <span class="tag-chip">{s}</span>)}
+                </div>
+              </div>
+              <div>
+                <div class="mb-2 font-mono text-[11px] tracking-[0.1em] text-ink/40">TOOLS AND SOFTWARE</div>
+                <div class="flex flex-wrap gap-2">
+                  {skills.tools.map((s) => <span class="tag-chip">{s}</span>)}
+                </div>
+              </div>
             </div>
-            <span class="font-bold text-black">Richmond, VA</span>
+          </section>
+
+          <!-- Education -->
+          <section>
+            <SectionHeader index="04" name="EDUCATION" />
+            <div class="flex flex-wrap items-baseline justify-between gap-2 text-[14px]">
+              <div>
+                <h3 class="text-[16px] font-bold text-ink">Strayer University</h3>
+                <p class="italic text-ink/70">B.S. Information Systems</p>
+              </div>
+              <span class="font-mono text-[12px] tracking-[0.08em] text-ink/50">Richmond, VA</span>
+            </div>
+          </section>
+        </div>
+
+        <!-- Footer status strip -->
+        <div class="no-print mt-14 border-t border-line pt-4" aria-hidden="true">
+          <div class="flex flex-wrap items-center justify-between gap-2 font-mono text-[10px] tracking-[0.1em] text-ink/40">
+            <div class="flex items-center gap-3">
+              <StatusDots reduced={false} />
+              <span>TTY/2 :: RESUME EXPORT</span>
+            </div>
+            <span class="text-accent">RECORD VERIFIED &middot; RM97-2607</span>
           </div>
-        </section>
+        </div>
       </div>
     </div>
   </section>
@@ -140,16 +189,9 @@ const skills = {
 </script>
 
 <style>
-  .print-only {
-    display: none;
-  }
-
   @media print {
     .no-print {
       display: none !important;
-    }
-    .print-only {
-      display: flex !important;
     }
     section {
       padding-top: 0 !important;
@@ -158,6 +200,21 @@ const skills = {
     .container-site {
       max-width: 100% !important;
       padding: 0 !important;
+    }
+    /* The dark on-screen theme (text-ink, text-accent, bg-surface-raised, etc.)
+       sets color/background directly on individual elements, which the global
+       `html, body { color: black !important }` print rule does not override
+       (inherited values only apply where an element has no rule of its own).
+       Force everything inside the panel back to plain black-on-white here. */
+    .resume-panel,
+    .resume-panel * {
+      color: #000 !important;
+      background: transparent !important;
+      border-color: #000 !important;
+      backdrop-filter: none !important;
+    }
+    .resume-panel li::marker {
+      color: #000 !important;
     }
   }
 </style>
