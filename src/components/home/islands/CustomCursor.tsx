@@ -25,7 +25,9 @@ export default function CustomCursor() {
     const onMove = (e: MouseEvent) => { mx = e.clientX; my = e.clientY; };
     const onOver = (e: MouseEvent) => {
       const target = e.target as Element;
-      const hot = target.closest?.('a, button') ?? null;
+      // [data-cursor-hot] opts non-link elements (e.g. the boot SEQ
+      // scrubbers) into the same grow + hover-sound treatment as links.
+      const hot = target.closest?.('a, button, [data-cursor-hot]') ?? null;
       const ring = ringRef.current;
       if (ring) {
         ring.style.width = hot ? '52px' : '30px';

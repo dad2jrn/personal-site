@@ -65,6 +65,7 @@ export function SeqRows({ reduced }: { reduced: boolean }) {
           <span
             ref={(el) => { trackRefs.current[i] = el; }}
             role="presentation"
+            data-cursor-hot
             onPointerDown={onPointerDown(i)}
             onPointerMove={onPointerMove(i)}
             onPointerUp={onPointerUp}
@@ -78,7 +79,7 @@ export function SeqRows({ reduced }: { reduced: boolean }) {
                   ? { left: `calc((100% - 12px) * ${rows[i].pos})` }
                   : reduced
                     ? { left: 'calc((100% - 12px) * 0.7)' }
-                    : { animation: `rm-slide-track ${2.7 + i * 0.4}s ease-in-out infinite alternate` }
+                    : { animation: `rm-slide-track ${9 + i * 2.5}s ease-in-out infinite alternate` }
               }
             />
           </span>
