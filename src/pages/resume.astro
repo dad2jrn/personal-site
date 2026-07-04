@@ -44,12 +44,31 @@ const skills = {
         <div class="no-print" aria-hidden="true">
           <CornerHandles />
         </div>
-        {/* Scanline sweep, clipped by an inner wrapper so the corner handles
-            (which sit outside the panel edge) aren't cut off. */}
+        {/* Full-panel CRT ambient layer: static scanline texture plus glow
+            bands and thin sync lines all sweeping downward at offset periods.
+            Clipped by an inner wrapper so the corner handles (which sit
+            outside the panel edge) aren't cut off. Negative delays start the
+            sweeps mid-flight so the panel never looks "empty" at load. */}
         <div class="no-print pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+          <div
+            class="absolute inset-0"
+            style="background: repeating-linear-gradient(to bottom, rgba(245,165,36,0.025) 0 1px, transparent 1px 5px);"
+          ></div>
           <div
             class="absolute left-0 right-0 h-[40%] bg-linear-to-b from-accent/[0.05] to-transparent"
             style="animation: rm-scan 9s linear infinite;"
+          ></div>
+          <div
+            class="absolute left-0 right-0 h-[22%] bg-linear-to-b from-accent/[0.03] to-transparent"
+            style="animation: rm-scan 14s linear infinite -6s;"
+          ></div>
+          <div
+            class="absolute left-0 right-0 h-px bg-accent/15"
+            style="animation: rm-scan 7s linear infinite -3s;"
+          ></div>
+          <div
+            class="absolute left-0 right-0 h-[2px] bg-accent/[0.08]"
+            style="animation: rm-scan 11.5s linear infinite -8s;"
           ></div>
         </div>
 
@@ -89,26 +108,26 @@ const skills = {
 
         <div class="space-y-14">
           <!-- Work Experience -->
-          <section>
+          <section data-tsection>
             <h2 class="sr-only">Work Experience</h2>
             <SectionHeader index="01" name="WORK EXPERIENCE" />
             <div class="space-y-10">
               {featuredExperience.map((entry: CollectionEntry<'experience'>) => (
-                <div data-reveal>
-                  <div class="mb-1 flex flex-wrap items-baseline justify-between gap-2">
+                <div>
+                  <div data-tline class="mb-1 flex flex-wrap items-baseline justify-between gap-2">
                     <h3 class="text-[17px] font-bold text-ink">{entry.data.company}</h3>
                     <span class="font-mono text-[12px] tracking-[0.08em] text-ink/50">{formatDate(entry.data.startDate)} &ndash; {entry.data.endDate ? formatDate(entry.data.endDate) : 'Present'}</span>
                   </div>
-                  <div class="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+                  <div data-tline class="mb-3 flex flex-wrap items-baseline justify-between gap-2">
                     <span class="font-serif text-[16px] italic text-ink/85">{entry.data.role}</span>
                     <span class="font-mono text-[12px] tracking-[0.08em] text-ink/40">{entry.data.location}</span>
                   </div>
-                  <p class="mb-4 text-[14px] leading-relaxed text-ink-muted">
+                  <p data-tline class="mb-4 text-[14px] leading-relaxed text-ink-muted">
                     {entry.data.summary}
                   </p>
                   <ul class="ml-5 list-disc space-y-2 text-[14px] marker:text-accent">
                     {entry.data.achievements?.map((achievement: string) => (
-                      <li class="pl-1 leading-relaxed text-ink-muted">
+                      <li data-tline class="pl-1 leading-relaxed text-ink-muted">
                         {achievement}
                       </li>
                     ))}
@@ -120,12 +139,12 @@ const skills = {
 
           <!-- Previous Experience -->
           {previousExperience.length > 0 && (
-            <section>
+            <section data-tsection>
               <h2 class="sr-only">Previous Experience</h2>
               <SectionHeader index="02" name="PREVIOUS EXPERIENCE" />
-              <div data-reveal class="space-y-3">
+              <div class="space-y-3">
                 {previousExperience.map((entry: CollectionEntry<'experience'>) => (
-                  <div class="grid grid-cols-[1fr_auto] items-baseline gap-4 text-[14px]">
+                  <div data-tline class="grid grid-cols-[1fr_auto] items-baseline gap-4 text-[14px]">
                     <div class="truncate">
                       <span class="font-bold text-ink">{entry.data.role}</span>
                       <span class="mx-1 text-ink/30">|</span>
@@ -143,30 +162,30 @@ const skills = {
           )}
 
           <!-- Skills -->
-          <section>
+          <section data-tsection>
             <h2 class="sr-only">Skills</h2>
             <SectionHeader index="03" name="SKILLS" />
             <div class="space-y-5">
-              <div data-reveal>
-                <div class="mb-2 flex items-end justify-between gap-4">
+              <div>
+                <div data-tline class="mb-2 flex items-end justify-between gap-4">
                   <div class="font-mono text-[11px] tracking-[0.1em] text-ink/40">HARD SKILLS</div>
                   <div class="no-print hidden sm:block" aria-hidden="true">
                     <ArrayChip tag="SKL" code="6YT" />
                   </div>
                 </div>
-                <div class="flex flex-wrap gap-2">
+                <div data-tline class="flex flex-wrap gap-2">
                   {skills.hard.map((s) => <span class="tag-chip">{s}</span>)}
                 </div>
               </div>
-              <div data-reveal>
-                <div class="mb-2 font-mono text-[11px] tracking-[0.1em] text-ink/40">TECHNIQUES</div>
-                <div class="flex flex-wrap gap-2">
+              <div>
+                <div data-tline class="mb-2 font-mono text-[11px] tracking-[0.1em] text-ink/40">TECHNIQUES</div>
+                <div data-tline class="flex flex-wrap gap-2">
                   {skills.techniques.map((s) => <span class="tag-chip">{s}</span>)}
                 </div>
               </div>
-              <div data-reveal>
-                <div class="mb-2 font-mono text-[11px] tracking-[0.1em] text-ink/40">TOOLS AND SOFTWARE</div>
-                <div class="flex flex-wrap gap-2">
+              <div>
+                <div data-tline class="mb-2 font-mono text-[11px] tracking-[0.1em] text-ink/40">TOOLS AND SOFTWARE</div>
+                <div data-tline class="flex flex-wrap gap-2">
                   {skills.tools.map((s) => <span class="tag-chip">{s}</span>)}
                 </div>
               </div>
@@ -174,10 +193,10 @@ const skills = {
           </section>
 
           <!-- Education -->
-          <section>
+          <section data-tsection>
             <h2 class="sr-only">Education</h2>
             <SectionHeader index="04" name="EDUCATION" />
-            <div data-reveal class="flex flex-wrap items-baseline justify-between gap-2 text-[14px]">
+            <div data-tline class="flex flex-wrap items-baseline justify-between gap-2 text-[14px]">
               <div>
                 <h3 class="text-[16px] font-bold text-ink">Strayer University</h3>
                 <p class="italic text-ink/70">B.S. Information Systems</p>
@@ -206,6 +225,32 @@ const skills = {
     </div>
   </section>
 </BaseLayout>
+
+<script>
+  // Console-output reveal: when a [data-tsection] scrolls into view, its
+  // [data-tline] lines pop in fast, top to bottom, like a terminal printing
+  // the record. Hidden state is only ever applied by JS (no-JS safe), and
+  // the global @media print rule forces [data-tline] visible regardless.
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const sections = Array.from(document.querySelectorAll<HTMLElement>('[data-tsection]'));
+  if (!reduced && sections.length) {
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (!e.isIntersecting) continue;
+        io.unobserve(e.target);
+        e.target.querySelectorAll<HTMLElement>('[data-tline]').forEach((el, i) => {
+          el.style.animation = `rm-bootline 0.22s both ${(i * 0.055).toFixed(3)}s`;
+        });
+      }
+    }, { threshold: 0.08 });
+    for (const s of sections) {
+      s.querySelectorAll<HTMLElement>('[data-tline]').forEach((el) => {
+        el.style.opacity = '0';
+      });
+      io.observe(s);
+    }
+  }
+</script>
 
 <style>
   @media print {
