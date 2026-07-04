@@ -1,6 +1,7 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
 import PatentCard from '../../components/PatentCard.astro';
 
 const patents = await getCollection('patents');
@@ -15,6 +16,9 @@ const sortedPatents = patents.sort((a, b) => {
   <section class="py-24">
     <div class="container-site">
       <div class="max-w-[800px]">
+        <div class="mb-10">
+          <Breadcrumb segments={[{ label: 'PATENTS' }]} />
+        </div>
         <div class="eyebrow mb-8">/ INTELLECTUAL PROPERTY</div>
         <h1 class="h-display mb-8 text-[clamp(48px,7vw,96px)] text-ink">
           Four U.S. patents. One thesis: make the cloud run itself.

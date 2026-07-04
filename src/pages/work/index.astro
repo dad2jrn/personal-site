@@ -1,6 +1,7 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
 import ExperienceTimeline from '../../components/ExperienceTimeline.astro';
 import CaseStudyVisual from '../../components/CaseStudyVisual.astro';
 
@@ -13,6 +14,9 @@ const sortedExperience = experience.sort((a: CollectionEntry<'experience'>, b: C
 <BaseLayout title="Work & Experience">
   <section class="py-24">
     <div class="container-site">
+      <div class="mb-10">
+        <Breadcrumb segments={[{ label: 'THE_WORK' }]} />
+      </div>
       <div class="eyebrow mb-8">/ WORK</div>
       <h1 class="h-display mb-8 text-[clamp(48px,7vw,96px)] text-ink">Work</h1>
       <p class="text-xl text-ink-muted max-w-[60ch]">

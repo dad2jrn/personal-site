@@ -24,7 +24,7 @@ const { Content } = await render(entry);
     <div class="container-site">
       <div class="max-w-[800px]">
         <div class="mb-10">
-          <Breadcrumb segments={[{ label: 'THE_WORK', href: '/#work' }, { label: `${entry.id}.log`.toUpperCase() }]} />
+          <Breadcrumb segments={[{ label: 'THE_WORK', href: '/work/' }, { label: `${entry.id}.log`.toUpperCase() }]} />
         </div>
         <div class="label-mono mb-8">{entry.data.company} · {entry.data.period}</div>
         <h1 class="h-display mb-8 text-[clamp(24px,7.5vw,72px)] text-ink">

@@ -1,6 +1,7 @@
 ---
 import { getCollection, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
 
 const posts = await getCollection('writing', ({ data }: CollectionEntry<'writing'>) => !data.draft);
 // Dated posts sort newest-first; undated posts (no publishedAt yet) fall after them, alphabetically.
@@ -24,6 +25,9 @@ const formatDate = (date: Date | string) => {
 <BaseLayout title="Writing & Essays">
   <section class="py-24">
     <div class="container-site">
+      <div class="mb-10">
+        <Breadcrumb segments={[{ label: 'FIELD_NOTES' }]} />
+      </div>
       <div class="eyebrow mb-8">/ FIELD NOTES</div>
       <h1 class="h-display mb-8 text-[clamp(48px,7vw,96px)] text-ink">Writing</h1>
       <p class="text-xl text-ink-muted max-w-[60ch]">
