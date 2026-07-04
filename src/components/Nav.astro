@@ -15,7 +15,10 @@ const navItems = [
     {navItems.map((item) => (
       <a href={item.href} class="text-ink no-underline transition-colors hover:text-accent">{item.label}</a>
     ))}
-    <button id="sound-toggle" type="button" data-sfx-silent class="border border-ink/25 px-3 py-[5px] font-mono text-[12px] tracking-[0.08em] text-ink transition-colors hover:border-accent hover:text-accent">SOUND · ON</button>
+    <button id="sound-toggle" type="button" data-sfx-silent class="flex items-center gap-2 border border-ink/25 px-3 py-[5px] font-mono text-[12px] tracking-[0.08em] text-ink transition-colors hover:border-accent hover:text-accent">
+      <span id="sound-dot" class="inline-block h-[7px] w-[7px] rounded-full bg-accent animate-[rm-pulse_2s_infinite]"></span>
+      <span id="sound-label">SOUND · ON</span>
+    </button>
   </div>
 </nav>
 
@@ -32,11 +35,22 @@ const navItems = [
   onScroll();
 
   const btn = document.getElementById('sound-toggle');
+  const dot = document.getElementById('sound-dot');
+  const label = document.getElementById('sound-label');
+  const render = () => {
+    const on = soundOn();
+    if (label) label.textContent = `SOUND · ${on ? 'ON' : 'OFF'}`;
+    if (dot) {
+      dot.classList.toggle('bg-accent', on);
+      dot.classList.toggle('animate-[rm-pulse_2s_infinite]', on);
+      dot.classList.toggle('bg-ink/30', !on);
+    }
+  };
   if (btn) {
-    btn.textContent = `SOUND · ${soundOn() ? 'ON' : 'OFF'}`;
+    render();
     btn.addEventListener('click', () => {
       setSound(!soundOn());
-      btn.textContent = `SOUND · ${soundOn() ? 'ON' : 'OFF'}`;
+      render();
     });
   }
 </script>

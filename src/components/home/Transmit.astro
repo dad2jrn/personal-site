@@ -1,5 +1,6 @@
 ---
 import EmailDecoder from './islands/EmailDecoder';
+import PhoneDecoder from './islands/PhoneDecoder';
 import { site } from '../../lib/site';
 ---
 
@@ -13,7 +14,7 @@ import { site } from '../../lib/site';
     <div data-reveal class="mt-10 flex flex-wrap justify-center gap-8 font-mono text-[12px] tracking-[0.1em]">
       <a href={site.links.linkedin} class="text-ink/60 no-underline transition-colors hover:text-accent">LINKEDIN</a>
       <a href={site.links.github} class="text-ink/60 no-underline transition-colors hover:text-accent">GITHUB</a>
-      <a href={`tel:${site.phone.replace(/[^+\d]/g, '')}`} class="text-ink/60 no-underline transition-colors hover:text-accent">{site.phone}</a>
+      <PhoneDecoder client:visible />
     </div>
   </div>
 </section>
