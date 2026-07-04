@@ -140,4 +140,8 @@
   .no-print { display: none !important; }
   a { color: black !important; text-decoration: none !important; }
   nav, footer, #scroll-progress { display: none !important; }
+  /* reveal.ts sets inline opacity/transform on below-fold [data-reveal]
+     elements at load, and the IntersectionObserver that clears them never
+     fires in print layout — reset here so headings don't print invisible. */
+  [data-reveal] { opacity: 1 !important; transform: none !important; }
 }

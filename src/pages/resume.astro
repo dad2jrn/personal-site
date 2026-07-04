@@ -53,8 +53,8 @@ const skills = {
             <span>{site.location}</span>
             <span class="text-accent">&#9670;</span>
             <a href={`tel:${site.phone.replace(/\s+/g, '')}`} class="transition-colors hover:text-accent">{site.phone}</a>
-            <span class="text-accent">&#9670;</span>
-            <a id="resume-email-link" href="#" class="transition-colors hover:text-accent"></a>
+            <span id="resume-email-sep" class="text-accent" hidden>&#9670;</span>
+            <a id="resume-email-link" href="#" class="transition-colors hover:text-accent" hidden></a>
             <span class="text-accent">&#9670;</span>
             <a href={site.links.linkedin} class="transition-colors hover:text-accent">LinkedIn</a>
           </div>
@@ -72,6 +72,7 @@ const skills = {
         <div class="space-y-14">
           <!-- Work Experience -->
           <section>
+            <h2 class="sr-only">Work Experience</h2>
             <SectionHeader index="01" name="WORK EXPERIENCE" />
             <div class="space-y-10">
               {featuredExperience.map((entry: CollectionEntry<'experience'>) => (
@@ -102,6 +103,7 @@ const skills = {
           <!-- Previous Experience -->
           {previousExperience.length > 0 && (
             <section>
+              <h2 class="sr-only">Previous Experience</h2>
               <SectionHeader index="02" name="PREVIOUS EXPERIENCE" />
               <div class="space-y-3">
                 {previousExperience.map((entry: CollectionEntry<'experience'>) => (
@@ -124,6 +126,7 @@ const skills = {
 
           <!-- Skills -->
           <section>
+            <h2 class="sr-only">Skills</h2>
             <SectionHeader index="03" name="SKILLS" />
             <div class="relative space-y-5">
               <div class="no-print absolute -right-2 -top-2 hidden sm:block" aria-hidden="true">
@@ -152,6 +155,7 @@ const skills = {
 
           <!-- Education -->
           <section>
+            <h2 class="sr-only">Education</h2>
             <SectionHeader index="04" name="EDUCATION" />
             <div class="flex flex-wrap items-baseline justify-between gap-2 text-[14px]">
               <div>
@@ -181,10 +185,13 @@ const skills = {
 <script>
   const codes = [114, 111, 110, 109, 101, 99, 107, 64, 103, 109, 97, 105, 108, 46, 99, 111, 109];
   const link = document.getElementById('resume-email-link');
+  const sep = document.getElementById('resume-email-sep');
   if (link) {
     const email = codes.map((c) => String.fromCharCode(c)).join('');
     link.setAttribute('href', `mailto:${email}`);
     link.textContent = email;
+    link.removeAttribute('hidden');
+    sep?.removeAttribute('hidden');
   }
 </script>
 
@@ -197,23 +204,23 @@ const skills = {
       padding-top: 0 !important;
       padding-bottom: 0 !important;
     }
-    .container-site {
-      max-width: 100% !important;
-      padding: 0 !important;
-    }
     /* The dark on-screen theme (text-ink, text-accent, bg-surface-raised, etc.)
        sets color/background directly on individual elements, which the global
        `html, body { color: black !important }` print rule does not override
        (inherited values only apply where an element has no rule of its own).
-       Force everything inside the panel back to plain black-on-white here. */
+       Force everything inside the panel back to plain black-on-white here.
+       `:global()` is required on the descendant combinator because Astro's
+       scoped-style attribute isn't carried onto child-component markup
+       (e.g. SectionHeader's amber spans), so a plain `.resume-panel *`
+       selector would never reach them. */
     .resume-panel,
-    .resume-panel * {
+    .resume-panel :global(*) {
       color: #000 !important;
       background: transparent !important;
       border-color: #000 !important;
       backdrop-filter: none !important;
     }
-    .resume-panel li::marker {
+    .resume-panel :global(li::marker) {
       color: #000 !important;
     }
   }
