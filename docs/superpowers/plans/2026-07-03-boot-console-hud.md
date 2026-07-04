@@ -1037,7 +1037,7 @@ export function BootConsoleInner() {
       />
 
       <div className="relative z-20 flex h-full flex-col justify-between gap-6 p-6 md:p-10">
-        <div style={enter('header')}>
+        <div className="hidden min-[700px]:block" style={enter('header')}>
           <HeaderBand reduced={t.reduced} showSkipHint={t.phase !== 'ready'} />
         </div>
 
