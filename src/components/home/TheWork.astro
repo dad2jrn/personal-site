@@ -2,15 +2,14 @@
 import { getCollection, type CollectionEntry } from "astro:content";
 import SectionHeader from "./SectionHeader.astro";
 
+// Alias so the template's map callback needs no inline generic — the Astro
+// compiler misparses `CollectionEntry<"case-studies">` inside JSX as a
+// Fragment with attributes (astro 1002 false positive).
+type Study = CollectionEntry<"case-studies">;
+
 const studies = (
-  await getCollection(
-    "case-studies",
-    ({ data }: CollectionEntry<"case-studies">) => data.featured,
-  )
-).sort(
-  (a: CollectionEntry<"case-studies">, b: CollectionEntry<"case-studies">) =>
-    a.data.order - b.data.order,
-);
+  await getCollection("case-studies", ({ data }: Study) => data.featured)
+).sort((a: Study, b: Study) => a.data.order - b.data.order);
 const scanDurations = ["5s", "6.5s"];
 ---
 
@@ -19,7 +18,7 @@ const scanDurations = ["5s", "6.5s"];
     <SectionHeader index="03" name="THE WORK" meta="FEATURED CASE STUDIES" />
     <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
       {
-        studies.map((study: CollectionEntry<"case-studies">, i: number) => (
+        studies.map((study: Study, i: number) => (
           <a
             data-reveal
             href={`/work/${study.id}/`}
