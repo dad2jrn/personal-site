@@ -56,8 +56,13 @@ export function BootConsoleInner() {
     if (!t.dismissed) return;
     const root = rootRef.current;
     if (!root) return;
-    const onEnd = () => root.remove();
-    root.addEventListener('animationend', onEnd, { once: true });
+    // animationend bubbles — a child's own entrance animation (e.g. the
+    // payoff button's rm-stamp, if it mounts mid-dismiss via the skip
+    // listener) can otherwise fire this before the exit collapse finishes.
+    const onEnd = (e: AnimationEvent) => {
+      if (e.animationName === 'rm-boot-exit') root.remove();
+    };
+    root.addEventListener('animationend', onEnd);
     root.classList.add('boot-overlay-exit');
     return () => root.removeEventListener('animationend', onEnd);
   }, [t.dismissed]);
