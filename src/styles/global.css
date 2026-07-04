@@ -140,10 +140,9 @@
   .no-print { display: none !important; }
   a { color: black !important; text-decoration: none !important; }
   nav, footer, #scroll-progress { display: none !important; }
-  /* reveal.ts ([data-reveal]) and the resume's console-output script
-     ([data-tline]) set inline opacity/animation on elements at load, and the
-     IntersectionObservers that clear them never fire in print layout — reset
-     here so content doesn't print invisible. (!important author rules also
-     beat the rm-bootline animation's backwards fill.) */
+  /* reveal.ts ([data-reveal]) and the resume's typewriter script
+     ([data-tline]) set inline opacity on elements at load, and the
+     IntersectionObservers that clear them never fire in print layout —
+     reset here so content doesn't print invisible. */
   [data-reveal], [data-tline] { opacity: 1 !important; transform: none !important; animation: none !important; }
 }

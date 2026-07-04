@@ -108,7 +108,7 @@ const skills = {
 
         <div class="space-y-14">
           <!-- Work Experience -->
-          <section data-tsection>
+          <section>
             <h2 class="sr-only">Work Experience</h2>
             <SectionHeader index="01" name="WORK EXPERIENCE" />
             <div class="space-y-10">
@@ -139,7 +139,7 @@ const skills = {
 
           <!-- Previous Experience -->
           {previousExperience.length > 0 && (
-            <section data-tsection>
+            <section>
               <h2 class="sr-only">Previous Experience</h2>
               <SectionHeader index="02" name="PREVIOUS EXPERIENCE" />
               <div class="space-y-3">
@@ -162,7 +162,7 @@ const skills = {
           )}
 
           <!-- Skills -->
-          <section data-tsection>
+          <section>
             <h2 class="sr-only">Skills</h2>
             <SectionHeader index="03" name="SKILLS" />
             <div class="space-y-5">
@@ -193,7 +193,7 @@ const skills = {
           </section>
 
           <!-- Education -->
-          <section data-tsection>
+          <section>
             <h2 class="sr-only">Education</h2>
             <SectionHeader index="04" name="EDUCATION" />
             <div data-tline class="flex flex-wrap items-baseline justify-between gap-2 text-[14px]">
@@ -227,35 +227,138 @@ const skills = {
 </BaseLayout>
 
 <script>
-  // Console-output reveal: when a [data-tsection] scrolls into view, its
-  // [data-tline] lines pop in fast, top to bottom, like a terminal printing
-  // the record. Hidden state is only ever applied by JS (no-JS safe), and
-  // the global @media print rule forces [data-tline] visible regardless.
+  // Terminal typewriter: one blinking block cursor types each [data-tline]
+  // out character by character; lines join a single queue as they scroll
+  // into view, so the cursor works top-to-bottom like real console output.
+  //
+  // Layout never shifts: on a line's turn its text nodes are split into
+  // per-character spans that are invisible (visibility) but still occupy
+  // their space, then flipped visible one by one with the cursor riding
+  // the newest character. Hidden state is only ever applied by JS (no-JS
+  // safe); reduced motion skips everything; the print rules force both
+  // [data-tline] and .tc visible so nothing prints blank.
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const sections = Array.from(document.querySelectorAll<HTMLElement>('[data-tsection]'));
-  if (!reduced && sections.length) {
+  const lines = Array.from(document.querySelectorAll<HTMLElement>('[data-tline]'));
+  if (!reduced && lines.length) {
+    lines.forEach((el, i) => {
+      el.style.opacity = '0';
+      el.dataset.ti = String(i);
+    });
+
+    // Split a line's text into per-char spans, skipping decorative
+    // aria-hidden subtrees (e.g. the ArrayChip). Tag-chip borders hide
+    // until their first character is typed so empty pills don't linger.
+    const split = (line: HTMLElement): HTMLSpanElement[] => {
+      const spans: HTMLSpanElement[] = [];
+      const walker = document.createTreeWalker(line, NodeFilter.SHOW_TEXT, {
+        acceptNode(n) {
+          if (!n.nodeValue || !n.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+          for (let p = n.parentElement; p && p !== line; p = p.parentElement) {
+            if (p.getAttribute('aria-hidden') === 'true') return NodeFilter.FILTER_REJECT;
+          }
+          return NodeFilter.FILTER_ACCEPT;
+        },
+      });
+      const nodes: Text[] = [];
+      while (walker.nextNode()) nodes.push(walker.currentNode as Text);
+      for (const node of nodes) {
+        const frag = document.createDocumentFragment();
+        for (const ch of node.nodeValue!.replace(/\s+/g, ' ')) {
+          const s = document.createElement('span');
+          s.className = 'tc';
+          s.textContent = ch;
+          frag.appendChild(s);
+          spans.push(s);
+        }
+        node.parentNode?.replaceChild(frag, node);
+      }
+      line.querySelectorAll<HTMLElement>('.tag-chip').forEach((c) => {
+        c.style.visibility = 'hidden';
+      });
+      return spans;
+    };
+
+    const queue: { el: HTMLElement; i: number }[] = [];
+    let active: { spans: HTMLSpanElement[]; i: number } | null = null;
+    let cursor: HTMLElement | null = null;
+    let raf = 0;
+
+    const pump = () => {
+      if (!active) {
+        const next = queue.shift();
+        if (!next) {
+          raf = 0;
+          cursor?.classList.add('tc-idle'); // park & blink at the last char
+          return;
+        }
+        cursor?.classList.remove('tc-cur', 'tc-idle');
+        cursor = null;
+        next.el.style.opacity = '';
+        active = { spans: split(next.el), i: 0 };
+      }
+      // Speed scales with backlog so fast scrolling never leaves the
+      // cursor hopelessly behind (2–10 chars per frame ≈ 120–600 cps).
+      const step = Math.min(10, 2 + queue.length);
+      for (let k = 0; k < step && active; k++) {
+        const s = active.spans[active.i];
+        if (s) {
+          s.classList.add('tc-on');
+          const chip = s.closest<HTMLElement>('.tag-chip');
+          if (chip && chip.style.visibility === 'hidden') chip.style.visibility = '';
+          cursor?.classList.remove('tc-cur');
+          s.classList.add('tc-cur');
+          cursor = s;
+        }
+        active.i++;
+        if (active.i >= active.spans.length) active = null;
+      }
+      raf = requestAnimationFrame(pump);
+    };
+
     const io = new IntersectionObserver((entries) => {
       for (const e of entries) {
         if (!e.isIntersecting) continue;
         io.unobserve(e.target);
-        e.target.querySelectorAll<HTMLElement>('[data-tline]').forEach((el, i) => {
-          el.style.animation = `rm-bootline 0.22s both ${(i * 0.055).toFixed(3)}s`;
-        });
+        const el = e.target as HTMLElement;
+        queue.push({ el, i: Number(el.dataset.ti) });
+        queue.sort((a, b) => a.i - b.i); // type in document order regardless of IO firing order
+        if (!raf) raf = requestAnimationFrame(pump);
       }
-    }, { threshold: 0.08 });
-    for (const s of sections) {
-      s.querySelectorAll<HTMLElement>('[data-tline]').forEach((el) => {
-        el.style.opacity = '0';
-      });
-      io.observe(s);
-    }
+    }, { threshold: 0.15 });
+    lines.forEach((el) => io.observe(el));
   }
 </script>
 
 <style>
+  /* Typewriter chars — :global because the spans are created by the script
+     at runtime and never receive Astro's scoped-style attribute. Untyped
+     chars keep their space (visibility, not display) so nothing reflows. */
+  :global(.tc) {
+    visibility: hidden;
+  }
+  :global(.tc-on) {
+    visibility: visible;
+  }
+  :global(.tc-cur) {
+    background: var(--color-accent);
+    color: var(--color-surface);
+  }
+  :global(.tc-idle) {
+    animation: rm-blink 1.1s steps(1) infinite;
+  }
+
   @media print {
     .no-print {
       display: none !important;
+    }
+    /* Mid-type state must never print blank or inverse-video. */
+    :global(.tc) {
+      visibility: visible !important;
+    }
+    :global(.tc-cur),
+    :global(.tc-idle) {
+      background: transparent !important;
+      animation: none !important;
     }
     section {
       padding-top: 0 !important;
