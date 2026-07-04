@@ -72,16 +72,9 @@
 @keyframes rm-fillx   { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 @keyframes rm-slidex  { from { transform: translateX(0); } to { transform: translateX(26px); } }
 @keyframes rm-flicker { 0%, 100% { opacity: 0.15; } 50% { opacity: 0.9; } }
-/* Mostly-on with brief irregular dips — corner-handle flicker. Randomized
-   per-element duration/delay (set inline by page scripts) keeps instances
-   out of phase so each square reads as independent. */
-@keyframes rm-flick {
-  0%, 6%, 9%, 33%, 37%, 60%, 64%, 83%, 86%, 100% { opacity: 1; }
-  7.5% { opacity: 0.15; }
-  35% { opacity: 0.45; }
-  62% { opacity: 0.1; }
-  84.5% { opacity: 0.5; }
-}
+/* One quick corner-handle dip; page scripts randomize duration and
+   iteration count per burst so every flicker looks different. */
+@keyframes rm-flick-burst { 0%, 100% { opacity: 1; } 50% { opacity: 0.1; } }
 @keyframes rm-scrolly { from { transform: translateY(0); } to { transform: translateY(-50%); } }
 @keyframes rm-fall    { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(54px); opacity: 0; } }
 @keyframes rm-rot     { to { transform: rotate(360deg); } }
