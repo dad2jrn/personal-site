@@ -1,0 +1,73 @@
+---
+title: "The Strangler Fig, Properly Understood: What It Is, What It Isn't, and When You Should Refuse to Use It"
+titleHtml: "The Strangler Fig, <span class=\"text-accent\">Properly</span> Understood: What It Is, What It Isn't, and When You Should Refuse to <span class=\"text-accent\">Use It</span>"
+dek: "The most cited — and most abused — modernization pattern in enterprise architecture. A field guide to deploying it honestly."
+tags: ["enterprise architecture", "modernization", "legacy systems", "patterns"]
+draft: false
+---
+
+
+Somewhere right now, a modernization program is being pitched to a CIO with a slide that says "Strangler Pattern" on it, and what the slide actually describes is a two-year rewrite with a marketing name. I've reviewed enough of these decks to consider it an occupational hazard.
+
+The strangler fig deserves better. It is one of the few modernization strategies with a genuinely sound risk model behind it — when it's actually the strangler fig, and when it's applied to a problem shaped like the problem it solves. So let's be precise: what it is, what it isn't, when to deploy it, and when the honest answer is "don't."
+
+## What it actually is
+
+Martin Fowler coined the metaphor in 2004 after watching strangler figs in Australian rainforests: the fig seeds in the upper branches of a host tree, sends roots down toward the soil, grows around the host, and eventually the host dies and rots away — leaving a fully formed fig standing in its place.
+
+Applied to systems, the pattern has three load-bearing mechanics, and if any one of them is missing, you are not doing the strangler fig no matter what the slide says:
+
+**1. An interception layer (the façade).** All traffic to the legacy system passes through a routing layer you control — an API gateway, a reverse proxy, an event router, sometimes a database-level seam. This is the trunk the fig grows around. Without it, you have no mechanism for gradual displacement; you just have two systems.
+
+**2. Incremental, functional displacement.** You carve off one capability at a time — a bounded slice of business function, not a horizontal layer — build it in the new world, and flip the routing so the façade sends that traffic to the new component. The legacy system keeps handling everything you haven't migrated yet. Both systems run in production, in earnest, for a long time. That coexistence isn't a transitional embarrassment; it *is* the pattern.
+
+**3. Actual atrophy.** As slices migrate, legacy code paths go dark, get decommissioned, and — this is the part everyone skips — eventually the old system is *turned off*. The fig only wins when the host tree dies. A strangler migration that never retires anything hasn't reduced risk; it has doubled your operational surface permanently.
+
+The strategic payoff is that value ships continuously and risk is amortized. Every migrated slice is independently valuable, independently testable, and — crucially — independently <em class="font-semibold text-phosphor">reversible</em>. If slice seven goes badly, you flip the route back and the business barely notices. Compare that to the big-bang rewrite, where risk accumulates silently for two years and then discharges all at once on cutover weekend.
+
+## What it is not
+
+**It is not a rewrite with incremental *delivery*.** Building the entire replacement system on the side, demoing it quarterly, and then cutting over at the end is a big-bang rewrite with better stakeholder management. The distinguishing question: is production traffic being progressively routed to new components *while the old system still serves the rest*? If not, it's not a strangler.
+
+It is not <span class="font-semibold text-alert">"run both systems forever."</span> I've seen strangler programs that migrated the pleasant 60% of functionality, hit the gnarly core, declared victory, and left the enterprise paying two licensing bills, two on-call rotations, and one integration layer's worth of glue code — indefinitely. That end-state is worse than never starting. The pattern's economics only close when the host dies.
+
+**It is not a database migration strategy by itself.** The fig metaphor is about intercepting *behavior*. The hardest part of most legacy displacements is the shared database underneath, and the strangler pattern is largely silent about it. You'll need companion techniques — change-data-capture, dual writes with reconciliation, database-per-slice carve-outs — and each carries its own consistency risks. Anyone selling you a strangler plan that hand-waves the data layer hasn't done one.
+
+**It is not free.** The façade is real engineering. Routing logic, session coherence across two systems, dual-running observability, data synchronization, feature-flag hygiene — this scaffolding can be 20–30% of total program cost, and it's *temporary* scaffolding you tear down at the end. That cost is the premium you pay for the insurance. It's usually worth it. It is never zero.
+
+## When to deploy it
+
+The pattern earns its keep when most of the following are true:
+
+- **The legacy system is large, valuable, and can't stop running.** Revenue flows through it daily. Downtime is measured in dollars per minute. This is the pattern's home turf — it exists precisely because "freeze the business for a cutover" is not an option.
+- **Functionality decomposes into slices with identifiable seams.** You can name discrete capabilities — quoting, statements, order intake — that have reasonably clean entry points to intercept. The seams don't have to be pretty; they have to exist.
+- **The migration horizon is long enough that intermediate value matters.** If the journey is 18 months to 5 years, shipping value at month three instead of month thirty changes the program's political survivability. Strangler programs keep their funding because they keep showing receipts.
+- **Requirements are partially unknown.** When the legacy system *is* the spec — twenty years of undocumented business rules — incremental displacement lets you discover behavior one slice at a time, with the old system as a live reference oracle you can diff against.
+- **Organizational risk tolerance is low.** Regulated industries, core ledgers, safety-adjacent systems. Reversible steps beat brave leaps.
+
+## When to refuse
+
+- **The system is small.** If a competent team can rewrite and cut over the whole thing in a few months, the façade scaffolding costs more than the risk it retires. Just rewrite it. The strangler fig is a pattern for host trees, not shrubs.
+- **There are no seams — and none can be affordably made.** Some systems are a single transactional hairball around one database, with logic in triggers and batch jobs woven through everything. If intercepting behavior requires understanding the whole system first, you've lost the pattern's core advantage. Sometimes the honest architecture answer is a carefully staged replacement, or — heresy — leaving it alone and containing it behind a contract.
+- **The old and new worlds must share mutable state in real time.** If every slice you carve off still has to synchronously read and write the legacy database of record, you're not strangling anything; you're building a distributed monolith with extra latency. Fix the data ownership question first or pick another strategy.
+- **The system is being retired for business reasons anyway.** Product sunset, divestiture, migration to a SaaS package. Don't build elegant displacement scaffolding around something whose replacement is a purchase order.
+- **You lack the organizational stamina.** This is the unglamorous disqualifier. A strangler program requires years of consistent governance: routing discipline, decommissioning discipline, resisting the eternal temptation to add "just one feature" to the legacy side. If your organization reorganizes annually and treats every program as disposable, the fig will end up half-grown around a host that never dies — the worst of every world.
+
+## The architect's test
+
+Before I endorse any strangler proposal, I ask four questions:
+
+1. **Where is the façade, exactly?** Point to the interception mechanism in the architecture. Name the technology.
+2. **What is slice one, and when does it take production traffic?** If the answer is more than a quarter away, the plan is a rewrite in disguise.
+3. **What is the decommissioning trigger for each slice?** Migrated functionality must have a scheduled funeral for its legacy counterpart.
+4. **What is the end-state date for the host system's shutdown — and who is accountable for it?** No name and no date means no strangler; it means two systems forever.
+
+<span class="font-semibold text-accent">The strangler fig</span> is not a modernization strategy. It's a *risk-shaping* strategy that happens to modernize. Deploy it when the risk profile matches — a large, live, sliceable system that cannot stop — and refuse it, loudly, when someone reaches for it as vocabulary rather than as mechanics. The pattern's reputation depends on the people who know the difference.
+
+---
+
+## Further reading
+
+- Martin Fowler, [*StranglerFigApplication*](https://martinfowler.com/bliki/StranglerFigApplication.html) (2004, updated 2019)
+- Microsoft Azure Architecture Center, [*Strangler Fig pattern*](https://learn.microsoft.com/en-us/azure/architecture/patterns/strangler-fig)
+- Sam Newman, *Monolith to Microservices* (O'Reilly, 2019) — the deepest practical treatment of seams, façades, and data decomposition in strangler migrations

@@ -31,6 +31,13 @@
   --color-paper-accent-bright: #B07C1E;
   --color-paper-line: rgb(20 20 18 / 0.2);
 
+  /* Alternate accents from the palette reference — used sparingly as semantic
+     editorial highlights within long-form article prose only; amber remains
+     the only accent everywhere else in the UI. */
+  --color-phosphor: #4ADE80;
+  --color-signal: #6B8BFF;
+  --color-alert: #FF4D2E;
+
   --font-sans: 'Archivo Variable', sans-serif;
   --font-serif: 'Instrument Serif', serif;
   --font-mono: 'JetBrains Mono Variable', monospace;

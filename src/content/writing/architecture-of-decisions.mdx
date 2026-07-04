@@ -1,0 +1,78 @@
+---
+title: "The Architecture of Decisions: Why Reversibility Beats Prediction"
+titleHtml: "The Architecture of Decisions: Why <span class=\"text-accent\">Reversibility Beats Prediction</span>"
+dek: "Your systems are the fossil record of your decisions. The architect's real job is not choosing the right technology — it's engineering how expensive it is to be wrong."
+tags: ["enterprise architecture", "decision-making", "adr", "strategy"]
+draft: false
+---
+
+
+Ask ten enterprise architects what their job is and you'll get some blend of "designing systems," "setting technical direction," and "aligning technology with business strategy." All true, all incomplete. After twenty years of doing this work in environments where mistakes have regulatory consequences, I've come to a blunter definition:
+
+**An architect's job is to manage the cost of being wrong.**
+
+Not to avoid being wrong — that's impossible, and organizations that demand infallibility from their architects get paralysis instead. The job is to arrange the decision landscape so that the inevitable wrong calls are cheap to reverse, and the rare irreversible calls get the scrutiny they deserve.
+
+Everything else — the patterns, the reference architectures, the review boards — is tooling in service of that one function.
+
+## One-way doors and two-way doors
+
+Jeff Bezos gave the enterprise its most useful decision taxonomy in his 1997 and 2015 shareholder letters: some decisions are <span class="font-semibold text-alert">one-way doors</span> — consequential, irreversible or nearly so, deserving slow, deliberate process — and most are <span class="font-semibold text-phosphor">two-way doors</span> — reversible, cheap to undo, and best made quickly by the people closest to them. His diagnosis of large-organization failure was precise: as companies grow, they apply the heavyweight one-way-door process to *everything*, which produces slowness, risk aversion, and diminished invention.
+
+Enterprise IT is the terminal case of this disease. I've watched architecture review boards spend six weeks deliberating a logging library — a decision reversible in an afternoon — while a data-model choice that would constrain the company for a decade sailed through as an implementation detail in a sprint ticket.
+
+That inversion is not random. It happens because organizations gate decisions by *budget size and visibility*, not by *reversibility*. The logging library came up in a formal review; the entity model was buried in a repo. The governance apparatus scrutinized what it could see rather than what mattered.
+
+So the first discipline is classification. Before any significant technical decision, ask one question before all others: **what would it cost to undo this in two years?** The answer sorts your portfolio:
+
+**Genuinely one-way doors** in enterprise systems are fewer than people think, but they're heavy: the shape of your core data model and its ownership boundaries; public API contracts once external parties depend on them; identity and tenancy models; choice of system-of-record; anything involving data residency and regulatory posture; and — the sleeper — organizational structure, because Conway's Law guarantees your org chart will be lovingly reproduced in your integration diagram.
+
+**Two-way doors wearing one-way costumes** make up most of the rest: frameworks, most vendor tools behind a decent abstraction, deployment topology, even (with discipline) cloud providers for stateless workloads. These deserve fast, delegated decisions with lightweight documentation — not committees.
+
+The subtle failure mode is the reverse costume: a two-way door that *becomes* one-way through neglect. Every "temporary" direct database integration, every credential shared between systems, every consumer that couples to your internal schema quietly welds a hinge shut. Reversibility is not a property you have; it's a property you *maintain*, and it decays by default.
+
+## Buying back reversibility
+
+This is where architecture stops being philosophy and becomes engineering, because <span class="font-semibold text-accent">reversibility</span> can be purchased. The catalog is familiar; what's rarely made explicit is that these techniques are all the *same purchase* — paying a modest, continuous premium to keep doors swinging both ways:
+
+**Interfaces and anti-corruption layers** convert vendor decisions from one-way to two-way. The day your domain logic imports a vendor SDK directly is the day that vendor becomes a one-way door.
+
+**The strangler fig pattern** — which I've written about separately — is reversibility applied to modernization: every migrated slice can be routed back if it fails. The pattern's entire value proposition is decomposing one giant irreversible cutover into fifty reversible ones.
+
+**Feature flags and parallel runs** buy reversibility at the release level; **event-sourced or append-only data designs** buy it at the data level, because you can rebuild any projection you later regret; **contract tests** keep integration seams honest so they remain seams rather than scar tissue.
+
+And each has a real cost — indirection, dual-running, latency, cognitive load. Which is exactly why the classification step matters: you buy insurance in proportion to the irreversibility of what it protects. Wrapping a one-way door in abstraction is stewardship. Wrapping every trivial choice in three layers of indirection is how you get the lasagna architectures that give abstraction a bad name.
+
+## Write down the doors: ADRs as institutional memory
+
+The second half of managing wrongness is remembering *why* you did things. Michael Nygard's Architecture Decision Records — a one-page format capturing context, decision, and consequences — solved a problem every architect over forty has lived: the system as a mystery novel where all the authors have left the company.
+
+But most ADR practices I audit miss the highest-value field. Context and rationale are good. What transforms an ADR from documentation into a decision instrument is recording, at decision time:
+
+1. **The reversibility class.** Is this a one-way or two-way door, and what specifically makes it so?
+2. **The conditions under which we'd revisit.** "We chose X because of assumptions A and B. If A stops being true — traffic exceeds N, the vendor is acquired, the regulation changes — this decision is up for re-examination."
+
+That second field is the architectural equivalent of a stop-loss order. Without it, decisions harden into dogma: five years later, nobody remembers that the messaging topology was chosen for a traffic pattern the business abandoned in year two, and the constraint outlives its reason. Systems don't accumulate technical debt so much as they accumulate *decisions whose expiry dates nobody wrote down*.
+
+## What this means for how you run architecture
+
+Pull the threads together and the operating model almost writes itself:
+
+**Gate by reversibility, not by budget.** The architecture review board's calendar should be dominated by one-way doors — data models, contracts, tenancy, org-shaping platform choices — regardless of how small they look in the funding system. Two-way doors get delegated with an ADR and a smile. If your review board discussed a UI framework this quarter but not a data-ownership boundary, your gates are miscalibrated.
+
+**Measure decision latency as a health metric.** Bezos's insight cuts both ways: slow decisions on two-way doors are not prudence, they're organizational damage — every week a reversible decision sits in a queue is a week of learning forfeited. High-functioning architecture organizations make reversible decisions at roughly the speed of conversation and are proud of it.
+
+**Audit the hinges annually.** Once a year, walk the portfolio of "two-way" decisions and ask which ones have quietly welded shut — the abstraction layer that leaked, the internal API three partners now depend on, the temporary sync that became load-bearing. Re-classify honestly. Reversibility that exists only on the original slide deck is the most dangerous kind, because you'll make future bets against insurance you no longer hold.
+
+**Prefer options to predictions.** The industry sells architecture as foresight — target states, three-year roadmaps, technology bets. Twenty years in, I trust almost none of my predictions and nearly all of my options. The roadmap will be wrong in ways you can't anticipate; the question is whether your systems will let you turn when it happens. An architecture with modest technology choices and excellent reversibility will outperform a brilliant architecture with welded doors every single time, because the future gets a vote and the future is rude.
+
+The fossil record of your decisions is what your successors will call "the architecture." You can't control whether they'll agree with your choices. You can control how much it costs them when they don't. That — more than any diagram — is the work.
+
+---
+
+## Further reading
+
+- Jeff Bezos, Amazon Shareholder Letters ([1997](https://www.sec.gov/Archives/edgar/data/1018724/000119312516530910/d168744dex991.htm) and 2015) — the origin of the Type 1 / Type 2 decision framing
+- Michael Nygard, [*Documenting Architecture Decisions*](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions) (2011)
+- Mel Conway, [*How Do Committees Invent?*](http://www.melconway.com/Home/Committees_Paper.html) (1968) — the original statement of Conway's Law
+- Neal Ford, Rebecca Parsons, Patrick Kua, *Building Evolutionary Architectures* (O'Reilly) — fitness functions as the mechanical enforcement of "conditions under which we'd revisit"

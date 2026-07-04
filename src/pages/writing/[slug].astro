@@ -30,16 +30,20 @@ const formatDate = (date: Date | string) => {
 <BaseLayout title={entry.data.title}>
   <article class="py-24">
     <div class="container-site">
-      <div class="max-w-[720px] mx-auto">
-        <div class="label-mono mb-8">{formatDate(entry.data.publishedAt)}</div>
-        <h1 class="h-display mb-8 text-[clamp(36px,5vw,72px)] text-ink">
-          {entry.data.title}
-        </h1>
+      <div class="max-w-[820px] mx-auto">
+        {entry.data.publishedAt && <div class="label-mono mb-8">{formatDate(entry.data.publishedAt)}</div>}
+        {entry.data.titleHtml ? (
+          <h1 class="h-display mb-8 text-[clamp(28px,4vw,48px)] text-ink" set:html={entry.data.titleHtml} />
+        ) : (
+          <h1 class="h-display mb-8 text-[clamp(28px,4vw,48px)] text-ink">
+            {entry.data.title}
+          </h1>
+        )}
         <p class="text-xl md:text-2xl text-ink-muted leading-relaxed mb-16">
           {entry.data.dek}
         </p>
 
-        <div class="prose max-w-none">
+        <div class="prose max-w-none text-lg">
           <Content />
         </div>
 

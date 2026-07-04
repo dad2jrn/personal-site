@@ -62,8 +62,9 @@ const writing = defineCollection({
   loader: glob({ pattern: '**/*.mdx', base: './src/content/writing' }),
   schema: z.object({
     title: z.string(),
+    titleHtml: z.string().optional(), // raw HTML override for the detail-page H1 only (e.g. colored words); title stays plain text everywhere else (index list, <title> tag)
     dek: z.string(),
-    publishedAt: z.string(),
+    publishedAt: z.string().optional(), // omitted while a post has no assigned date yet
     updatedAt: z.string().optional(),
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),

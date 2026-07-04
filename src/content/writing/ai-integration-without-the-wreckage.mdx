@@ -1,0 +1,83 @@
+---
+title: "AI Integration Without the Wreckage: An Architect's Playbook for Doing It Safely and Actually Succeeding"
+titleHtml: "AI <span class=\"text-accent\">Integration</span> Without the <span class=\"text-accent\">Wreckage</span>: An Architect's Playbook for Doing It <span class=\"text-accent\">Safely</span> and Actually <span class=\"text-accent\">Succeeding</span>"
+dek: "Most enterprise AI initiatives fail — not because the models are bad, but because the integration architecture is. Here's how to be in the 5% that ship value."
+tags: ["enterprise architecture", "ai", "governance", "risk management"]
+draft: false
+---
+
+
+There's a number that should be pinned to the wall of every steering committee currently green-lighting an AI initiative: <span class="font-semibold text-accent">95%</span>.
+
+That's the share of enterprise generative AI pilots that MIT's *GenAI Divide: State of AI in Business 2025* report found delivered zero measurable P&L impact — despite an estimated $30–40 billion in enterprise spending. Gartner tells a similar story from a different angle, predicting that over 40% of agentic AI projects will be canceled by the end of 2027, citing escalating costs, unclear business value, and inadequate risk controls.
+
+Here's the part that should get an architect's attention: MIT's researchers concluded the failures weren't primarily about model quality or regulation. They were about **flawed enterprise integration** — a learning gap between what generic AI tools do well and what enterprise workflows actually require. In other words, this is our problem. The models arrived; the architecture didn't.
+
+Having spent two decades building systems in regulated financial services environments, I find that oddly reassuring. Integration failure is a solvable problem. We know how to solve it. We've just been ignoring what we know because the technology feels new.
+
+It isn't that new. What follows is the playbook I'd hand any enterprise team about to wire an LLM into a production application.
+
+## <span class="text-accent">Principle 1</span>: Treat the model as an untrusted component
+
+The single most consequential architectural decision you'll make is where you draw the trust boundary. Draw it *around* the model, not inside it.
+
+An LLM is a non-deterministic component that consumes untrusted input and produces unverified output. That sentence should sound familiar — it's how we've described user input since the dawn of web security. The OWASP Top 10 for LLM Applications makes <span class="font-semibold text-alert">prompt injection</span> its #1 risk (LLM01), and critically, the 2025 revision expanded the definition to cover **indirect** injection: an attacker doesn't need access to your prompt box; they just need to plant instructions in a document, email, or web page your model will eventually read. OWASP's guidance is blunt on this point — neither RAG nor fine-tuning fully mitigates the injection class. The recommended posture is defense-in-depth: least-privilege tooling, input/output filtering, human approval gates for high-risk actions, and regular adversarial testing.
+
+Architecturally, this means:
+
+The model never holds credentials. Tools invoked on the model's behalf run under scoped, auditable service identities with the minimum permissions the *use case* requires — not the minimum the demo required. If the model can be talked into calling a tool, assume someday it will be. Design the tool layer so that the worst successful injection is an annoyance, not an incident.
+
+Output is data, not instructions. Anything the model produces gets validated, schema-checked, and sanitized before it touches a downstream system, exactly as you'd treat a form submission from the public internet. If the model emits SQL, JSON, or an API call, that payload passes through the same validation gauntlet any external caller would.
+
+## <span class="text-accent">Principle 2</span>: Governance is an architecture function, not a compliance afterthought
+
+The <span class="font-semibold text-signal">NIST AI Risk Management Framework</span> (AI RMF 1.0) organizes AI risk work into four functions — **Govern, Map, Measure, Manage** — with Govern deliberately positioned as the cross-cutting function that infuses the other three. NIST also published a Generative AI Profile (NIST AI 600-1, July 2024) that extends the framework to twelve genAI-specific risk categories, including confabulation, prompt injection, and data privacy.
+
+Most organizations get Govern and Map done on paper and then stall — practitioners consistently report that Measure is where implementations die, because nobody built the data infrastructure to actually benchmark model behavior in production. That's an architecture failure wearing a governance costume.
+
+The fix is to treat evaluation as a first-class subsystem. Before an AI feature ships, it should have: a golden dataset of representative inputs with expected behaviors; automated evaluation runs wired into CI/CD; production telemetry that captures inputs, outputs, tool calls, and human overrides; and defined thresholds that trigger rollback. If you can't measure whether the model is behaving, you don't have an AI system — you have a liability with an API.
+
+This is also where NIST's framing earns its keep: AI risk shouldn't be managed in a silo. It belongs inside your existing enterprise risk management, alongside cybersecurity and privacy, using the same escalation paths and the same accountability structures. New risk category; same operating model.
+
+## <span class="text-accent">Principle 3</span>: Start where the blast radius is small and the ROI is real
+
+MIT's data contains a finding almost everyone ignores because it's unglamorous: budgets concentrate in sales and marketing pilots, but the highest measured returns show up in **back-office automation** — document processing, reconciliation, knowledge retrieval, workflow triage. The 5% of organizations that succeed follow a consistent playbook: pick one painful, well-bounded problem; integrate deeply into the actual workflow rather than bolting a chatbot on the side; and partner rather than build everything internally.
+
+Gartner's warning about agentic AI reinforces the same discipline from the other direction. Their analysts note that many use cases positioned as "agentic" today don't require agentic implementations at all — and that thousands of vendors are engaged in "agent washing," rebranding conventional automation with an agentic price tag. Their recommended progression is refreshingly boring: assistants for retrieval, automation for routine workflows, and agents only where autonomous decision-making delivers demonstrable value.
+
+As an architect, I translate that into a maturity ladder with hard gates between rungs:
+
+1. **Advisory** — the model drafts, summarizes, suggests; a human executes. Blast radius: near zero.
+2. **Human-in-the-loop execution** — the model prepares an action; a human approves before it fires. Blast radius: contained by review.
+3. **Bounded autonomy** — the model executes within tight, revocable permissions on reversible operations, with sampling-based human audit.
+4. **Agentic workflows** — multi-step autonomous execution, only for processes where you've proven levels 1–3, and only with kill switches, budget caps, and full action logging.
+
+Nobody gets to skip rungs. The organizations in MIT's failing 95% almost universally tried to start at rung 3 or 4 with rung-0 governance.
+
+## <span class="text-accent">Principle 4</span>: Design for the model you'll have in eighteen months
+
+Model churn is a certainty. Providers ship new versions quarterly; pricing shifts; capabilities leapfrog. If your application is welded to one vendor's API idioms, every one of those events is a migration project.
+
+The pattern is the same one we used for database independence twenty years ago: put an anti-corruption layer between your domain and the model provider. Centralize prompts as versioned, tested artifacts — not string literals scattered through application code. Abstract the inference call behind an internal interface so swapping providers (or routing cheap queries to a small model and hard ones to a frontier model) is a configuration change, not a rewrite. Log every prompt/response pair with the model version that produced it, because when behavior drifts after a provider update — and it will — you'll need the forensic trail.
+
+## <span class="text-accent">Principle 5</span>: Kill the shadow AI economy by out-competing it
+
+MIT's report surfaced something every CISO already suspects: while official enterprise AI tools stall, employees run a thriving "shadow AI economy" on personal ChatGPT accounts. You will not policy-memo your way out of this. People use shadow tools because the sanctioned path is worse.
+
+The architectural response is to make the governed path the *fastest* path: an internal AI gateway with SSO, logging, and DLP that's genuinely easier to use than a personal account; pre-approved patterns and reference implementations so product teams don't each reinvent (and mis-secure) the same RAG pipeline; and a lightweight intake process that says "yes, with guardrails" in days rather than "no" in months. Governance that only says no doesn't reduce risk — it just relocates it somewhere you can't see it.
+
+## The uncomfortable summary
+
+The enterprises failing at AI are not failing at AI. They're failing at architecture: trust boundaries drawn in the wrong place, no measurement infrastructure, use cases selected by hype rather than blast radius, vendor lock-in accepted by default, and governance designed as an obstacle rather than a service.
+
+None of that is novel. Every one of those failure modes has a decades-old discipline attached to it. The <span class="font-semibold text-phosphor">5%</span> who succeed aren't doing anything magical — they're applying boring, rigorous enterprise architecture to an exciting technology. Which, frankly, has always been the job.
+
+---
+
+## Sources
+
+- MIT NANDA Initiative, *The GenAI Divide: State of AI in Business 2025* — as reported by [Fortune](https://fortune.com/2025/08/18/mit-report-95-percent-generative-ai-pilots-at-companies-failing-cfo/) (Aug 2025)
+- Gartner, [*Gartner Predicts Over 40% of Agentic AI Projects Will Be Canceled by End of 2027*](https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027) (June 2025)
+- NIST, [*Artificial Intelligence Risk Management Framework (AI RMF 1.0)*](https://nvlpubs.nist.gov/nistpubs/ai/nist.ai.100-1.pdf), NIST AI 100-1 (Jan 2023), and *Generative AI Profile*, NIST AI 600-1 (July 2024)
+- OWASP, [*OWASP Top 10 for LLM Applications 2025*](https://genai.owasp.org/llm-top-10/) — LLM01: Prompt Injection
+- NIST AI Resource Center, [AI RMF Core: Govern, Map, Measure, Manage](https://airc.nist.gov/airmf-resources/airmf/5-sec-core/)
