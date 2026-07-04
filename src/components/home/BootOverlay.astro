@@ -23,9 +23,11 @@ import BootConsole from './islands/BootConsole';
     const el = document.getElementById('boot-overlay');
     // Once per session: removing the element (any width) also keeps the
     // sound engine's currentTrack() from picking the boot loop.
+    // Dev override: /?boot forces the gate regardless of the session flag.
+    const force = new URLSearchParams(location.search).has('boot');
     let seen = false;
     try { seen = sessionStorage.getItem('rm-boot-seen') === '1'; } catch { /* private mode */ }
-    if (seen) { el && el.remove(); return; }
+    if (seen && !force) { el && el.remove(); return; }
     // Phone-width only — tablet/desktop gets <BootConsole> below instead.
     if (window.matchMedia('(min-width: 768px)').matches) return;
     const btn = document.getElementById('boot-launch');

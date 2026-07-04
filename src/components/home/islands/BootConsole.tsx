@@ -34,12 +34,14 @@ export default function BootConsole() {
   // stay unmounted until then, so phone visitors never run any of this.
   // Once per session: after a LAUNCH click (rm-boot-seen, shared with the
   // phone overlay) the gate never mounts again, so visitors returning from
-  // inner pages land straight on the site.
+  // inner pages land straight on the site. Dev override: /?boot forces the
+  // gate regardless of the session flag.
   const [enabled, setEnabled] = useState(false);
   useEffect(() => {
+    const force = new URLSearchParams(window.location.search).has('boot');
     let seen = false;
     try { seen = sessionStorage.getItem('rm-boot-seen') === '1'; } catch { /* private mode */ }
-    setEnabled(!seen && window.matchMedia(DESKTOP_QUERY).matches);
+    setEnabled((force || !seen) && window.matchMedia(DESKTOP_QUERY).matches);
   }, []);
   if (!enabled) return null;
   return <BootConsoleInner />;

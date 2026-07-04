@@ -33,6 +33,9 @@ export function useBootTimeline(): BootTimelineState {
   );
   const [repeat] = useState(() => {
     if (typeof window === 'undefined') return false;
+    // Dev override: /?boot replays the full assembly sequence, not the
+    // skip-ahead repeat view.
+    if (new URLSearchParams(window.location.search).has('boot')) return false;
     try {
       return sessionStorage.getItem(SESSION_KEY) === '1';
     } catch {
