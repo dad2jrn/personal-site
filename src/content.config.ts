@@ -16,6 +16,7 @@ const experience = defineCollection({
     shortCompany: z.string().optional(),  // timeline display name when company is too long
     tag: z.string().optional(),           // timeline category tag override (defaults from sector)
     achievements: z.array(z.string()).optional(), // bullet points for resume
+    resume: z.boolean().default(true), // false = timeline-only (e.g. early service the PDF resume omits)
   }),
 });
 

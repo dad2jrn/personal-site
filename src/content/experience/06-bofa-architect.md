@@ -7,9 +7,10 @@ location: "Richmond, VA"
 sector: "banking"
 featured: true
 order: 6
-summary: "Led enterprise architecture initiatives supporting large-scale financial systems across multiple business units, delivering secure, high-availability platforms aligned with corporate strategy."
+summary: "Managed enterprise architecture initiatives supporting large-scale, high-availability financial systems across multiple business units."
 achievements:
-  - "Guided teams through major infrastructure modernization and data center migration initiatives."
-  - "Directed business capability mapping to identify long-term transformation opportunities."
-  - "Served as a trusted architecture advisor contributing to enterprise-wide technology decisions."
+  - "Guided teams through platform modernization, data center migration, API-driven integration, and service-oriented architecture initiatives."
+  - "Served as a trusted architecture advisor contributing to enterprise-wide technology decisions and long-term transformation opportunities."
+  - "Supervised and mentored architects and engineers, driving alignment on architecture standards, reusable patterns, and best practices."
+  - "Evaluated emerging technologies and led informed adoption of platforms that improved performance, security, scalability, and maintainability."
 ---

@@ -11,7 +11,7 @@ const experience = await getCollection('experience');
 const sortedExperience = experience.sort((a: CollectionEntry<'experience'>, b: CollectionEntry<'experience'>) => a.data.order - b.data.order);
 
 const featuredExperience = sortedExperience.filter(e => e.data.featured);
-const previousExperience = sortedExperience.filter(e => !e.data.featured);
+const previousExperience = sortedExperience.filter(e => !e.data.featured && e.data.resume);
 
 const formatDate = (dateStr: string | null | undefined) => {
   if (!dateStr) return '';
@@ -22,11 +22,28 @@ const formatDate = (dateStr: string | null | undefined) => {
   return date.toLocaleDateString('en-US', { month: '2-digit', year: 'numeric' });
 };
 
-const skills = {
-  hard: ["Enterprise Architecture", "Cloud Strategy", "Product Management", "Agile Methodologies", "Budgeting & Forecasting", "Risk Management"],
-  techniques: ["CI/CD", "Vendor Selection", "Resource Optimization", "Governance Frameworks"],
-  tools: ["AWS", "Azure", "Jira", "Confluence", "Playwright", "Astro"]
-};
+const summary = "Enterprise architect who bridges business strategy and AI implementation, trusted by executives from Fortune 100 banks to state agencies to startup leadership. Helps organizations capture AI's value without betting the business on it, using safe-to-fail pilots, human-in-the-loop guardrails, and reversible deployment patterns that contain risk while proving measurable outcomes. 20+ years across regulated and enterprise-scale platforms.";
+
+const skillGroups = [
+  { label: "ENTERPRISE ARCHITECTURE", items: ["Architecture Governance", "Business Capability Modeling", "IT Strategy Alignment", "Platform Modernization", "Domain-driven Design"] },
+  { label: "APPLIED AI & GOVERNANCE", items: ["Local LLM Tooling", "AI Solution Architecture (RAG, Copilots, Automation)", "AI-Assisted Development", "AI Readiness Assessment", "Prompt Engineering & Agentic Workflows", "LLM Platforms (Claude / MS Copilot / ChatGPT)", "Developer Productivity Evaluation"] },
+  { label: "CLOUD & PLATFORMS", items: ["Azure", "AWS", "Cloud-Native Architecture", "Microservices", "API-Driven Platforms"] },
+  { label: "ENGINEERING LEADERSHIP", items: ["Team Leadership", "Player-Coach Leadership", "Mentoring", "Cross-Functional Collaboration", "Executive Advisory"] },
+  { label: "DELIVERY & OPERATIONS", items: ["DevOps", "CI/CD (Jenkins, GitHub Actions)", "Observability", "Reliability Engineering", "Agile/Scrum Methodology", "Performance Optimization"] },
+  { label: "TECHNICAL", items: ["Python", "React.js", "TypeScript", "Node.js", "Java/Spring Boot", "Postgres", "Git", "Event-Driven Architecture"] },
+];
+
+const education = [
+  { school: "Strayer University", degree: "BS, Computer Information Systems" },
+  { school: "Strayer University", degree: "AA, Inter-networking Systems" },
+];
+
+const patents = [
+  "Cloud Systems State Management",
+  "Automated Software Roll-Forward / Rollback",
+  "Least-Privilege Access Automation",
+  "Terraform Infrastructure Modernization",
+];
 ---
 
 <BaseLayout title="Resume">
@@ -107,10 +124,17 @@ const skills = {
         </div>
 
         <div class="space-y-14">
+          <!-- Summary -->
+          <section>
+            <h2 class="sr-only">Summary</h2>
+            <SectionHeader index="01" name="SUMMARY" />
+            <p data-tline class="m-0 text-[15px] leading-[1.7] text-ink-muted">{summary}</p>
+          </section>
+
           <!-- Work Experience -->
           <section>
             <h2 class="sr-only">Work Experience</h2>
-            <SectionHeader index="01" name="WORK EXPERIENCE" />
+            <SectionHeader index="02" name="WORK EXPERIENCE" />
             <div class="space-y-10">
               {featuredExperience.map((entry: CollectionEntry<'experience'>) => (
                 <div>
@@ -141,7 +165,7 @@ const skills = {
           {previousExperience.length > 0 && (
             <section>
               <h2 class="sr-only">Previous Experience</h2>
-              <SectionHeader index="02" name="PREVIOUS EXPERIENCE" />
+              <SectionHeader index="03" name="PREVIOUS EXPERIENCE" />
               <div class="space-y-3">
                 {previousExperience.map((entry: CollectionEntry<'experience'>) => (
                   <div data-tline class="grid grid-cols-[1fr_auto] items-baseline gap-4 text-[14px]">
@@ -164,45 +188,50 @@ const skills = {
           <!-- Skills -->
           <section>
             <h2 class="sr-only">Skills</h2>
-            <SectionHeader index="03" name="SKILLS" />
+            <SectionHeader index="04" name="SKILLS" />
             <div class="space-y-5">
-              <div>
-                <div data-tline class="mb-2 flex items-end justify-between gap-4">
-                  <div class="font-mono text-[11px] tracking-[0.1em] text-ink/40">HARD SKILLS</div>
-                  <div class="no-print hidden sm:block" aria-hidden="true">
-                    <ArrayChip tag="SKL" code="6YT" />
+              {skillGroups.map((group, gi) => (
+                <div>
+                  <div data-tline class="mb-2 flex items-end justify-between gap-4">
+                    <div class="font-mono text-[11px] tracking-[0.1em] text-ink/40">{group.label}</div>
+                    {gi === 0 && (
+                      <div class="no-print hidden sm:block" aria-hidden="true">
+                        <ArrayChip tag="SKL" code="6YT" />
+                      </div>
+                    )}
+                  </div>
+                  <div data-tline class="flex flex-wrap gap-2">
+                    {group.items.map((s) => <span class="tag-chip">{s}</span>)}
                   </div>
                 </div>
-                <div data-tline class="flex flex-wrap gap-2">
-                  {skills.hard.map((s) => <span class="tag-chip">{s}</span>)}
-                </div>
-              </div>
-              <div>
-                <div data-tline class="mb-2 font-mono text-[11px] tracking-[0.1em] text-ink/40">TECHNIQUES</div>
-                <div data-tline class="flex flex-wrap gap-2">
-                  {skills.techniques.map((s) => <span class="tag-chip">{s}</span>)}
-                </div>
-              </div>
-              <div>
-                <div data-tline class="mb-2 font-mono text-[11px] tracking-[0.1em] text-ink/40">TOOLS AND SOFTWARE</div>
-                <div data-tline class="flex flex-wrap gap-2">
-                  {skills.tools.map((s) => <span class="tag-chip">{s}</span>)}
-                </div>
-              </div>
+              ))}
             </div>
           </section>
 
           <!-- Education -->
           <section>
             <h2 class="sr-only">Education</h2>
-            <SectionHeader index="04" name="EDUCATION" />
-            <div data-tline class="flex flex-wrap items-baseline justify-between gap-2 text-[14px]">
-              <div>
-                <h3 class="text-[16px] font-bold text-ink">Strayer University</h3>
-                <p class="italic text-ink/70">B.S. Information Systems</p>
-              </div>
-              <span class="font-mono text-[12px] tracking-[0.08em] text-ink/50">Richmond, VA</span>
+            <SectionHeader index="05" name="EDUCATION" />
+            <div class="space-y-4">
+              {education.map((ed) => (
+                <div data-tline class="flex flex-wrap items-baseline justify-between gap-2 text-[14px]">
+                  <h3 class="text-[16px] font-bold text-ink">{ed.school}</h3>
+                  <span class="italic text-ink/70">{ed.degree}</span>
+                </div>
+              ))}
             </div>
+          </section>
+
+          <!-- Patents -->
+          <section>
+            <h2 class="sr-only">Patents</h2>
+            <SectionHeader index="06" name="PATENTS" />
+            <ul class="m-0 ml-5 list-disc space-y-2 p-0 text-[14px] marker:text-accent">
+              {patents.map((p) => (
+                <li data-tline class="pl-1 leading-relaxed text-ink-muted">{p}</li>
+              ))}
+            </ul>
+            <a href="/#patents" class="no-print mt-5 inline-block font-mono text-[12px] tracking-[0.12em] text-accent no-underline transition-colors hover:text-ink">FULL PATENT RECORDS &rarr;</a>
           </section>
         </div>
 
