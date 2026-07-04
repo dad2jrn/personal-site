@@ -1,3 +1,7 @@
+---
+import BootConsole from './islands/BootConsole';
+---
+
 {/* Terminal boot gate. Hidden by default (no-JS never blocks); the inline
     script shows it on every home-page load — refresh or navigation alike.
     The site unlocks when the user clicks LAUNCH — that click is also the
@@ -15,6 +19,8 @@
 
 <script is:inline>
   (() => {
+    // Phone-width only — tablet/desktop gets <BootConsole> below instead.
+    if (window.matchMedia('(min-width: 768px)').matches) return;
     const el = document.getElementById('boot-overlay');
     const btn = document.getElementById('boot-launch');
     if (!el || !btn) return;
@@ -32,14 +38,21 @@
   // Bundled (non-inline) so it can import the sound module. Runs a beat after
   // the inline gate — acceptable: the boot text animates for ~2.3s anyway.
   import { sfx, startMusic } from '../../scripts/sound';
-  const btn = document.getElementById('boot-launch');
-  if (btn) {
-    // On a truly first visit this is blocked by autoplay policy (no gesture
-    // yet) and silently skipped — accepted in the spec.
-    sfx('boot');
-    btn.addEventListener('click', () => {
-      sfx('launch');
-      startMusic('main'); // ends the boot intro loop, starts the site loop
-    });
+  // Phone-width only — see the guard at the top; unchanged otherwise.
+  if (window.matchMedia('(min-width: 768px)').matches) {
+    // no-op: tablet/desktop uses BootConsole's own sound wiring instead
+  } else {
+    const btn = document.getElementById('boot-launch');
+    if (btn) {
+      // On a truly first visit this is blocked by autoplay policy (no gesture
+      // yet) and silently skipped — accepted in the spec.
+      sfx('boot');
+      btn.addEventListener('click', () => {
+        sfx('launch');
+        startMusic('main'); // ends the boot intro loop, starts the site loop
+      });
+    }
   }
 </script>
+
+<BootConsole client:load />
