@@ -13,7 +13,14 @@ function email(): string {
   );
 }
 
-export default function EmailDecoder() {
+// Default styling is the Transmit section's large display treatment; pass
+// `className` to restyle the anchor where the decoder is reused (e.g. the
+// compact mono contact row on /resume).
+export default function EmailDecoder({
+  className = 'inline-block border-b-2 border-accent pb-[6px] font-mono text-[clamp(16px,2.4vw,28px)] tracking-[0.04em] text-ink no-underline transition-colors hover:text-accent',
+}: {
+  className?: string;
+}) {
   const ref = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
@@ -53,7 +60,7 @@ export default function EmailDecoder() {
         e.preventDefault();
         window.location.href = 'mai' + 'lto:' + email();
       }}
-      className="inline-block border-b-2 border-accent pb-[6px] font-mono text-[clamp(16px,2.4vw,28px)] tracking-[0.04em] text-ink no-underline transition-colors hover:text-accent"
+      className={className}
     >
       <span ref={ref}>r*******@*****.***</span>
     </a>
