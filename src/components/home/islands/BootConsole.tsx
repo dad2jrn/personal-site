@@ -6,6 +6,7 @@ import { SystemBox } from './boot/SystemBox';
 import { SeqRows, NavModules, CareerBars, PatentChips, TransmissionWindow } from './boot/Panels';
 import { MICRO_SELECT_SEED, ARRAY_CHIPS, CAREER_ITEMS, PATENT_CHIPS, NAV_ITEMS, SUBTITLE } from './boot/data';
 import { sfx, startMusic } from '../../../scripts/sound';
+import { initCornerFlicker } from '../../../scripts/flicker';
 
 // Entrance delays (seconds) — every element uses rm-bootline 0.3s both {delay};
 // these are the delays from bootoverlay.md §5, condensed to per-region values.
@@ -57,6 +58,9 @@ export function BootConsoleInner() {
       sfx('boot');
       bootedRef.current = true;
     }
+    // Corner squares (header band ends, sync widget, lock boxes) flicker
+    // sparsely — same scheduler as the resume panel and The Record.
+    initCornerFlicker();
   }, []);
 
   useEffect(() => {
@@ -88,6 +92,7 @@ export function BootConsoleInner() {
       role="status"
       aria-label="Site loading"
       data-sfx-silent
+      data-flicker
       className="fixed inset-0 z-[150] overflow-hidden bg-surface-sunken text-ink"
     >
       <div

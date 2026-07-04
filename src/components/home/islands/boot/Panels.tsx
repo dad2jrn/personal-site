@@ -1,25 +1,84 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CornerHandles } from './Greebles';
 import { SEQ_ROWS, TRANSMISSION_LINES } from './data';
 import { sfx } from '../../../../scripts/sound';
 import type { CareerItem, PatentChipData, NavItem } from './types';
 
+const SEQ_GLYPHS = 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789';
+const randCode = () =>
+  Array.from({ length: 3 }, () => SEQ_GLYPHS[Math.floor(Math.random() * SEQ_GLYPHS.length)]).join('');
+
+// SEQ scrubbers: on load each slider sweeps its track and the row's 3-char
+// code cycles randomly. Grab a slider and drag — the code scrambles as you
+// scrub — and wherever you release it, the thumb and code stay set. Pure
+// toy: nothing reads the value.
 export function SeqRows({ reduced }: { reduced: boolean }) {
+  const [rows, setRows] = useState(() => SEQ_ROWS.map((r) => ({ code: r.code, set: false, pos: 0.7 })));
+  const trackRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const dragging = useRef<number | null>(null);
+  const lastX = useRef(0);
+
+  // Codes keep rolling until a row is set by the visitor.
+  useEffect(() => {
+    if (reduced) return;
+    const id = setInterval(() => {
+      setRows((rs) => (rs.some((r) => !r.set) ? rs.map((r) => (r.set ? r : { ...r, code: randCode() })) : rs));
+    }, 380);
+    return () => clearInterval(id);
+  }, [reduced]);
+
+  const posFrom = (i: number, clientX: number): number => {
+    const track = trackRefs.current[i];
+    if (!track) return 0;
+    const r = track.getBoundingClientRect();
+    return Math.min(1, Math.max(0, (clientX - r.left) / r.width));
+  };
+
+  const onPointerDown = (i: number) => (e: React.PointerEvent<HTMLSpanElement>) => {
+    e.currentTarget.setPointerCapture(e.pointerId);
+    dragging.current = i;
+    lastX.current = e.clientX;
+    const pos = posFrom(i, e.clientX);
+    setRows((rs) => rs.map((r, j) => (j === i ? { ...r, set: true, pos, code: randCode() } : r)));
+  };
+
+  const onPointerMove = (i: number) => (e: React.PointerEvent<HTMLSpanElement>) => {
+    if (dragging.current !== i) return;
+    const pos = posFrom(i, e.clientX);
+    const scramble = Math.abs(e.clientX - lastX.current) > 4;
+    if (scramble) lastX.current = e.clientX;
+    setRows((rs) => rs.map((r, j) => (j === i ? { ...r, pos, code: scramble ? randCode() : r.code } : r)));
+  };
+
+  const onPointerUp = () => {
+    dragging.current = null;
+  };
+
   return (
     <div className="flex flex-col gap-3">
       {SEQ_ROWS.map((row, i) => (
-        <div key={i} aria-hidden="true" className="flex items-center gap-3 font-mono text-[10px] tracking-[0.1em]">
-          <span className="w-[30px] text-ink/40">{row.label}</span>
-          <span className="flex-1 border border-ink/20 px-2 py-1 text-ink/70">
-            {row.value} <span className="text-accent">&#9660;</span> <span className="text-accent/80">{row.code}</span>
+        <div key={i} className="flex items-center gap-3 font-mono text-[10px] tracking-[0.1em]">
+          <span className="w-[30px] text-ink/40" aria-hidden="true">{row.label}</span>
+          <span className="w-[170px] shrink-0 border border-ink/20 px-2 py-1 text-ink/70" aria-hidden="true">
+            {row.value} <span className="text-accent">&#9660;</span> <span className="text-accent/80">{rows[i].code}</span>
           </span>
-          <span className="relative h-[3px] w-[46px] bg-ink/[0.14]">
+          <span
+            ref={(el) => { trackRefs.current[i] = el; }}
+            role="presentation"
+            onPointerDown={onPointerDown(i)}
+            onPointerMove={onPointerMove(i)}
+            onPointerUp={onPointerUp}
+            onPointerCancel={onPointerUp}
+            className="relative h-[3px] flex-1 cursor-ew-resize touch-none bg-ink/[0.14] py-0 before:absolute before:-inset-y-2 before:inset-x-0 before:content-['']"
+          >
             <span
-              className="absolute -top-[4.5px] left-0 h-3 w-3 bg-accent"
+              className="pointer-events-none absolute -top-[4.5px] h-3 w-3 bg-accent"
               style={
-                reduced
-                  ? { transform: 'translateX(34px)' }
-                  : { animation: `rm-slidex ${2.7 + i * 0.4}s ease-in-out infinite alternate` }
+                rows[i].set
+                  ? { left: `calc((100% - 12px) * ${rows[i].pos})` }
+                  : reduced
+                    ? { left: 'calc((100% - 12px) * 0.7)' }
+                    : { animation: `rm-slide-track ${2.7 + i * 0.4}s ease-in-out infinite alternate` }
               }
             />
           </span>
