@@ -9,10 +9,10 @@ import type {
 } from './types';
 
 export const NAV_ITEMS: NavItem[] = [
-  { label: 'WORK DECRYPT', href: '#work' },
-  { label: 'PATENT REGISTRY', href: '#patents' },
-  { label: 'FIELD NOTES', href: '#writing' },
-  { label: 'RESUME EXTRACT', href: '#resume' },
+  { label: 'WORK DECRYPT', module: 'WORK_DECRYPT.MOD', err: '0x4031' },
+  { label: 'PATENT REGISTRY', module: 'PATENT_REGISTRY.DB', err: '0x4407' },
+  { label: 'FIELD NOTES', module: 'FIELD_NOTES.LOG', err: '0x4188' },
+  { label: 'RESUME EXTRACT', module: 'RESUME_EXTRACT.BIN', err: '0x4260' },
 ];
 
 export const CAREER_ITEMS: CareerItem[] = [

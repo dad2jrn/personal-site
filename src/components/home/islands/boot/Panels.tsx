@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { CornerHandles } from './Greebles';
 import { SEQ_ROWS, TRANSMISSION_LINES } from './data';
+import { sfx } from '../../../../scripts/sound';
 import type { CareerItem, PatentChipData, NavItem } from './types';
 
 export function SeqRows({ reduced }: { reduced: boolean }) {
@@ -27,25 +29,64 @@ export function SeqRows({ reduced }: { reduced: boolean }) {
   );
 }
 
+// Sealed-module accordion: the modules never navigate — expanding one plays
+// the deny sample and reveals an ACCESS DENIED readout that points the
+// visitor at the LAUNCH button instead. Single-open.
 export function NavModules({ items }: { items: NavItem[] }) {
+  const [open, setOpen] = useState<number | null>(null);
+  const toggle = (i: number) => {
+    setOpen((cur) => {
+      const next = cur === i ? null : i;
+      if (next !== null) sfx('deny');
+      return next;
+    });
+  };
   return (
     <div className="flex flex-col gap-2">
-      {items.map((item) => (
-        <a
-          key={item.href}
-          href={item.href}
-          data-nav-module
-          data-sfx-silent
-          className="group flex items-center gap-3 border border-accent/25 bg-accent/[0.09] px-4 py-3 no-underline transition-colors hover:border-accent hover:bg-accent/20"
-        >
-          <span className="flex gap-[2px]" aria-hidden="true">
-            <span className="h-[14px] w-[3px] bg-accent" />
-            <span className="h-[14px] w-[3px] bg-accent" />
-            <span className="h-[14px] w-[3px] bg-accent" />
-          </span>
-          <span className="font-mono text-[12px] tracking-[0.16em] text-ink">{item.label}</span>
-          <span className="ml-auto text-accent">&#9654;</span>
-        </a>
+      {items.map((item, i) => (
+        <div key={item.label} className="border border-accent/25 bg-accent/[0.09] transition-colors hover:border-accent">
+          <button
+            type="button"
+            data-sfx-silent
+            aria-expanded={open === i}
+            onClick={() => toggle(i)}
+            className="group flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-accent/20"
+          >
+            <span className="flex gap-[2px]" aria-hidden="true">
+              <span className="h-[14px] w-[3px] bg-accent" />
+              <span className="h-[14px] w-[3px] bg-accent" />
+              <span className="h-[14px] w-[3px] bg-accent" />
+            </span>
+            <span className="font-mono text-[12px] tracking-[0.16em] text-ink">{item.label}</span>
+            <span
+              className={`ml-auto text-accent transition-transform duration-200 ${open === i ? 'rotate-90' : ''}`}
+              aria-hidden="true"
+            >
+              &#9654;
+            </span>
+          </button>
+          <div
+            className={`grid transition-[grid-template-rows] duration-300 ease-out ${open === i ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}
+          >
+            {/* Lines stay mounted so the close transition can animate; the
+                entrance animation is only applied while open, so it replays
+                each time the panel expands. */}
+            <div className="min-h-0 overflow-hidden">
+              <div className="border-t border-accent/25 px-4 py-3 font-mono text-[11px] leading-[1.9] tracking-[0.1em]">
+                <div className="text-accent" style={open === i ? { animation: 'rm-bootline 0.25s both' } : { opacity: 0 }}>
+                  &gt; ACCESS DENIED :: CLEARANCE_REQUIRED
+                </div>
+                <div className="text-ink/60" style={open === i ? { animation: 'rm-bootline 0.25s both 0.15s' } : { opacity: 0 }}>
+                  &gt; {item.module} SEALED &mdash; ERR {item.err}
+                </div>
+                <div className="text-ink/85" style={open === i ? { animation: 'rm-bootline 0.25s both 0.3s' } : { opacity: 0 }}>
+                  &gt; LAUNCH APPLICATION TO AUTHENTICATE
+                  <span className="ml-[6px] inline-block h-[11px] w-[7px] translate-y-[1px] animate-[rm-blink_0.9s_infinite] bg-accent" aria-hidden="true" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       ))}
     </div>
   );

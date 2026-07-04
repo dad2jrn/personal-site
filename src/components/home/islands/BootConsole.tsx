@@ -80,28 +80,12 @@ export function BootConsoleInner() {
     t.dismiss();
   };
 
-  const handleRootClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const anchor = (e.target as HTMLElement).closest('a[data-nav-module]') as HTMLAnchorElement | null;
-    if (!anchor) return;
-    e.preventDefault();
-    const href = anchor.getAttribute('href');
-    sfx('launch');
-    startMusic('main');
-    t.dismiss();
-    if (href) {
-      window.setTimeout(() => {
-        document.querySelector(href)?.scrollIntoView({ behavior: 'auto', block: 'start' });
-      }, 0);
-    }
-  };
-
   return (
     <div
       ref={rootRef}
       role="status"
       aria-label="Site loading"
       data-sfx-silent
-      onClick={handleRootClick}
       className="fixed inset-0 z-[150] overflow-hidden bg-surface-sunken text-ink"
     >
       <div

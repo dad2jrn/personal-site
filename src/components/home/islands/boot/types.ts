@@ -7,7 +7,8 @@ export interface LogLine {
 
 export interface NavItem {
   label: string;
-  href: string;
+  module: string; // sealed-module filename shown in the denial readout
+  err: string; // error code shown in the denial readout
 }
 
 export interface CareerItem {
