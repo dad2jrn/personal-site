@@ -1,23 +1,55 @@
 ---
-import SectionHeader from './SectionHeader.astro';
+import SectionHeader from "./SectionHeader.astro";
 ---
 
-<section id="origin" class="relative bg-paper px-6 pb-[140px] pt-[120px] text-paper-ink md:px-10">
-  {/* Wider than max-w-site: the stretched display H2 needs the extra column
-      width to clear the right-hand paragraphs (revision feedback #4). */}
+<section
+  id="origin"
+  class="relative bg-paper px-6 pb-[140px] pt-[120px] text-paper-ink md:px-10"
+>
+  {
+    /* Wider than max-w-site: the stretched display H2 needs the extra column
+      width to clear the right-hand paragraphs (revision feedback #4). */
+  }
   <div class="mx-auto max-w-[1360px]">
     <SectionHeader index="01" name="ORIGIN" meta="1997 → 2016" paper />
-    {/* Left column gets the larger share and the H2 is capped a touch smaller so
-        the stretched display face can't run under the right-hand column. */}
-    <div class="grid grid-cols-1 items-start gap-[60px] md:grid-cols-[1.2fr_1fr]">
-      <h2 data-reveal class="h-display m-0 text-[clamp(26px,8.5vw,66px)]">Every architecture has a foundation<span class="text-paper-accent-bright">.</span></h2>
+    {
+      /* Left column gets the larger share and the H2 is capped a touch smaller so
+        the stretched display face can't run under the right-hand column. */
+    }
+    <div
+      class="grid grid-cols-1 items-start gap-[60px] md:grid-cols-[1.2fr_1fr]"
+    >
+      <h2 data-reveal class="h-display m-0 text-[clamp(26px,8.5vw,66px)]">
+        Every architecture has a foundation<span
+          class="text-paper-accent-bright">.</span>
+      </h2>
       <div>
-        <p data-reveal class="mb-7 text-[19px] leading-[1.65] text-paper-ink/85">1997. A nineteen-year-old petty officer learns the first rule of mission-critical systems: <em class="font-serif text-[22px]">they don't get to fail.</em></p>
-        <p data-reveal class="mb-7 text-[19px] leading-[1.65] text-paper-ink/85">Four years in the Navy. Then a decade architecting enterprise systems for the Army, the Navy, and Bank of America. The scale kept growing. The rule never changed.</p>
-        <div data-reveal class="flex flex-wrap gap-8 border-t border-paper-line pt-5 font-mono text-[12px] tracking-[0.1em] text-paper-ink/55">
+        <p
+          data-reveal
+          class="mb-7 text-[19px] leading-[1.65] text-paper-ink/85"
+        >
+          1997. A nineteen-year-old petty officer serving in the U.S. Navy learns the first rule of
+          mission-critical systems: <em class="font-serif text-[22px]"
+            >they don't get to fail.</em>
+        </p>
+        <p
+          data-reveal
+          class="mb-7 text-[19px] leading-[1.65] text-paper-ink/85"
+        >
+          Four years in the Navy. Then decades architecting enterprise systems
+          for the Army, the Navy, Bank of America, Capital One, a State agency, and a startup. The scale kept growing. The challenges never stopped.
+          But the rule never changed.
+        </p>
+        <div
+          data-reveal
+          class="flex flex-wrap gap-8 border-t border-paper-line pt-5 font-mono text-[12px] tracking-[0.1em] text-paper-ink/55"
+        >
           <span>US NAVY · 1997</span>
           <span>US ARMY · 2002</span>
           <span>BANK OF AMERICA · 2008</span>
+          <span>Capital One · 2016</span>
+          <span>VDOT · 2024</span>
+          <span>1800Unlocks · 2026</span>
         </div>
       </div>
     </div>

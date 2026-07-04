@@ -1,5 +1,5 @@
 ---
-title: "Rearchitecting payments at $2T scale"
+title: "Architecting payments at $2T scale"
 company: "Capital One"
 role: "Sr. Manager, Software Engineering Architect"
 period: "2016 – 2023"
@@ -27,7 +27,7 @@ cardTags: ["AWS", "KAFKA", "MICROSERVICES", "TERRAFORM"]
 The Card Line of Business (LoB) was anchored by a legacy monolithic payment application that had become increasingly unstable. This "black box" system was difficult to scale, prone to outages during peak volumes, and acted as a bottleneck for new feature delivery. The technical debt was so significant that even minor changes risked cascading failures across the payment lifecycle.
 
 ### The Strategy: The Strangler Method
-Rather than a high-risk "big bang" migration, we employed the **Strangler Fig pattern**. We froze the legacy system, limiting its scope strictly to production support and essential maintenance. This ensured stability for existing customers while we systematically "strangled" its functionality by building out a modern replacement in parallel.
+Rather than a high-risk "big bang" migration, we employed the [**Strangler Fig pattern**](/writing/strangler-fig-what-it-is-and-isnt/). We froze the legacy system, limiting its scope strictly to production support and essential maintenance. This ensured stability for existing customers while we systematically "strangled" its functionality by building out a modern replacement in parallel.
 
 ### Architectural Innovation
 We designed a cloud-native, event-driven ecosystem built on **Domain-Driven Design (DDD)** principles. Key architectural pillars included:
