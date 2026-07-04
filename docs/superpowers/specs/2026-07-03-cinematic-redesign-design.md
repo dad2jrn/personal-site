@@ -53,7 +53,7 @@ In-place rebuild on the `revision` branch (no parallel `/v2` route, no wholesale
 | `Timeline` | 10 rows from the `experience` collection, grid `180px 1fr 220px 110px` (years / role / org / category tag), hover amber-tint + left-pad slide. Stacks on mobile. |
 | `Patents` | H2 + accordion island over the `patents` collection. |
 | `FieldNotes` | 2-col: H2 left; paragraph + outlined mono button "READ THE WRITING →" to `/writing/`. |
-| `TheRecord` | Outlined banner + solid amber "DOWNLOAD PDF RESUME ↓" → `/Ron_Meck_Resume.pdf`; also links `/resume`. |
+| `TheRecord` | Outlined banner + solid amber "DOWNLOAD PDF RESUME ↓" → `/Ron_Meck_Enterprise_Architect_Resume.pdf`; also links `/resume`. |
 | `Transmit` | 90vh centered: giant H2 "READY TO MODERNIZE YOUR ENTERPRISE?" (amber ?), decoded email link, mono LINKEDIN / GITHUB / PHONE links from `src/lib/site.ts`. No floating artifacts. |
 
 **Copy:** narrative copy (Origin paragraphs, hero subline, ticker items, section intros) lives in the components, taken verbatim from the prototype. Collection-driven content (timeline rows, patents, case-study cards) is reconciled to the prototype's copy by editing frontmatter, extending schemas in `src/content/config.ts` where fields are missing (timeline category tag, work-card mono header string, patent tag string).
