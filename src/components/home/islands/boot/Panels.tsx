@@ -70,8 +70,22 @@ export function SeqRows({ reduced }: { reduced: boolean }) {
             onPointerMove={onPointerMove(i)}
             onPointerUp={onPointerUp}
             onPointerCancel={onPointerUp}
-            className="relative h-[3px] flex-1 cursor-ew-resize touch-none bg-ink/[0.14] py-0 before:absolute before:-inset-y-2 before:inset-x-0 before:content-['']"
+            className="group relative h-[3px] flex-1 cursor-ew-resize touch-none bg-ink/[0.14] py-0 before:absolute before:-inset-y-2 before:inset-x-0 before:content-['']"
           >
+            {/* Hover fill: amber bar from the track's start to the thumb.
+                While sweeping it animates in lockstep with the thumb (same
+                duration/easing); opacity-only hiding keeps the two keyframe
+                clocks running so they never drift apart. */}
+            <span
+              className="pointer-events-none absolute left-0 top-0 h-full bg-accent/70 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+              style={
+                rows[i].set
+                  ? { width: `calc((100% - 12px) * ${rows[i].pos} + 6px)` }
+                  : reduced
+                    ? { width: 'calc((100% - 12px) * 0.7 + 6px)' }
+                    : { animation: `rm-slide-track-fill ${9 + i * 2.5}s ease-in-out infinite alternate` }
+              }
+            />
             <span
               className="pointer-events-none absolute -top-[4.5px] h-3 w-3 bg-accent"
               style={

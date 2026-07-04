@@ -71,8 +71,11 @@
 @keyframes rm-fadeup { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes rm-fillx   { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 @keyframes rm-slidex  { from { transform: translateX(0); } to { transform: translateX(26px); } }
-/* Full-track scrubber sweep — thumb is 12px wide, so stop short of the end. */
+/* Full-track scrubber sweep — thumb is 12px wide, so stop short of the end.
+   The -fill variant runs in lockstep (same duration/easing) on the hover
+   fill bar, tracking the thumb's center. */
 @keyframes rm-slide-track { from { left: 0; } to { left: calc(100% - 12px); } }
+@keyframes rm-slide-track-fill { from { width: 6px; } to { width: calc(100% - 6px); } }
 @keyframes rm-flicker { 0%, 100% { opacity: 0.15; } 50% { opacity: 0.9; } }
 /* One quick corner-handle dip; page scripts randomize duration and
    iteration count per burst so every flicker looks different. */
