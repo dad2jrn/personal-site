@@ -1,45 +1,85 @@
 ---
-import ParticleField from './islands/ParticleField';
+import ParticleField from "./islands/ParticleField";
 
 const ticker = [
-  '$2T+ ANNUAL VOLUME',
-  '60M MONTHLY USERS',
-  '4 US PATENTS',
-  '75% FASTER DELIVERY',
-  '$30M REVENUE UNLOCKED',
+  "$2T+ ANNUAL VOLUME",
+  "60M MONTHLY USERS",
+  "4 US PATENTS",
+  "75% FASTER DELIVERY",
+  "$30M REVENUE UNLOCKED",
 ];
 ---
 
-<header id="top" class="relative flex min-h-screen flex-col justify-end overflow-hidden">
+<header
+  id="top"
+  class="relative flex min-h-screen flex-col justify-end overflow-hidden"
+>
   <div class="absolute inset-0">
     <ParticleField client:idle />
   </div>
-  <div class="pointer-events-none absolute inset-0 [background:radial-gradient(ellipse_at_50%_100%,rgba(10,10,11,0)_30%,rgba(10,10,11,0.85)_100%)]"></div>
+  <div
+    class="pointer-events-none absolute inset-0 [background:radial-gradient(ellipse_at_50%_100%,rgba(10,10,11,0)_30%,rgba(10,10,11,0.85)_100%)]"
+  >
+  </div>
   <div class="relative px-6 md:px-10">
-    <div class="mb-6 flex flex-wrap gap-6 font-mono text-[12px] tracking-[0.14em] text-accent">
-      <span><span class="mr-2 inline-block h-[7px] w-[7px] animate-[rm-pulse_2s_infinite] rounded-full bg-accent"></span>AVAILABLE</span>
+    <div
+      class="mb-6 flex flex-wrap gap-6 font-mono text-[12px] tracking-[0.14em] text-accent"
+    >
+      <span
+        ><span
+          class="mr-2 inline-block h-[7px] w-[7px] animate-[rm-pulse_2s_infinite] rounded-full bg-accent"
+        ></span>AVAILABLE</span
+      >
       <span class="text-ink/50">GREATER RICHMOND, VA</span>
       <span class="text-ink/50">37.5407° N / 77.4360° W</span>
     </div>
-    <h1 class="m-0 text-[clamp(72px,15.5vw,260px)] font-black uppercase leading-[0.86] tracking-[-0.03em] [font-stretch:125%]">Ron<br />Meck</h1>
-    <div class="flex flex-wrap items-end justify-between gap-10 pb-10 pt-8">
-      <p class="m-0 max-w-[560px] font-serif text-[clamp(24px,3vw,40px)] italic leading-[1.15] text-ink">I design the systems money moves through.</p>
-      <p class="m-0 max-w-[340px] font-mono text-[13px] leading-[1.8] text-ink-muted">Enterprise architect &amp; technology transformation leader. Twenty-five years across Fortune 100 finance and statewide government.</p>
+    <div class="flex flex-wrap items-end justify-between gap-x-10 gap-y-6 pt-6">
+      <p
+        class="m-0 max-w-[560px] font-accent text-[clamp(24px,3vw,40px)] leading-[1.15] text-ink"
+      >
+        I lead the changes enterprises cannot afford to get wrong.
+      </p>
+      <p
+        class="m-0 max-w-[360px] text-[14px] leading-[1.7] text-ink-muted"
+      >
+        Enterprise architect &amp; technology transformation leader. Twenty-five
+        years across Fortune 100 finance, statewide government, and startups.
+      </p>
     </div>
+    {/* Nameplate fills the hero's lower third: Suisse Bold "Ron" left,
+        Apparel amber "Meck" right on desktop; stacked below md. */}
+    <h1
+      class="m-0 flex flex-col pb-6 pt-8 text-[clamp(64px,14vw,230px)] font-bold leading-[0.95] tracking-[-0.02em] md:flex-row md:items-baseline md:justify-between md:text-[clamp(96px,16.5vw,320px)] md:leading-[0.9]"
+    >
+      <span>Ron</span>
+      <span class="font-accent text-[0.95em] font-normal tracking-normal text-accent">Meck</span>
+    </h1>
   </div>
-  <div id="ticker-viewport" class="relative overflow-hidden whitespace-nowrap border-t border-line-strong py-[14px]">
+  <div
+    id="ticker-viewport"
+    class="relative overflow-hidden whitespace-nowrap border-t border-line-strong py-[14px]"
+  >
     <div id="ticker-entry">
-      {/* 4 copies: the -50% loop shifts two copies, so wrap-around stays seamless
+      {
+        /* 4 copies: the -50% loop shifts two copies, so wrap-around stays seamless
           even on viewports wider than a single copy (~1400px). 56s keeps the same
-          px/s crawl speed the 2-copy 28s version had. */}
-      <div id="ticker-loop" class="inline-flex animate-[rm-marquee_56s_linear_infinite] will-change-transform">
-        {[0, 1, 2, 3].map(() => (
-          <span class="font-mono text-[13px] tracking-[0.12em] text-ink/70">
-            {ticker.map((t) => (
-              <>{t}&nbsp;&nbsp;<span class="text-accent">◆</span>&nbsp;&nbsp;</>
-            ))}
-          </span>
-        ))}
+          px/s crawl speed the 2-copy 28s version had. */
+      }
+      <div
+        id="ticker-loop"
+        class="inline-flex animate-[rm-marquee_56s_linear_infinite] will-change-transform"
+      >
+        {
+          [0, 1, 2, 3].map(() => (
+            <span class="font-mono text-[13px] tracking-[0.12em] text-ink/70">
+              {ticker.map((t) => (
+                <>
+                  {t}&nbsp;&nbsp;<span class="text-accent">◆</span>&nbsp;&nbsp;
+                </>
+              ))}
+            </span>
+          ))
+        }
       </div>
     </div>
   </div>
@@ -50,21 +90,29 @@ const ticker = [
   // exact speed of the infinite loop, which takes over seamlessly (no gap).
   // Without JS the plain CSS loop still runs — this is an enhancement only.
   const LOOP_S = 56; // must match the rm-marquee duration on #ticker-loop
-  const viewport = document.getElementById('ticker-viewport');
-  const entry = document.getElementById('ticker-entry');
-  const loop = document.getElementById('ticker-loop');
-  if (viewport && entry && loop && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  const viewport = document.getElementById("ticker-viewport");
+  const entry = document.getElementById("ticker-entry");
+  const loop = document.getElementById("ticker-loop");
+  if (
+    viewport &&
+    entry &&
+    loop &&
+    !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  ) {
     const speed = loop.scrollWidth / 2 / LOOP_S; // px/s: the loop travels half its width per cycle
     if (speed > 0) {
       const distance = viewport.clientWidth;
       const duration = distance / speed;
       // Restart the loop deterministically, delayed until the entrance lands.
-      loop.style.animation = 'none';
+      loop.style.animation = "none";
       void loop.offsetWidth; // reflow so the animation reset takes
       loop.style.animation = `rm-marquee ${LOOP_S}s linear infinite ${duration}s`;
       entry.animate(
-        [{ transform: `translateX(${distance}px)` }, { transform: 'translateX(0)' }],
-        { duration: duration * 1000, easing: 'linear', fill: 'both' }
+        [
+          { transform: `translateX(${distance}px)` },
+          { transform: "translateX(0)" },
+        ],
+        { duration: duration * 1000, easing: "linear", fill: "both" },
       );
     }
   }

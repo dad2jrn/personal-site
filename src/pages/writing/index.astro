@@ -43,7 +43,7 @@ const formatDate = (date: Date | string) => {
           <article class="group">
             {post.data.publishedAt && <div class="label-mono mb-4">{formatDate(post.data.publishedAt)}</div>}
             <a href={`/writing/${post.id}/`} class="block">
-              <h2 class="mb-4 text-[28px] font-extrabold tracking-[-0.01em] text-ink transition-colors group-hover:text-accent [font-stretch:112%]">
+              <h2 class="mb-4 text-[28px] font-extrabold tracking-[-0.01em] text-ink transition-colors group-hover:text-accent">
                 {post.data.title}
               </h2>
               <p class="text-xl text-ink-muted leading-relaxed mb-6">

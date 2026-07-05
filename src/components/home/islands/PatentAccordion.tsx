@@ -37,9 +37,9 @@ export default function PatentAccordion({ items }: { items: PatentItem[] }) {
             className="grid w-full grid-cols-[1fr_40px] items-center gap-6 px-7 py-[26px] text-left transition-colors hover:bg-accent/[0.06] md:grid-cols-[170px_1fr_40px]"
           >
             <span className="font-mono text-[13px] text-accent">{pat.number}</span>
-            <span className="hidden text-[clamp(18px,2.2vw,28px)] font-bold tracking-[-0.01em] [font-stretch:112%] md:block">{pat.title}</span>
+            <span className="hidden text-[clamp(18px,2.2vw,28px)] font-bold tracking-[-0.01em] md:block">{pat.title}</span>
             <span className="text-right font-mono text-[20px] text-ink/60">{open === i ? '−' : '+'}</span>
-            <span className="col-span-2 text-[clamp(18px,2.2vw,28px)] font-bold tracking-[-0.01em] [font-stretch:112%] md:hidden">{pat.title}</span>
+            <span className="col-span-2 text-[clamp(18px,2.2vw,28px)] font-bold tracking-[-0.01em] md:hidden">{pat.title}</span>
           </button>
           {open === i && (
             <div className="grid animate-[rm-fadeup_0.4s_both] grid-cols-1 items-center gap-12 px-7 pb-8 pt-2 md:grid-cols-[1fr_300px]">

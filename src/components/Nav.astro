@@ -10,7 +10,7 @@ const navItems = [
 
 <div id="scroll-progress" class="fixed left-0 top-0 z-[90] h-[2px] w-0 bg-accent"></div>
 <nav class="fixed left-0 right-0 top-0 z-[80] flex items-center justify-between px-6 py-5 [mix-blend-mode:difference] md:px-10">
-  <a href="/" class="text-[20px] font-extrabold tracking-[-0.02em] text-ink no-underline [font-stretch:125%]">RM<span class="text-accent">.</span></a>
+  <a href="/" class="text-[20px] font-extrabold tracking-[-0.02em] text-ink no-underline">RM<span class="text-accent">.</span></a>
   <div class="hidden items-center gap-7 font-mono text-[12px] tracking-[0.08em] min-[700px]:flex">
     {navItems.map((item) => (
       <a href={item.href} class="text-ink no-underline transition-colors hover:text-accent">{item.label}</a>

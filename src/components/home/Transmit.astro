@@ -1,13 +1,20 @@
 ---
 import EmailDecoder from './islands/EmailDecoder';
 import PhoneDecoder from './islands/PhoneDecoder';
+import { NeuralNoise } from '../ui/neural-noise';
 import { site } from '../../lib/site';
+
+// Amber #F5A524 normalized to 0–1 RGB for the shader uniform.
+const AMBER: [number, number, number] = [0.961, 0.647, 0.141];
 ---
 
 <section id="contact" class="relative flex min-h-[90vh] flex-col justify-center overflow-hidden px-6 pb-40 pt-[140px] text-center md:px-10">
+  <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+    <NeuralNoise client:visible color={AMBER} opacity={0.55} />
+  </div>
   <div class="relative">
     <div data-reveal class="eyebrow mb-8">08 / TRANSMIT</div>
-    <h2 data-reveal class="mx-auto mb-12 max-w-[1100px] text-[clamp(48px,8vw,130px)] font-black uppercase leading-[0.92] tracking-[-0.03em] [font-stretch:122%]">Ready to<br />modernize your<br />enterprise<span class="text-accent">?</span></h2>
+    <h2 data-reveal class="mx-auto mb-12 max-w-[1100px] text-[clamp(48px,8vw,130px)] font-bold leading-[1.02] tracking-[-0.02em]">Ready to<br /><span class="font-accent text-[1.06em] font-normal tracking-normal text-accent">modernize</span> your<br />enterprise<span class="text-accent">?</span></h2>
     <div data-reveal>
       <EmailDecoder client:visible />
     </div>

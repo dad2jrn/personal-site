@@ -12,12 +12,12 @@ const stats = [
 <section id="scale" class="relative border-b border-line px-6 py-[140px] md:px-10">
   <div class="mx-auto max-w-site">
     <SectionHeader index="02" name="SCALE" meta="CAPITAL ONE · 2016 → 2023" />
-    <h2 data-reveal class="h-display mb-6 max-w-[900px] text-[clamp(40px,5vw,76px)]">Then the numbers got serious<span class="text-accent">.</span></h2>
+    <h2 data-reveal class="h-display mb-6 max-w-[900px] text-[clamp(40px,5vw,76px)]">Then the numbers got <span class="font-accent text-[1.06em] font-normal tracking-normal text-accent">serious</span><span class="text-accent">.</span></h2>
     <p data-reveal class="mb-20 max-w-[620px] text-[19px] leading-[1.65] text-ink/65">Seven years architecting mission-critical payment systems for a Fortune 100 bank — owning platform architecture end to end, from engineering to security to the board-level roadmap.</p>
     <div class="grid grid-cols-2 gap-px border border-line bg-line md:grid-cols-4">
       {stats.map((s) => (
         <div data-reveal class="bg-surface px-7 py-9">
-          <div class:list={["text-[clamp(44px,4.5vw,72px)] font-black leading-none [font-stretch:115%]", s.accent && "text-accent"]}>
+          <div class:list={["text-[clamp(44px,4.5vw,72px)] font-black leading-none", s.accent && "text-accent"]}>
             <span data-count={s.count} data-prefix={s.prefix} data-suffix={s.suffix}>{s.prefix}{s.count}{s.suffix}</span>
           </div>
           <div class="mt-4 font-mono text-[12px] tracking-[0.12em] text-ink/50">{s.label}</div>

@@ -1,15 +1,38 @@
 /* Fonts — self-hosted, zero external requests */
-@import '@fontsource-variable/archivo/wdth.css';
 @import '@fontsource-variable/jetbrains-mono/index.css';
-@import '@fontsource/instrument-serif/400.css';
-@import '@fontsource/instrument-serif/400-italic.css';
 
 @import "tailwindcss";
 
-/* Display accent face — used sparingly via .other-accent, never body text */
+/* Suisse Int'l — body (400 + italic) and all headings (700; the 700–900
+   range maps any bold utility to the real Bold face, preventing synthetic
+   bold). Licensed faces live in src/assets/fonts (bundled with hashed
+   URLs), not public/ — no guessable /fonts/ paths. */
 @font-face {
-  font-family: 'Machine';
-  src: url('/fonts/Machine.otf') format('opentype');
+  font-family: 'Suisse Intl';
+  src: url('../assets/fonts/international.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Suisse Intl';
+  src: url('../assets/fonts/international-bold.woff2') format('woff2');
+  font-weight: 700 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Suisse Intl';
+  src: url('../assets/fonts/suisseintl-italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+/* Apparel — the accent voice. The face is italic by design; declaring
+   normal avoids double-slanting via font-style: italic. */
+@font-face {
+  font-family: 'Apparel';
+  src: url('../assets/fonts/apparel.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -38,8 +61,8 @@
   --color-signal: #6B8BFF;
   --color-alert: #FF4D2E;
 
-  --font-sans: 'Archivo Variable', sans-serif;
-  --font-serif: 'Instrument Serif', serif;
+  --font-sans: 'Suisse Intl', sans-serif;
+  --font-accent: 'Apparel', serif;
   --font-mono: 'JetBrains Mono Variable', monospace;
 
   --container-site: 1200px;
@@ -51,6 +74,9 @@
     @apply bg-surface font-sans text-ink antialiased;
     scroll-behavior: smooth;
     text-rendering: optimizeLegibility;
+    /* Never faux-bold Suisse or faux-italicize Apparel; prose emphasis is
+       mapped to Apparel explicitly (see .prose em) instead of synthesized. */
+    font-synthesis: none;
   }
 
   body { @apply bg-surface text-ink; min-height: 100vh; }
@@ -107,30 +133,31 @@
   .label-mono { @apply font-mono text-[11px] uppercase tracking-[0.1em] text-ink-subtle; }
   .hairline { @apply border-t border-line; }
   .eyebrow { @apply font-mono text-[13px] uppercase tracking-[0.14em] text-accent; }
+  /* Sentence-case Suisse Bold; leading carries ascenders/descenders that
+     the old caps-era 0.98 would collide. */
   .h-display {
-    font-weight: 800;
-    font-stretch: 118%;
-    text-transform: uppercase;
-    letter-spacing: -0.02em;
-    line-height: 0.98;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    line-height: 1.04;
   }
   .tag-chip { @apply inline-block border border-ink/20 px-[10px] py-[5px] font-mono text-[11px] tracking-[0.08em] uppercase; }
   .btn-outline { @apply inline-block border border-ink/30 px-6 py-[14px] font-mono text-[12px] tracking-[0.12em] text-ink no-underline transition-colors hover:border-accent hover:text-accent; }
   .btn-solid { @apply inline-block bg-accent px-8 py-[18px] font-mono text-[13px] font-bold tracking-[0.12em] text-surface no-underline transition-transform hover:-translate-y-[3px]; }
   .boot-line { animation: rm-bootline 0.3s both; }
-  .other-accent { font-family: 'Machine', var(--font-sans); }
   .boot-overlay-exit { animation: rm-boot-exit 0.65s cubic-bezier(0.5, 0, 0.75, 0.9) forwards; }
 
   /* Prose (MDX bodies) */
   .prose { @apply max-w-none leading-relaxed text-ink-muted; }
   .prose p { @apply mb-6; }
   .prose h1, .prose h2, .prose h3, .prose h4 {
-    @apply mb-6 mt-12 font-bold uppercase tracking-[-0.01em] text-ink [font-stretch:112%];
+    @apply mb-6 mt-12 font-bold leading-[1.08] tracking-[-0.01em] text-ink;
   }
   .prose h1 { @apply text-3xl md:text-4xl; }
   .prose h2 { @apply text-2xl md:text-3xl; }
   .prose h3 { @apply text-xl md:text-2xl; }
-  .prose strong { @apply font-semibold text-ink; }
+  .prose strong { @apply font-bold text-ink; }
+  /* <em> renders in the real Suisse Intl Italic face (registered above);
+     Apparel remains a deliberate accent applied via explicit classes only. */
   .prose a { @apply text-accent no-underline transition-colors hover:text-ink; }
   .prose code { @apply bg-surface-raised px-1.5 py-0.5 font-mono text-[0.9em] text-accent; }
   .prose code::before, .prose code::after { content: ""; }

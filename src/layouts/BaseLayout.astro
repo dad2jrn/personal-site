@@ -3,6 +3,10 @@ import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 import CustomCursor from '../components/home/islands/CustomCursor.tsx';
 import '../styles/global.css';
+// Hashed URLs for the bundled font files (same assets global.css references)
+// so the preload hints point at the exact URLs the CSS will request.
+import suisseRegularUrl from '../assets/fonts/international.woff2?url';
+import suisseBoldUrl from '../assets/fonts/international-bold.woff2?url';
 
 interface Props {
   title?: string;
@@ -21,6 +25,8 @@ const {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preload" href={suisseRegularUrl} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={suisseBoldUrl} as="font" type="font/woff2" crossorigin />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     <meta name="description" content={description} />
