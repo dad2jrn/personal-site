@@ -1,0 +1,55 @@
+---
+title: "A new platform to run the whole business"
+company: "1800Unlocks"
+role: "Principal Consultant, Enterprise & AI Architecture"
+period: "2026 – present"
+dek: "Re-architecting the central platform behind a national locksmith network — and wiring AI into it safely, with humans in the loop where it matters and on the loop where it doesn't."
+summary: "Engaged directly by the CEO to assess the current-state technology environment and drive the re-architecture of the central platform powering 1800Unlocks' operations, network sites, and member services — a multi-tenant AWS serverless platform with governed, human-supervised AI woven through its workflows."
+scale:
+  - { label: "Network", value: "Nationwide" }
+  - { label: "Platform", value: "Multi-tenant" }
+  - { label: "Delivery", value: "Serverless AWS" }
+  - { label: "AI oversight", value: "HITL / HOTL" }
+tools: ["AWS", "Serverless", "Claude AI", "Event-Driven Architecture"]
+outcomes:
+  - "Defined the target-state architecture and implementation roadmap for the entire business platform"
+  - "Established AI governance patterns: staged reversible rollouts, tenant isolation, scoped tool permissions"
+  - "Architected automated job-lead classification and routing across the member network"
+publishedAt: "2026-07-04"
+featured: true
+order: 1
+cardHeader: "1800UNLOCKS // PLATFORM_GENESIS_v1.0"
+cardSummary: "A ground-up re-architecture of the platform behind a national locksmith network — multi-tenant, serverless, and AI-assisted with human oversight matched to risk."
+cardTags: ["AWS", "SERVERLESS", "CLAUDE AI", "MULTI-TENANT"]
+---
+
+### What 1800Unlocks is
+1800Unlocks is a national network of independent locksmith firms. Behind the brand sits a central platform that powers everything the business does: the firm's own operations, the network of member sites, and the services those members depend on — from how a customer's request finds the right locksmith to how each member shop shows up in local search. When that platform ages, every part of the business ages with it.
+
+### The Engagement
+I was engaged directly by the CEO to assess the current-state technology environment and drive the re-architecture of that central platform. This isn't a point solution or a single-system replacement — the mandate is a target-state architecture and implementation roadmap for a platform that will drive every aspect of the business, translated from business objectives into prioritized, sequenced delivery in direct partnership with executive leadership.
+
+### The Target Architecture
+The target state is a **multi-tenant AWS serverless platform** built around two deliberately boring ideas:
+
+*   **Immutable, versioned site templates**: every member site renders from a versioned template. Changes roll forward as new versions and roll back just as cleanly — no snowflake sites, no unrecoverable states.
+*   **Pre-rendered static delivery**: member sites ship as pre-rendered static assets. That single decision cuts hosting cost across the network, shrinks the attack surface, and removes whole classes of operational risk from hundreds of independently owned sites.
+
+Multi-tenancy does the economic work: one platform, versioned centrally, serving every member firm — instead of a fleet of divergent systems that each need their own care.
+
+### AI, with the right amount of human
+The interesting part of this engagement is not *whether* to use AI — it's the supervision model. The architecture classifies every AI-assisted workflow by consequence, then matches the oversight to the risk:
+
+*   **Human-in-the-loop (HITL)** where decisions are consequential or customer-facing: AI drafts, a person approves. Marketing content and anything that speaks with a member firm's voice passes through brand and accuracy controls before it ships.
+*   **Human-on-the-loop (HOTL)** where risk is low or the action is reversible: AI acts, people monitor and can intervene. Job-lead classification runs this way — a misroute is visible, cheap, and correctable, so the automation runs at machine speed with humans watching the aggregate, not each event.
+
+Underneath both modes sits the governance layer for the **Claude AI integration** itself: staged and reversible rollouts (every AI capability can be turned off or rolled back without touching the rest of the platform), tenant data isolation (one member's data never informs another's outputs), scoped tool permissions (each workflow gets the narrowest access that does the job), and prompt-injection mitigations on every path where external content reaches a model.
+
+### What the AI actually does
+Two capability families anchor the roadmap:
+
+*   **AI-assisted marketing and local SEO** for member firms: structured data generation and content pipelines that improve search rankings and lead generation — with the brand and accuracy controls above, because a locksmith's local reputation is not a place to ship hallucinations.
+*   **Automated job-lead classification and routing**: inbound service requests matched to member firms by geography, capability, and availability, so the right locksmith gets the right job without a human dispatcher rate-limiting the network.
+
+### Where it stands
+The engagement is active: the current-state assessment is complete, the target-state architecture and roadmap are defined, and delivery is being sequenced with executive leadership by business value. The pattern it demonstrates is the same one running through my patent work — find the expensive, manual, human-bottlenecked process, and replace it with a system that is automated, governed, and auditable, with humans exactly where they add judgment and nowhere else.

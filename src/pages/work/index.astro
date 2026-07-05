@@ -6,7 +6,9 @@ import ExperienceTimeline from '../../components/ExperienceTimeline.astro';
 import CaseStudyVisual from '../../components/CaseStudyVisual.astro';
 
 const experience = await getCollection('experience');
-const caseStudies = await getCollection('case-studies');
+const caseStudies = (await getCollection('case-studies')).sort(
+  (a: CollectionEntry<'case-studies'>, b: CollectionEntry<'case-studies'>) => a.data.order - b.data.order,
+);
 
 const sortedExperience = experience.sort((a: CollectionEntry<'experience'>, b: CollectionEntry<'experience'>) => a.data.order - b.data.order);
 ---
