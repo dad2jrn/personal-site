@@ -18,5 +18,9 @@ export default defineConfig({
   build: { format: 'directory' },
   redirects: {
     '/contact': '/#contact',
+    // Retired index pages — homepage sections replace them; detail pages
+    // under /work/* and /patents/* live on.
+    '/work': '/#work',
+    '/patents': '/#patents',
   },
 });

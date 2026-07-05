@@ -14,46 +14,74 @@ const sortedPosts = posts.sort((a: CollectionEntry<'writing'>, b: CollectionEntr
 
 const formatDate = (date: Date | string) => {
   const d = typeof date === 'string' ? new Date(date) : date;
-  return d.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
+  return d
+    .toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit' })
+    .toUpperCase();
 };
+
+// Log numbering grows with the archive: the newest entry carries the
+// highest number, like lines appended to a running log.
+const logNo = (i: number) => String(sortedPosts.length - i).padStart(2, '0');
+const latest = sortedPosts.find((p: CollectionEntry<'writing'>) => p.data.publishedAt)?.data.publishedAt;
+const scanDurations = ['6s', '7.5s', '5s', '8s'];
 ---
 
 <BaseLayout title="Writing & Essays">
-  <section class="py-24">
-    <div class="container-site">
+  <section class="px-6 pb-16 pt-28 md:px-10 md:pt-32">
+    <div class="mx-auto max-w-site">
       <div class="mb-10">
         <Breadcrumb segments={[{ label: 'FIELD_NOTES' }]} />
       </div>
-      <div class="eyebrow mb-8">/ FIELD NOTES</div>
-      <h1 class="h-display mb-8 text-[clamp(48px,7vw,96px)] text-ink">Writing</h1>
-      <p class="text-xl text-ink-muted max-w-[60ch]">
+      <div data-reveal class="mb-12 flex items-baseline gap-5">
+        <span class="eyebrow">FIELD NOTES</span>
+        <div class="h-px flex-1 bg-ink/[0.14]"></div>
+        <span class="font-mono text-[13px] text-ink/40">ENTRIES: {String(sortedPosts.length).padStart(2, '0')}{latest && ` · LAST SYNC: ${formatDate(latest)}`}</span>
+      </div>
+      <h1 data-reveal class="h-display m-0 mb-8 text-[clamp(48px,7vw,96px)] text-ink">
+        Notes from the <span class="font-accent text-[1.06em] font-normal tracking-normal text-accent">field</span><span class="text-accent">.</span>
+      </h1>
+      <p data-reveal class="m-0 max-w-[60ch] text-xl leading-relaxed text-ink-muted">
         Thoughts on enterprise architecture, engineering leadership, and the intersection of technology and business strategy.
       </p>
     </div>
   </section>
 
-  <section class="py-24 bg-surface-sunken border-t border-line">
-    <div class="container-site">
-      <div class="max-w-[800px] space-y-16">
-        {sortedPosts.map((post: CollectionEntry<'writing'>) => (
-          <article class="group">
-            {post.data.publishedAt && <div class="label-mono mb-4">{formatDate(post.data.publishedAt)}</div>}
-            <a href={`/writing/${post.id}/`} class="block">
-              <h2 class="mb-4 text-[28px] font-extrabold tracking-[-0.01em] text-ink transition-colors group-hover:text-accent">
-                {post.data.title}
-              </h2>
-              <p class="text-xl text-ink-muted leading-relaxed mb-6">
-                {post.data.dek}
-              </p>
-              <div class="flex items-center gap-2 text-sm font-medium text-ink group-hover:gap-3 transition-all">
-                Read essay <span>→</span>
-              </div>
-            </a>
-          </article>
+  <section class="border-t border-line bg-surface-sunken px-6 py-24 md:px-10">
+    <div class="mx-auto max-w-site">
+      <div class="mx-auto flex max-w-[900px] flex-col gap-8">
+        {sortedPosts.map((post: CollectionEntry<'writing'>, i: number) => (
+          <a
+            data-reveal
+            href={`/writing/${post.id}/`}
+            class="group relative block overflow-hidden border border-line bg-surface p-8 text-ink no-underline transition-[border-color,transform] duration-300 hover:-translate-y-1 hover:border-accent md:p-10"
+          >
+            <div
+              class="pointer-events-none absolute left-0 right-0 h-[40%] bg-linear-to-b from-accent/[0.05] to-transparent"
+              style={`animation: rm-scan ${scanDurations[i % scanDurations.length]} linear infinite;`}
+            ></div>
+            <div class="mb-8 flex flex-wrap items-baseline justify-between gap-3 font-mono text-[11px] tracking-[0.14em]">
+              <span class="text-accent">LOG {logNo(i)} // FIELD_NOTE</span>
+              <span class="text-ink-subtle">{post.data.publishedAt ? formatDate(post.data.publishedAt) : 'QUEUED · UNDATED'}</span>
+            </div>
+            <h2 class="mb-4 text-[clamp(24px,3vw,32px)] font-bold leading-[1.08] tracking-[-0.01em] transition-colors group-hover:text-accent">
+              {post.data.title}
+            </h2>
+            <p class="mb-7 max-w-[62ch] text-[16px] leading-[1.65] text-ink/60">
+              {post.data.dek}
+            </p>
+            <div class="flex flex-wrap items-center justify-between gap-4">
+              {post.data.tags.length > 0 ? (
+                <div class="flex flex-wrap gap-[10px]">
+                  {post.data.tags.map((tag: string) => (
+                    <span class="tag-chip">{tag}</span>
+                  ))}
+                </div>
+              ) : (
+                <span></span>
+              )}
+              <span class="font-mono text-[12px] tracking-[0.12em] text-accent">READ ENTRY &rarr;</span>
+            </div>
+          </a>
         ))}
       </div>
     </div>

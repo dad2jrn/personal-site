@@ -24,7 +24,7 @@ const { Content } = await render(entry);
     <div class="container-site">
       <div class="max-w-[800px]">
         <div class="mb-12">
-          <Breadcrumb segments={[{ label: 'PATENTS', href: '/patents/' }, { label: `${entry.id}.log`.toUpperCase() }]} />
+          <Breadcrumb segments={[{ label: 'PATENTS', href: '/#patents' }, { label: `${entry.id}.log`.toUpperCase() }]} />
         </div>
 
         <div class="label-mono text-accent mb-4">{entry.data.patentNumber}</div>
