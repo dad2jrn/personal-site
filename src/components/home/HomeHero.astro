@@ -14,7 +14,7 @@ const ticker = [
   id="top"
   class="relative flex min-h-screen flex-col justify-end overflow-hidden"
 >
-  <div class="absolute inset-0">
+  <div id="hero-particles" class="absolute inset-0">
     <ParticleField client:idle />
   </div>
   <div
@@ -86,6 +86,27 @@ const ticker = [
 </header>
 
 <script>
+  // Boot handoff: while the boot gate is active this session, the particle
+  // field starts hidden and fades in as the birth-flash noise decays, so the
+  // hero appears to condense out of the noise. Hidden state is JS-applied
+  // only (no-JS safe); skipped for repeat visits and reduced motion.
+  {
+    const wrap = document.getElementById('hero-particles');
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let seen = false;
+    try { seen = sessionStorage.getItem('rm-boot-seen') === '1'; } catch { /* private mode */ }
+    const force = new URLSearchParams(window.location.search).has('boot');
+    if (wrap && !reduced && (!seen || force)) {
+      wrap.style.opacity = '0';
+      wrap.style.transition = 'opacity 1.6s ease-out';
+      window.addEventListener('rm:boot-flash', () => {
+        // The flash noise holds until ~900ms and decays to 1800ms; starting
+        // here lets the particles condense out of the dissolving noise.
+        window.setTimeout(() => { wrap.style.opacity = '1'; }, 1100);
+      }, { once: true });
+    }
+  }
+
   // Ticker entrance: the crawl starts fully offscreen right and enters at the
   // exact speed of the infinite loop, which takes over seamlessly (no gap).
   // Without JS the plain CSS loop still runs — this is an enhancement only.
