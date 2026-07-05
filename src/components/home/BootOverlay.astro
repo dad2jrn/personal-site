@@ -1,5 +1,6 @@
 ---
 import BootConsole from './islands/BootConsole';
+import BootFlash from './islands/BootFlash';
 ---
 
 {/* Terminal boot gate. Hidden by default (no-JS never blocks); the inline
@@ -37,6 +38,7 @@ import BootConsole from './islands/BootConsole';
     btn.addEventListener('click', () => {
       try { sessionStorage.setItem('rm-boot-seen', '1'); } catch { /* private mode */ }
       document.documentElement.style.overflow = '';
+      window.dispatchEvent(new Event('rm:boot-flash')); // BootFlash island flares over the exit
       el.addEventListener('animationend', () => { el.remove(); }, { once: true });
       el.classList.add('boot-overlay-exit');
     });
@@ -65,3 +67,4 @@ import BootConsole from './islands/BootConsole';
 </script>
 
 <BootConsole client:load />
+<BootFlash client:load />

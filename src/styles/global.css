@@ -111,6 +111,11 @@
 @keyframes rm-rot     { to { transform: rotate(360deg); } }
 @keyframes rm-stamp   { 0% { opacity: 0; transform: scale(2.2); } 60% { opacity: 1; transform: scale(0.96); } 100% { opacity: 1; transform: scale(1); } }
 @keyframes rm-boot-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+/* Boot birth-flash: the noise layer ramps up fast, dominates while the boot
+   overlay is removed underneath, then decays to reveal the page; the core
+   layer is the initial amber pop. */
+@keyframes rm-flash-noise { 0% { opacity: 0; } 15% { opacity: 1; } 50% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes rm-flash-core  { 0% { opacity: 0; } 12% { opacity: 1; } 100% { opacity: 0; } }
 @keyframes rm-boot-exit {
   0% { transform: scale(1); filter: brightness(1); opacity: 1; }
   12% { transform: scale(1.01); filter: brightness(2.4); opacity: 1; }

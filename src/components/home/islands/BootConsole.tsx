@@ -83,6 +83,7 @@ export function BootConsoleInner() {
   const handleLaunch = () => {
     sfx('launch');
     startMusic('main');
+    window.dispatchEvent(new Event('rm:boot-flash')); // BootFlash island flares over the exit
     t.dismiss();
   };
 
